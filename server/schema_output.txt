@@ -1,0 +1,26 @@
+--- Listings Columns ---
+id: varchar(36) | Null: NO | Default: uuid()
+seller_id: varchar(36) | Null: NO | Default: null
+title: varchar(255) | Null: NO | Default: null
+course_code: varchar(100) | Null: YES | Default: null
+subject: varchar(100) | Null: YES | Default: null
+description: text | Null: YES | Default: null
+price: decimal(10,2) | Null: NO | Default: 0.00
+condition_status: varchar(50) | Null: YES | Default: null
+type: varchar(50) | Null: YES | Default: null
+images: json | Null: YES | Default: null
+status: varchar(50) | Null: YES | Default: available
+created_at: timestamp | Null: YES | Default: CURRENT_TIMESTAMP
+branch: varchar(100) | Null: YES | Default: null
+year: varchar(50) | Null: YES | Default: null
+semester: varchar(50) | Null: YES | Default: null
+material_type: varchar(100) | Null: YES | Default: null
+item_condition: varchar(50) | Null: YES | Default: null
+is_draft: tinyint(1) | Null: YES | Default: 0
+
+--- Recent Listings ---
+aa061bb6-1fd7-11f1-afbd-a0ad9fcb29c6: python notes (Sun Mar 15 2026 00:27:35 GMT+0530 (India Standard Time))
+a977610b-1fd7-11f1-afbd-a0ad9fcb29c6: python notes (Sun Mar 15 2026 00:27:34 GMT+0530 (India Standard Time))
+a8c0a3be-1fd7-11f1-afbd-a0ad9fcb29c6: python notes (Sun Mar 15 2026 00:27:33 GMT+0530 (India Standard Time))
+a7fbc53c-1fd7-11f1-afbd-a0ad9fcb29c6: python notes (Sun Mar 15 2026 00:27:32 GMT+0530 (India Standard Time))
+a6adb351-1fd7-11f1-afbd-a0ad9fcb29c6: python notes (Sun Mar 15 2026 00:27:30 GMT+0530 (India Standard Time))

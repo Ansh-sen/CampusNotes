@@ -1,0 +1,7 @@
+--- Listing Images Columns ---
+id: int | Null: NO | Default: null
+listing_id: int | Null: NO | Default: null
+image_url: varchar(255) | Null: NO | Default: null
+is_cover: tinyint(1) | Null: YES | Default: 0
+order_index: int | Null: YES | Default: 0
+created_at: timestamp | Null: YES | Default: CURRENT_TIMESTAMP

@@ -1,0 +1,8 @@
+﻿src/components/layout/ProtectedRoute.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+src/components/ui/toast-provider.tsx(3,1): error TS6133: 'X' is declared but its value is never read.
+src/context/UnreadCountContext.tsx(39,7): error TS18047: 'socketRef.current' is possibly 'null'.
+src/pages/Messages.tsx(39,7): error TS18047: 'socketRef.current' is possibly 'null'.
+src/pages/Messages.tsx(54,7): error TS18047: 'socketRef.current' is possibly 'null'.
+src/pages/Messages.tsx(58,7): error TS18047: 'socketRef.current' is possibly 'null'.
+src/pages/Messages.tsx(62,7): error TS18047: 'socketRef.current' is possibly 'null'.
+src/pages/SubjectPage.tsx(30,27): error TS6133: 'subjectRes' is declared but its value is never read.

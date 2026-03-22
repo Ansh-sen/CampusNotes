@@ -1,0 +1,51 @@
+import { useRef, useEffect } from 'react';
+import { Header } from './Header';
+import { BottomNav } from './BottomNav';
+import { Outlet, useLocation } from 'react-router-dom';
+import { cn } from '@/lib/utils';
+
+export function Layout() {
+  const { pathname } = useLocation();
+  const mainRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    // Immediate reset for all potential scroll containers
+    window.scrollTo(0, 0);
+    if (mainRef.current) {
+      mainRef.current.scrollTo(0, 0);
+    }
+    document.documentElement.scrollTo(0, 0);
+    document.body.scrollTo(0, 0);
+
+    // Some browsers or complex layouts need a micro-task delay
+    const scrollReset = () => {
+      window.scrollTo(0, 0);
+      if (mainRef.current) {
+        mainRef.current.scrollTo(0, 0);
+      }
+    };
+
+    requestAnimationFrame(scrollReset);
+    const timer = setTimeout(scrollReset, 50);
+    
+    return () => clearTimeout(timer);
+  }, [pathname]);
+
+  const isChatThread = pathname === '/messages' && new URLSearchParams(location.search).get('conv');
+  
+  return (
+    <div className="flex flex-col min-h-[100dvh] w-full max-w-screen-sm mx-auto bg-[hsl(var(--background))] border-x border-[hsl(var(--muted))]/50 relative shadow-sm">
+      <Header />
+      <main 
+        ref={mainRef} 
+        className={cn(
+          "flex-1 w-full pb-20 overflow-x-hidden",
+          isChatThread ? "overflow-y-hidden" : "pt-4 px-4 overflow-y-auto"
+        )}
+      >
+        <Outlet />
+      </main>
+      <BottomNav />
+    </div>
+  );
+}

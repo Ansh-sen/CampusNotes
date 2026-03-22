@@ -1,0 +1,11 @@
+CREATE TABLE IF NOT EXISTS purchases (
+    id VARCHAR(36) PRIMARY KEY,
+    listing_id VARCHAR(36) NOT NULL,
+    buyer_id VARCHAR(36) NOT NULL,
+    seller_id VARCHAR(36) NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (listing_id) REFERENCES listings(id) ON DELETE CASCADE,
+    FOREIGN KEY (buyer_id) REFERENCES profiles(id) ON DELETE CASCADE,
+    FOREIGN KEY (seller_id) REFERENCES profiles(id) ON DELETE CASCADE
+);

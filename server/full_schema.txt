@@ -1,0 +1,81 @@
+
+--- conversations ---
+id: varchar(36) | Null: NO | Default: uuid()
+listing_id: varchar(36) | Null: NO | Default: null
+buyer_id: varchar(36) | Null: NO | Default: null
+seller_id: varchar(36) | Null: NO | Default: null
+last_message_at: timestamp | Null: YES | Default: null
+unread_count: int | Null: YES | Default: 0
+is_muted: tinyint(1) | Null: YES | Default: 0
+
+--- listing_images ---
+id: int | Null: NO | Default: null
+listing_id: varchar(36) | Null: NO | Default: null
+image_url: varchar(255) | Null: NO | Default: null
+is_cover: tinyint(1) | Null: YES | Default: 0
+order_index: int | Null: YES | Default: 0
+created_at: timestamp | Null: YES | Default: CURRENT_TIMESTAMP
+
+--- listing_tags ---
+id: int | Null: NO | Default: null
+listing_id: varchar(36) | Null: NO | Default: null
+tag_name: varchar(50) | Null: NO | Default: null
+
+--- listings ---
+id: varchar(36) | Null: NO | Default: uuid()
+seller_id: varchar(36) | Null: NO | Default: null
+title: varchar(255) | Null: NO | Default: null
+course_code: varchar(100) | Null: YES | Default: null
+subject: varchar(100) | Null: YES | Default: null
+description: text | Null: YES | Default: null
+price: decimal(10,2) | Null: NO | Default: 0.00
+condition_status: varchar(50) | Null: YES | Default: null
+type: varchar(50) | Null: YES | Default: null
+images: json | Null: YES | Default: null
+status: varchar(50) | Null: YES | Default: available
+created_at: timestamp | Null: YES | Default: CURRENT_TIMESTAMP
+branch: varchar(100) | Null: YES | Default: null
+year: varchar(50) | Null: YES | Default: null
+semester: varchar(50) | Null: YES | Default: null
+material_type: varchar(100) | Null: YES | Default: null
+item_condition: varchar(50) | Null: YES | Default: null
+is_draft: tinyint(1) | Null: YES | Default: 0
+
+--- messages ---
+id: varchar(36) | Null: NO | Default: uuid()
+conversation_id: varchar(36) | Null: NO | Default: null
+sender_id: varchar(36) | Null: NO | Default: null
+content: text | Null: NO | Default: null
+read_status: tinyint(1) | Null: YES | Default: 0
+created_at: timestamp | Null: YES | Default: CURRENT_TIMESTAMP
+file_url: varchar(255) | Null: YES | Default: null
+file_name: varchar(255) | Null: YES | Default: null
+file_type: varchar(50) | Null: YES | Default: null
+is_edited: tinyint(1) | Null: YES | Default: 0
+message_type: enum('text','image','file') | Null: YES | Default: text
+attachment_url: varchar(255) | Null: YES | Default: null
+updated_at: timestamp | Null: YES | Default: CURRENT_TIMESTAMP
+is_read: tinyint(1) | Null: YES | Default: 0
+is_deleted: tinyint(1) | Null: YES | Default: 0
+
+--- profiles ---
+id: varchar(36) | Null: NO | Default: null
+email: varchar(191) | Null: NO | Default: null
+password_hash: varchar(255) | Null: NO | Default: null
+full_name: varchar(255) | Null: YES | Default: null
+university: varchar(255) | Null: YES | Default: null
+major: varchar(255) | Null: YES | Default: null
+year: varchar(50) | Null: YES | Default: null
+avatar_url: text | Null: YES | Default: null
+bio: text | Null: YES | Default: null
+rating_avg: decimal(3,2) | Null: YES | Default: 0.00
+created_at: timestamp | Null: YES | Default: CURRENT_TIMESTAMP
+
+--- reviews ---
+id: varchar(36) | Null: NO | Default: uuid()
+listing_id: varchar(36) | Null: YES | Default: null
+reviewer_id: varchar(36) | Null: NO | Default: null
+reviewee_id: varchar(36) | Null: NO | Default: null
+rating: int | Null: NO | Default: null
+comment: text | Null: YES | Default: null
+created_at: timestamp | Null: YES | Default: CURRENT_TIMESTAMP

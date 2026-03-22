@@ -1,0 +1,4 @@
+--- Listing Tags Columns ---
+id: int | Null: NO | Default: null
+listing_id: int | Null: NO | Default: null
+tag_name: varchar(50) | Null: NO | Default: null

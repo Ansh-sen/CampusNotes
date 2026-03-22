@@ -1,0 +1,629 @@
+programme,branch,semester,subject_code,subject_name
+B.E.,Computer Science & Engineering,1,BT-101,Engineering Chemistry
+B.E.,Computer Science & Engineering,1,BT-102,Mathematics-I
+B.E.,Computer Science & Engineering,1,BT-103,English for Communication
+B.E.,Computer Science & Engineering,1,BT-104,Basic Electrical & Electronics Engineering
+B.E.,Computer Science & Engineering,1,BT-105,Engineering Graphics
+B.E.,Computer Science & Engineering,1,BT-106,Manufacturing Practices
+B.E.,Computer Science & Engineering,1,BT-107,Internship-I (60 Hrs)
+B.E.,Computer Science & Engineering,2,BT-201,Engineering Physics
+B.E.,Computer Science & Engineering,2,BT-202,Mathematics-II
+B.E.,Computer Science & Engineering,2,BT-203,Basic Mechanical Engineering
+B.E.,Computer Science & Engineering,2,BT-204,Basic Civil Engineering & Mechanics
+B.E.,Computer Science & Engineering,2,BT-205,Basic Computer Engineering
+B.E.,Computer Science & Engineering,2,BT-206,Language Lab & Seminars
+B.E.,Computer Science & Engineering,3,ES-301,Energy & Environmental Engineering
+B.E.,Computer Science & Engineering,3,CS-302,Discrete Structure
+B.E.,Computer Science & Engineering,3,CS-303,Data Structure
+B.E.,Computer Science & Engineering,3,CS-304,Digital Systems
+B.E.,Computer Science & Engineering,3,CS-305,Object Oriented Programming & Methodology
+B.E.,Computer Science & Engineering,3,CS-306,Computer Workshop
+B.E.,Computer Science & Engineering,3,BT-307,Internship-II (90 Hrs)
+B.E.,Computer Science & Engineering,4,BT-401,Mathematics-III
+B.E.,Computer Science & Engineering,4,CS-402,Analysis Design of Algorithm
+B.E.,Computer Science & Engineering,4,CS-403,Software Engineering
+B.E.,Computer Science & Engineering,4,CS-404,Computer Organization & Architecture
+B.E.,Computer Science & Engineering,4,CS-405,Operating System
+B.E.,Computer Science & Engineering,4,CS-406,Data Structure & Software Engineering Lab
+B.E.,Computer Science & Engineering,4,CS-407,Operating System Lab
+B.E.,Computer Science & Engineering,5,CS-501,Theory of Computation
+B.E.,Computer Science & Engineering,5,CS-502,Database Management Systems
+B.E.,Computer Science & Engineering,5,CS-503,Departmental Elective-I
+B.E.,Computer Science & Engineering,5,CS-504,Open Elective-I
+B.E.,Computer Science & Engineering,5,CS-505,Linux Lab
+B.E.,Computer Science & Engineering,5,CS-506,Python Lab
+B.E.,Computer Science & Engineering,5,CS-507,Evaluation of Internship-II
+B.E.,Computer Science & Engineering,5,CS-508,Minor Project-I
+B.E.,Computer Science & Engineering,6,CS-601,Machine Learning
+B.E.,Computer Science & Engineering,6,CS-602,Computer Networks
+B.E.,Computer Science & Engineering,6,CS-603,Departmental Elective-II
+B.E.,Computer Science & Engineering,6,CS-604,Open Elective-II
+B.E.,Computer Science & Engineering,6,CS-605,Data Analytics Lab
+B.E.,Computer Science & Engineering,6,CS-606,Skill Development Lab
+B.E.,Computer Science & Engineering,6,CS-607,Internship-III
+B.E.,Computer Science & Engineering,6,CS-608,Minor Project-II
+B.E.,Computer Science & Engineering,7,CS-701,Software Architectures
+B.E.,Computer Science & Engineering,7,CS-702,Departmental Elective-III
+B.E.,Computer Science & Engineering,7,CS-703,Open Elective-III
+B.E.,Computer Science & Engineering,7,CS-704,Web Engineering
+B.E.,Computer Science & Engineering,7,CS-705,Elective-IV
+B.E.,Computer Science & Engineering,7,CS-706,Project-I
+B.E.,Computer Science & Engineering,7,CS-707,Industrial Training
+B.E.,Computer Science & Engineering,8,CS-801,Internet of Things
+B.E.,Computer Science & Engineering,8,CS-802,Departmental Elective-IV
+B.E.,Computer Science & Engineering,8,CS-803,Open Elective-IV
+B.E.,Computer Science & Engineering,8,CS-804,D/O/E Elective Lab
+B.E.,Computer Science & Engineering,8,CS-805,Major Project-II
+B.E.,Information Technology,1,BT-101,Engineering Chemistry
+B.E.,Information Technology,1,BT-102,Mathematics-I
+B.E.,Information Technology,1,BT-103,English for Communication
+B.E.,Information Technology,1,BT-104,Basic Electrical & Electronics Engineering
+B.E.,Information Technology,1,BT-105,Engineering Graphics
+B.E.,Information Technology,1,BT-106,Manufacturing Practices
+B.E.,Information Technology,1,BT-107,Internship-I (60 Hrs)
+B.E.,Information Technology,2,BT-201,Engineering Physics
+B.E.,Information Technology,2,BT-202,Mathematics-II
+B.E.,Information Technology,2,BT-203,Basic Mechanical Engineering
+B.E.,Information Technology,2,BT-204,Basic Civil Engineering & Mechanics
+B.E.,Information Technology,2,BT-205,Basic Computer Engineering
+B.E.,Information Technology,2,BT-206,Language Lab & Seminars
+B.E.,Information Technology,3,ES-301,Energy & Environmental Engineering
+B.E.,Information Technology,3,IT-302,Data Structure
+B.E.,Information Technology,3,IT-303,Discrete Mathematics
+B.E.,Information Technology,3,IT-304,Digital Electronics
+B.E.,Information Technology,3,IT-305,Object Oriented Programming using C++
+B.E.,Information Technology,3,IT-306,Data Structure Lab
+B.E.,Information Technology,3,BT-307,Internship-II (90 Hrs)
+B.E.,Information Technology,4,BT-401,Mathematics-III
+B.E.,Information Technology,4,IT-402,Analysis & Design of Algorithms
+B.E.,Information Technology,4,IT-403,Database Management System
+B.E.,Information Technology,4,IT-404,Operating Systems
+B.E.,Information Technology,4,IT-405,Computer Networks
+B.E.,Information Technology,4,IT-406,System Programming
+B.E.,Information Technology,4,IT-407,DBMS & Networks Lab
+B.E.,Information Technology,5,IT-501,Software Engineering
+B.E.,Information Technology,5,IT-502,Web Technologies
+B.E.,Information Technology,5,IT-503,Information & Network Security
+B.E.,Information Technology,5,IT-504,Departmental Elective-I
+B.E.,Information Technology,5,IT-505,Open Elective-I
+B.E.,Information Technology,5,IT-506,Python & Web Lab
+B.E.,Information Technology,5,IT-507,Minor Project-I
+B.E.,Information Technology,6,IT-601,Mobile Application Development
+B.E.,Information Technology,6,IT-602,Artificial Intelligence
+B.E.,Information Technology,6,IT-603,Data Warehousing & Mining
+B.E.,Information Technology,6,IT-604,Cloud Computing
+B.E.,Information Technology,6,IT-605,Departmental Elective-II
+B.E.,Information Technology,6,IT-606,Mobile & AI Lab
+B.E.,Information Technology,6,IT-607,Minor Project-II
+B.E.,Information Technology,7,IT-701,Machine Learning
+B.E.,Information Technology,7,IT-702,Big Data Technologies
+B.E.,Information Technology,7,IT-703,IoT & Embedded Systems
+B.E.,Information Technology,7,IT-704,Departmental Elective-III
+B.E.,Information Technology,7,IT-705,Open Elective-II
+B.E.,Information Technology,7,IT-706,Project-I
+B.E.,Information Technology,8,IT-801,Deep Learning
+B.E.,Information Technology,8,IT-802,Blockchain & Distributed Ledger Technology
+B.E.,Information Technology,8,IT-803,Departmental Elective-IV
+B.E.,Information Technology,8,IT-804,Project Work-II
+B.E.,Information Technology,8,IT-805,Seminar
+B.E.,Electronics & Communication Engineering,1,BT-101,Engineering Chemistry
+B.E.,Electronics & Communication Engineering,1,BT-102,Mathematics-I
+B.E.,Electronics & Communication Engineering,1,BT-103,English for Communication
+B.E.,Electronics & Communication Engineering,1,BT-104,Basic Electrical & Electronics Engineering
+B.E.,Electronics & Communication Engineering,1,BT-105,Engineering Graphics
+B.E.,Electronics & Communication Engineering,1,BT-106,Manufacturing Practices
+B.E.,Electronics & Communication Engineering,1,BT-107,Internship-I (60 Hrs)
+B.E.,Electronics & Communication Engineering,2,BT-201,Engineering Physics
+B.E.,Electronics & Communication Engineering,2,BT-202,Mathematics-II
+B.E.,Electronics & Communication Engineering,2,BT-203,Basic Mechanical Engineering
+B.E.,Electronics & Communication Engineering,2,BT-204,Basic Civil Engineering & Mechanics
+B.E.,Electronics & Communication Engineering,2,BT-205,Basic Computer Engineering
+B.E.,Electronics & Communication Engineering,2,BT-206,Language Lab & Seminars
+B.E.,Electronics & Communication Engineering,3,ES-301,Energy & Environmental Engineering
+B.E.,Electronics & Communication Engineering,3,EC-302,Electronic Measurement & Instrumentation
+B.E.,Electronics & Communication Engineering,3,EC-303,Digital System Design
+B.E.,Electronics & Communication Engineering,3,EC-304,Electronic Devices
+B.E.,Electronics & Communication Engineering,3,EC-305,Network Analysis
+B.E.,Electronics & Communication Engineering,3,EC-306,Electronic Measurement & Instrumentation Lab
+B.E.,Electronics & Communication Engineering,3,BT-307,Internship-II (90 Hrs)
+B.E.,Electronics & Communication Engineering,4,BT-401,Mathematics-III
+B.E.,Electronics & Communication Engineering,4,EC-402,Signals & Systems
+B.E.,Electronics & Communication Engineering,4,EC-403,Analog Communication
+B.E.,Electronics & Communication Engineering,4,EC-404,Control System
+B.E.,Electronics & Communication Engineering,4,EC-405,Analog Circuits
+B.E.,Electronics & Communication Engineering,4,EC-406,Simulation Lab
+B.E.,Electronics & Communication Engineering,5,EC-501,Microprocessor & Applications
+B.E.,Electronics & Communication Engineering,5,EC-502,Digital Communication
+B.E.,Electronics & Communication Engineering,5,EC-503,Departmental Elective-I (Mobile Communication / CNTL / Advanced Control System)
+B.E.,Electronics & Communication Engineering,5,EC-504,Open Elective-I (Electromagnetic Theory / Computer System Organization)
+B.E.,Electronics & Communication Engineering,5,EC-505,Communication Networks & Transmission Lines
+B.E.,Electronics & Communication Engineering,5,EC-506,Hardware Description Languages Lab
+B.E.,Electronics & Communication Engineering,5,EC-507,Evaluation of Internship-II
+B.E.,Electronics & Communication Engineering,5,EC-508,Minor Project-I
+B.E.,Electronics & Communication Engineering,6,EC-601,Cellular Mobile Communication
+B.E.,Electronics & Communication Engineering,6,EC-602,Digital Signal Processing
+B.E.,Electronics & Communication Engineering,6,EC-603,Antennas & Wave Propagation
+B.E.,Electronics & Communication Engineering,6,EC-604,VLSI Circuits & Systems
+B.E.,Electronics & Communication Engineering,6,EC-605,Data Communication Lab
+B.E.,Electronics & Communication Engineering,6,EC-606,Microcontroller & Embedded System Lab
+B.E.,Electronics & Communication Engineering,6,EC-607,Minor Project-II
+B.E.,Electronics & Communication Engineering,7,EC-701,RF & Microwave Engineering
+B.E.,Electronics & Communication Engineering,7,EC-702,Satellite Communication
+B.E.,Electronics & Communication Engineering,7,EC-703,Departmental Elective-II
+B.E.,Electronics & Communication Engineering,7,EC-704,Open Elective-II
+B.E.,Electronics & Communication Engineering,7,EC-705,Project-I
+B.E.,Electronics & Communication Engineering,7,EC-706,Industrial Training
+B.E.,Electronics & Communication Engineering,8,EC-801,Advanced Communication Systems
+B.E.,Electronics & Communication Engineering,8,EC-802,Advanced Data Network
+B.E.,Electronics & Communication Engineering,8,EC-803,Microwave Circuits
+B.E.,Electronics & Communication Engineering,8,EC-804,Computer Networks
+B.E.,Electronics & Communication Engineering,8,EC-805,Major Project-II
+B.E.,Mechanical Engineering,1,BT-101,Engineering Chemistry
+B.E.,Mechanical Engineering,1,BT-102,Mathematics-I
+B.E.,Mechanical Engineering,1,BT-103,English for Communication
+B.E.,Mechanical Engineering,1,BT-104,Basic Electrical & Electronics Engineering
+B.E.,Mechanical Engineering,1,BT-105,Engineering Graphics
+B.E.,Mechanical Engineering,1,BT-106,Manufacturing Practices
+B.E.,Mechanical Engineering,1,BT-107,Internship-I (60 Hrs)
+B.E.,Mechanical Engineering,2,BT-201,Engineering Physics
+B.E.,Mechanical Engineering,2,BT-202,Mathematics-II
+B.E.,Mechanical Engineering,2,BT-203,Basic Mechanical Engineering
+B.E.,Mechanical Engineering,2,BT-204,Basic Civil Engineering & Mechanics
+B.E.,Mechanical Engineering,2,BT-205,Basic Computer Engineering
+B.E.,Mechanical Engineering,2,BT-206,Language Lab & Seminars
+B.E.,Mechanical Engineering,3,ES-301,Energy & Environmental Engineering
+B.E.,Mechanical Engineering,3,ME-302,Applied Thermodynamics-I
+B.E.,Mechanical Engineering,3,ME-303,Mechanics of Solids
+B.E.,Mechanical Engineering,3,ME-304,Manufacturing Process-I
+B.E.,Mechanical Engineering,3,ME-305,Fluid Mechanics
+B.E.,Mechanical Engineering,3,ME-306,Mathematics-III (Numerical Methods)
+B.E.,Mechanical Engineering,3,ME-307,Thermodynamics Lab
+B.E.,Mechanical Engineering,3,ME-308,Fluid Mechanics Lab
+B.E.,Mechanical Engineering,3,BT-307,Internship-II (90 Hrs)
+B.E.,Mechanical Engineering,4,ME-401,Applied Thermodynamics-II
+B.E.,Mechanical Engineering,4,ME-402,Machine Design-I
+B.E.,Mechanical Engineering,4,ME-403,Manufacturing Process-II
+B.E.,Mechanical Engineering,4,ME-404,Kinematics of Machines
+B.E.,Mechanical Engineering,4,ME-405,Measurement Science & Metrology
+B.E.,Mechanical Engineering,4,ME-406,Machine Design Lab
+B.E.,Mechanical Engineering,4,ME-407,Manufacturing Process Lab
+B.E.,Mechanical Engineering,5,ME-501,Heat & Mass Transfer
+B.E.,Mechanical Engineering,5,ME-502,Dynamics of Machines
+B.E.,Mechanical Engineering,5,ME-503,Machine Design-II
+B.E.,Mechanical Engineering,5,ME-504,Industrial Engineering & Operations Research
+B.E.,Mechanical Engineering,5,ME-505,Departmental Elective-I
+B.E.,Mechanical Engineering,5,ME-506,Heat Transfer Lab
+B.E.,Mechanical Engineering,5,ME-507,Minor Project-I
+B.E.,Mechanical Engineering,6,ME-601,Refrigeration & Air Conditioning
+B.E.,Mechanical Engineering,6,ME-602,Automobile Engineering
+B.E.,Mechanical Engineering,6,ME-603,Finite Element Analysis
+B.E.,Mechanical Engineering,6,ME-604,CAD/CAM
+B.E.,Mechanical Engineering,6,ME-605,Departmental Elective-II
+B.E.,Mechanical Engineering,6,ME-606,CAD/CAM Lab
+B.E.,Mechanical Engineering,6,ME-607,Minor Project-II
+B.E.,Mechanical Engineering,7,ME-701,Advanced Manufacturing Technology
+B.E.,Mechanical Engineering,7,ME-702,Computational Fluid Dynamics
+B.E.,Mechanical Engineering,7,ME-703,Mechatronics
+B.E.,Mechanical Engineering,7,ME-704,Departmental Elective-III
+B.E.,Mechanical Engineering,7,ME-705,Open Elective-I
+B.E.,Mechanical Engineering,7,ME-706,Project-I
+B.E.,Mechanical Engineering,8,ME-801,Robotics
+B.E.,Mechanical Engineering,8,ME-802,Renewable Energy Systems
+B.E.,Mechanical Engineering,8,ME-803,Departmental Elective-IV
+B.E.,Mechanical Engineering,8,ME-804,Project Work-II
+B.E.,Mechanical Engineering,8,ME-805,Seminar
+B.E.,Civil Engineering,1,BT-101,Engineering Chemistry
+B.E.,Civil Engineering,1,BT-102,Mathematics-I
+B.E.,Civil Engineering,1,BT-103,English for Communication
+B.E.,Civil Engineering,1,BT-104,Basic Electrical & Electronics Engineering
+B.E.,Civil Engineering,1,BT-105,Engineering Graphics
+B.E.,Civil Engineering,1,BT-106,Manufacturing Practices
+B.E.,Civil Engineering,1,BT-107,Internship-I (60 Hrs)
+B.E.,Civil Engineering,2,BT-201,Engineering Physics
+B.E.,Civil Engineering,2,BT-202,Mathematics-II
+B.E.,Civil Engineering,2,BT-203,Basic Mechanical Engineering
+B.E.,Civil Engineering,2,BT-204,Basic Civil Engineering & Mechanics
+B.E.,Civil Engineering,2,BT-205,Basic Computer Engineering
+B.E.,Civil Engineering,2,BT-206,Language Lab & Seminars
+B.E.,Civil Engineering,3,ES-301,Energy & Environmental Engineering
+B.E.,Civil Engineering,3,CE-302,Strength of Materials
+B.E.,Civil Engineering,3,CE-303,Fluid Mechanics
+B.E.,Civil Engineering,3,CE-304,Surveying
+B.E.,Civil Engineering,3,CE-305,Building Materials & Construction
+B.E.,Civil Engineering,3,CE-306,Engineering Geology
+B.E.,Civil Engineering,3,CE-307,Surveying Lab
+B.E.,Civil Engineering,3,BT-307,Internship-II (90 Hrs)
+B.E.,Civil Engineering,4,CE-401,Structural Analysis-I
+B.E.,Civil Engineering,4,CE-402,Geotechnical Engineering-I
+B.E.,Civil Engineering,4,CE-403,Environmental Engineering-I
+B.E.,Civil Engineering,4,CE-404,Transportation Engineering
+B.E.,Civil Engineering,4,CE-405,Hydraulics
+B.E.,Civil Engineering,4,CE-406,Hydraulics Lab
+B.E.,Civil Engineering,4,CE-407,Geotechnical & Transportation Lab
+B.E.,Civil Engineering,5,CE-501,Structural Analysis-II
+B.E.,Civil Engineering,5,CE-502,Reinforced Cement Concrete
+B.E.,Civil Engineering,5,CE-503,Foundation Engineering
+B.E.,Civil Engineering,5,CE-504,Water Resource Engineering
+B.E.,Civil Engineering,5,CE-505,Construction Management
+B.E.,Civil Engineering,5,CE-506,RCC Design Lab
+B.E.,Civil Engineering,5,CE-507,Minor Project-I
+B.E.,Civil Engineering,6,CE-601,Design of Steel Structures
+B.E.,Civil Engineering,6,CE-602,Environmental Engineering-II
+B.E.,Civil Engineering,6,CE-603,Earthquake Engineering
+B.E.,Civil Engineering,6,CE-604,Remote Sensing & GIS
+B.E.,Civil Engineering,6,CE-605,Steel Structure Design Lab
+B.E.,Civil Engineering,6,CE-606,Minor Project-II
+B.E.,Civil Engineering,7,CE-701,Urban Planning & Transportation
+B.E.,Civil Engineering,7,CE-702,Bridge Engineering
+B.E.,Civil Engineering,7,CE-703,Departmental Elective-I
+B.E.,Civil Engineering,7,CE-704,Open Elective-I
+B.E.,Civil Engineering,7,CE-705,Project-I
+B.E.,Civil Engineering,8,CE-801,Advanced Structural Analysis
+B.E.,Civil Engineering,8,CE-802,Smart Infrastructure & Sustainable Development
+B.E.,Civil Engineering,8,CE-803,Departmental Elective-II
+B.E.,Civil Engineering,8,CE-804,Project Work-II
+B.E.,Civil Engineering,8,CE-805,Seminar
+B.E.,Electrical Engineering,1,BT-101,Engineering Chemistry
+B.E.,Electrical Engineering,1,BT-102,Mathematics-I
+B.E.,Electrical Engineering,1,BT-103,English for Communication
+B.E.,Electrical Engineering,1,BT-104,Basic Electrical & Electronics Engineering
+B.E.,Electrical Engineering,1,BT-105,Engineering Graphics
+B.E.,Electrical Engineering,1,BT-106,Manufacturing Practices
+B.E.,Electrical Engineering,1,BT-107,Internship-I (60 Hrs)
+B.E.,Electrical Engineering,2,BT-201,Engineering Physics
+B.E.,Electrical Engineering,2,BT-202,Mathematics-II
+B.E.,Electrical Engineering,2,BT-203,Basic Mechanical Engineering
+B.E.,Electrical Engineering,2,BT-204,Basic Civil Engineering & Mechanics
+B.E.,Electrical Engineering,2,BT-205,Basic Computer Engineering
+B.E.,Electrical Engineering,2,BT-206,Language Lab & Seminars
+B.E.,Electrical Engineering,3,ES-301,Energy & Environmental Engineering
+B.E.,Electrical Engineering,3,EE-302,Network Theory
+B.E.,Electrical Engineering,3,EE-303,Electrical Machines-I
+B.E.,Electrical Engineering,3,EE-304,Electrical Measurement & Instrumentation
+B.E.,Electrical Engineering,3,EE-305,Mathematics-III
+B.E.,Electrical Engineering,3,EE-306,Electrical Machines Lab
+B.E.,Electrical Engineering,3,BT-307,Internship-II (90 Hrs)
+B.E.,Electrical Engineering,4,EE-401,Signals & Systems
+B.E.,Electrical Engineering,4,EE-402,Electrical Machines-II
+B.E.,Electrical Engineering,4,EE-403,Power Electronics
+B.E.,Electrical Engineering,4,EE-404,Control Systems
+B.E.,Electrical Engineering,4,EE-405,Digital Electronics & Microprocessors
+B.E.,Electrical Engineering,4,EE-406,Power Electronics Lab
+B.E.,Electrical Engineering,5,EE-501,Power Systems-I
+B.E.,Electrical Engineering,5,EE-502,Switchgear & Protection
+B.E.,Electrical Engineering,5,EE-503,High Voltage Engineering
+B.E.,Electrical Engineering,5,EE-504,Electrical Drives
+B.E.,Electrical Engineering,5,EE-505,Departmental Elective-I
+B.E.,Electrical Engineering,5,EE-506,Power Systems Lab
+B.E.,Electrical Engineering,5,EE-507,Minor Project-I
+B.E.,Electrical Engineering,6,EE-601,Power Systems-II
+B.E.,Electrical Engineering,6,EE-602,FACTS & HVDC Systems
+B.E.,Electrical Engineering,6,EE-603,Renewable Energy Engineering
+B.E.,Electrical Engineering,6,EE-604,Smart Grid Technology
+B.E.,Electrical Engineering,6,EE-605,Departmental Elective-II
+B.E.,Electrical Engineering,6,EE-606,Renewable Energy Lab
+B.E.,Electrical Engineering,6,EE-607,Minor Project-II
+B.E.,Electrical Engineering,7,EE-701,Advanced Power Systems
+B.E.,Electrical Engineering,7,EE-702,Electric Vehicles & Drives
+B.E.,Electrical Engineering,7,EE-703,Departmental Elective-III
+B.E.,Electrical Engineering,7,EE-704,Open Elective-I
+B.E.,Electrical Engineering,7,EE-705,Project-I
+B.E.,Electrical Engineering,8,EE-801,Power System Operation & Control
+B.E.,Electrical Engineering,8,EE-802,Departmental Elective-IV
+B.E.,Electrical Engineering,8,EE-803,Open Elective-II
+B.E.,Electrical Engineering,8,EE-804,Project Work-II
+B.E.,Electrical Engineering,8,EE-805,Seminar
+MCA,Computer Applications,1,MCA-101,Computer Fundamentals & Programming in C
+MCA,Computer Applications,1,MCA-102,Mathematics for Computer Applications-I
+MCA,Computer Applications,1,MCA-103,Data Structures & Algorithms
+MCA,Computer Applications,1,MCA-104,Computer Organization & Architecture
+MCA,Computer Applications,1,MCA-105,Communication Skills & Technical Writing
+MCA,Computer Applications,1,MCA-106,C Programming Lab
+MCA,Computer Applications,2,MCA-201,Object Oriented Programming using Java
+MCA,Computer Applications,2,MCA-202,Database Management System
+MCA,Computer Applications,2,MCA-203,Operating Systems
+MCA,Computer Applications,2,MCA-204,Computer Networks
+MCA,Computer Applications,2,MCA-205,Mathematics for Computer Applications-II
+MCA,Computer Applications,2,MCA-206,Java Programming Lab
+MCA,Computer Applications,3,MCA-301,Software Engineering
+MCA,Computer Applications,3,MCA-302,Advanced Java & J2EE
+MCA,Computer Applications,3,MCA-303,Analysis & Design of Algorithms
+MCA,Computer Applications,3,MCA-304,Python Programming
+MCA,Computer Applications,3,MCA-305,Elective-I (Compiler Design / AI / Data Mining)
+MCA,Computer Applications,3,MCA-306,Python & Algorithms Lab
+MCA,Computer Applications,4,MCA-401,Machine Learning
+MCA,Computer Applications,4,MCA-402,Cloud Computing
+MCA,Computer Applications,4,MCA-403,Mobile Application Development
+MCA,Computer Applications,4,MCA-404,Information Security & Cyber Laws
+MCA,Computer Applications,4,MCA-405,Elective-II (IoT / Blockchain / AR-VR)
+MCA,Computer Applications,4,MCA-406,ML & Cloud Lab
+MCA,Computer Applications,4,MCA-407,Project Work-I
+MCA,Computer Applications,5,MCA-501,Artificial Intelligence & Expert Systems
+MCA,Computer Applications,5,MCA-502,Big Data Analytics & Hadoop
+MCA,Computer Applications,5,MCA-503,Deep Learning & Computer Vision
+MCA,Computer Applications,5,MCA-504,Internet of Things
+MCA,Computer Applications,5,MCA-505,Elective-III (NLP / Software Testing / Digital Forensics)
+MCA,Computer Applications,5,MCA-506,Deep Learning Lab
+MCA,Computer Applications,5,MCA-507,Project Work-II
+MBA,Management,1,MBA-101,Principles & Practices of Management
+MBA,Management,1,MBA-102,Managerial Economics
+MBA,Management,1,MBA-103,Financial Accounting & Analysis
+MBA,Management,1,MBA-104,Business Communication & Soft Skills
+MBA,Management,1,MBA-105,Quantitative Techniques for Management
+MBA,Management,1,MBA-106,Computer Applications in Management
+MBA,Management,2,MBA-201,Marketing Management
+MBA,Management,2,MBA-202,Financial Management
+MBA,Management,2,MBA-203,Human Resource Management
+MBA,Management,2,MBA-204,Operations & Supply Chain Management
+MBA,Management,2,MBA-205,Research Methodology & Business Analytics
+MBA,Management,2,MBA-206,Organisational Behaviour
+MBA,Management,3,MBA-301,Strategic Management
+MBA,Management,3,MBA-302,Entrepreneurship & Innovation Management
+MBA,Management,3,MBA-303,International Business
+MBA,Management,3,MBA-304,Project Management
+MBA,Management,3,MBA-305,Business Law & Corporate Governance
+MBA,Management,3,MBA-306,Functional Elective-I
+MBA,Management,3,MBA-307,Functional Elective-II
+MBA,Management,4,MBA-401,E-Commerce & Digital Marketing
+MBA,Management,4,MBA-402,Leadership & Change Management
+MBA,Management,4,MBA-403,Functional Elective-III
+MBA,Management,4,MBA-404,Functional Elective-IV
+MBA,Management,4,MBA-405,Project Work & Dissertation
+MBA,Management,4,MBA-406,Viva-Voce
+
+B.Tech,AIML,1,BT-101,Engineering Chemistry
+B.Tech,AIML,1,BT-102,Mathematics-I
+B.Tech,AIML,1,BT-103,English for Communication
+B.Tech,AIML,1,BT-104,Basic Electrical & Electronics Engineering
+B.Tech,AIML,1,BT-105,Engineering Graphics
+B.Tech,AIML,1,BT-106,Manufacturing Practices
+B.Tech,AIML,1,BT-107,Evaluation of Internship-I
+B.Tech,AIML,1,BT-108,Rural Outreach
+B.Tech,AIML,2,BT-201,Engineering Physics
+B.Tech,AIML,2,BT-202,Mathematics-II
+B.Tech,AIML,2,BT-203,Basic Mechanical Engineering
+B.Tech,AIML,2,BT-204,Basic Civil Engineering & Mechanics
+B.Tech,AIML,2,BT-205,Basic Computer Engineering
+B.Tech,AIML,2,BT-206,Language Lab & Seminars
+B.Tech,AIML,2,BT-207,Internship-I Evaluation
+B.Tech,CSE,1,BT-101,Engineering Chemistry
+B.Tech,CSE,1,BT-102,Mathematics-I
+B.Tech,CSE,1,BT-103,English for Communication
+B.Tech,CSE,1,BT-104,Basic Electrical & Electronics Engineering
+B.Tech,CSE,1,BT-105,Engineering Graphics
+B.Tech,CSE,1,BT-106,Manufacturing Practices
+B.Tech,CSE,1,BT-107,Evaluation of Internship-I
+B.Tech,CSE,1,BT-108,Rural Outreach
+B.Tech,CSE,2,BT-201,Engineering Physics
+B.Tech,CSE,2,BT-202,Mathematics-II
+B.Tech,CSE,2,BT-203,Basic Mechanical Engineering
+B.Tech,CSE,2,BT-204,Basic Civil Engineering & Mechanics
+B.Tech,CSE,2,BT-205,Basic Computer Engineering
+B.Tech,CSE,2,BT-206,Language Lab & Seminars
+B.Tech,CSE,2,BT-207,Internship-I Evaluation
+B.Tech,EEE,1,BT-101,Engineering Chemistry
+B.Tech,EEE,1,BT-102,Mathematics-I
+B.Tech,EEE,1,BT-103,English for Communication
+B.Tech,EEE,1,BT-104,Basic Electrical & Electronics Engineering
+B.Tech,EEE,1,BT-105,Engineering Graphics
+B.Tech,EEE,1,BT-106,Manufacturing Practices
+B.Tech,EEE,1,BT-107,Evaluation of Internship-I
+B.Tech,EEE,1,BT-108,Rural Outreach
+B.Tech,EEE,2,BT-201,Engineering Physics
+B.Tech,EEE,2,BT-202,Mathematics-II
+B.Tech,EEE,2,BT-203,Basic Mechanical Engineering
+B.Tech,EEE,2,BT-204,Basic Civil Engineering & Mechanics
+B.Tech,EEE,2,BT-205,Basic Computer Engineering
+B.Tech,EEE,2,BT-206,Language Lab & Seminars
+B.Tech,EEE,2,BT-207,Internship-I Evaluation
+B.Tech,Civil,1,BT-101,Engineering Chemistry
+B.Tech,Civil,1,BT-102,Mathematics-I
+B.Tech,Civil,1,BT-103,English for Communication
+B.Tech,Civil,1,BT-104,Basic Electrical & Electronics Engineering
+B.Tech,Civil,1,BT-105,Engineering Graphics
+B.Tech,Civil,1,BT-106,Manufacturing Practices
+B.Tech,Civil,1,BT-107,Evaluation of Internship-I
+B.Tech,Civil,1,BT-108,Rural Outreach
+B.Tech,Civil,2,BT-201,Engineering Physics
+B.Tech,Civil,2,BT-202,Mathematics-II
+B.Tech,Civil,2,BT-203,Basic Mechanical Engineering
+B.Tech,Civil,2,BT-204,Basic Civil Engineering & Mechanics
+B.Tech,Civil,2,BT-205,Basic Computer Engineering
+B.Tech,Civil,2,BT-206,Language Lab & Seminars
+B.Tech,Civil,2,BT-207,Internship-I Evaluation
+B.Tech,Mechanical,1,BT-101,Engineering Chemistry
+B.Tech,Mechanical,1,BT-102,Mathematics-I
+B.Tech,Mechanical,1,BT-103,English for Communication
+B.Tech,Mechanical,1,BT-104,Basic Electrical & Electronics Engineering
+B.Tech,Mechanical,1,BT-105,Engineering Graphics
+B.Tech,Mechanical,1,BT-106,Manufacturing Practices
+B.Tech,Mechanical,1,BT-107,Evaluation of Internship-I
+B.Tech,Mechanical,1,BT-108,Rural Outreach
+B.Tech,Mechanical,2,BT-201,Engineering Physics
+B.Tech,Mechanical,2,BT-202,Mathematics-II
+B.Tech,Mechanical,2,BT-203,Basic Mechanical Engineering
+B.Tech,Mechanical,2,BT-204,Basic Civil Engineering & Mechanics
+B.Tech,Mechanical,2,BT-205,Basic Computer Engineering
+B.Tech,Mechanical,2,BT-206,Language Lab & Seminars
+B.Tech,Mechanical,2,BT-207,Internship-I Evaluation
+B.Tech,AIML,3,AL-301,Technical Communication
+B.Tech,AIML,3,AL-302,Introduction to Probability and Statistics
+B.Tech,AIML,3,AL-303,Data Structures
+B.Tech,AIML,3,AL-304,Artificial Intelligence
+B.Tech,AIML,3,AL-305,Object Oriented Programming and Methodology
+B.Tech,AIML,3,AL-306,Computer Workshop/Introduction to Python-I
+B.Tech,AIML,3,BT-107,Evaluation of Internship-I
+B.Tech,AIML,3,BT-307,Internship-II
+B.Tech,AIML,3,NC-301,NSS/NCC
+B.Tech,AIML,4,AL-401,Database Management Systems
+B.Tech,AIML,4,AL-402,Machine Learning
+B.Tech,AIML,4,AL-403,Computer Organization and Architecture
+B.Tech,AIML,4,AL-404,Department Elective-I
+B.Tech,AIML,4,AL-405,Open Elective-I
+B.Tech,AIML,4,AL-406,Python Programming Lab
+B.Tech,AIML,4,BT-407,Internship-II Evaluation
+B.Tech,AIML,5,AL-501,Deep Learning
+B.Tech,AIML,5,AL-502,Natural Language Processing
+B.Tech,AIML,5,AL-503,Big Data Analytics
+B.Tech,AIML,5,AL-504,Department Elective-II
+B.Tech,AIML,5,AL-505,Open Elective-II
+B.Tech,AIML,5,AL-506,Machine Learning Lab
+B.Tech,AIML,6,AL-601,Computer Vision
+B.Tech,AIML,6,AL-602,Reinforcement Learning
+B.Tech,AIML,6,AL-603,Department Elective-III
+B.Tech,AIML,6,AL-604,Open Elective-III
+B.Tech,AIML,6,AL-605,Project-I
+B.Tech,AIML,6,AL-606,Industrial Training
+B.Tech,AIML,7,AL-701,Advanced AI Topics
+B.Tech,AIML,7,AL-702,Department Elective-IV
+B.Tech,AIML,7,AL-703,Department Elective-V
+B.Tech,AIML,7,AL-704,Open Elective-IV
+B.Tech,AIML,7,AL-705,Major Project Phase-I
+B.Tech,AIML,8,AL-801,Professional Elective
+B.Tech,AIML,8,AL-802,Open Elective-V
+B.Tech,AIML,8,AL-803,Major Project Phase-II
+B.Tech,AIML,8,AL-804,Comprehensive Viva
+B.Tech,CSE,3,CS-301,Technical Communication
+B.Tech,CSE,3,CS-302,Discrete Mathematics
+B.Tech,CSE,3,CS-303,Data Structures
+B.Tech,CSE,3,CS-304,Digital Logic Design
+B.Tech,CSE,3,CS-305,Object Oriented Programming
+B.Tech,CSE,3,CS-306,Computer Workshop/Python-I
+B.Tech,CSE,3,BT-307,Internship-II
+B.Tech,CSE,3,NC-301,NSS/NCC
+B.Tech,CSE,4,CS-401,Database Management Systems
+B.Tech,CSE,4,CS-402,Computer Organization & Architecture
+B.Tech,CSE,4,CS-403,Design & Analysis of Algorithms
+B.Tech,CSE,4,CS-404,Department Elective-I
+B.Tech,CSE,4,CS-405,Open Elective-I
+B.Tech,CSE,4,CS-406,Data Structures Lab
+B.Tech,CSE,4,BT-407,Internship-II Evaluation
+B.Tech,CSE,5,CS-501,Theory of Computation
+B.Tech,CSE,5,CS-502,Computer Networks
+B.Tech,CSE,5,CS-503,Software Engineering
+B.Tech,CSE,5,CS-504,Department Elective-II
+B.Tech,CSE,5,CS-505,Open Elective-II
+B.Tech,CSE,5,CS-506,Networks Lab
+B.Tech,CSE,6,CS-601,Compiler Design
+B.Tech,CSE,6,CS-602,Web Technologies
+B.Tech,CSE,6,CS-603,Department Elective-III
+B.Tech,CSE,6,CS-604,Open Elective-III
+B.Tech,CSE,6,CS-605,Project-I
+B.Tech,CSE,6,CS-606,Industrial Training
+B.Tech,CSE,7,CS-701,Distributed Systems
+B.Tech,CSE,7,CS-702,Department Elective-IV
+B.Tech,CSE,7,CS-703,Department Elective-V
+B.Tech,CSE,7,CS-704,Open Elective-IV
+B.Tech,CSE,7,CS-705,Major Project Phase-I
+B.Tech,CSE,8,CS-801,Professional Elective
+B.Tech,CSE,8,CS-802,Open Elective-V
+B.Tech,CSE,8,CS-803,Major Project Phase-II
+B.Tech,CSE,8,CS-804,Comprehensive Viva
+B.Tech,EEE,3,EX-301,Energy & Environmental Engineering
+B.Tech,EEE,3,EX-302,Signals & Systems
+B.Tech,EEE,3,EX-303,Electrical Measurement & Measuring Instruments
+B.Tech,EEE,3,EX-304,Network Analysis
+B.Tech,EEE,3,EX-305,Analog Electronics
+B.Tech,EEE,3,EX-306,Computer Programming – I (Java)
+B.Tech,EEE,3,BT-307,Internship -II
+B.Tech,EEE,3,NC-301,NSS/NCC
+B.Tech,EEE,4,BT-401,Mathematics-III
+B.Tech,EEE,4,EX-402,Electrical Machine-I
+B.Tech,EEE,4,EX-403,Digital Electronics & Logic Design
+B.Tech,EEE,4,EX-404,Power System-I
+B.Tech,EEE,4,EX-405,Control System
+B.Tech,EEE,4,EX-406,Computer Programming-II (Python)
+B.Tech,EEE,4,BT-407,Internship-2
+B.Tech,EEE,5,EX-501,Electrical Machine-II
+B.Tech,EEE,5,EX-502,Power Electronics
+B.Tech,EEE,5,EX-503,Department Elective-I
+B.Tech,EEE,5,EX-504,Open Elective-I
+B.Tech,EEE,5,EX-505,Microprocessor & Microcontroller
+B.Tech,EEE,5,EX-506,Power System Analysis
+B.Tech,EEE,6,EX-601,Switch Gear & Protection
+B.Tech,EEE,6,EX-602,Electric Drives
+B.Tech,EEE,6,EX-603,Department Elective-II
+B.Tech,EEE,6,EX-604,Open Elective-II
+B.Tech,EEE,6,EX-605,Project-I
+B.Tech,EEE,6,EX-606,Industrial Training
+B.Tech,EEE,7,EX-701,High Voltage Engineering
+B.Tech,EEE,7,EX-702,Department Elective-III
+B.Tech,EEE,7,EX-703,Department Elective-IV
+B.Tech,EEE,7,EX-704,Open Elective-III
+B.Tech,EEE,7,EX-705,Major Project Phase-I
+B.Tech,EEE,8,EX-801,Professional Elective
+B.Tech,EEE,8,EX-802,Open Elective-IV
+B.Tech,EEE,8,EX-803,Major Project Phase-II
+B.Tech,EEE,8,EX-804,Comprehensive Viva
+B.Tech,Civil,3,CE-301,Building Materials & Construction
+B.Tech,Civil,3,CE-302,Surveying
+B.Tech,Civil,3,CE-303,Fluid Mechanics-I
+B.Tech,Civil,3,CE-304,Strength of Materials-I
+B.Tech,Civil,3,CE-305,Engineering Geology
+B.Tech,Civil,3,CE-306,Computer Programming (MATLAB/C++)
+B.Tech,Civil,3,BT-307,Internship-II
+B.Tech,Civil,3,NC-301,NSS/NCC
+B.Tech,Civil,4,CE-401,Structural Analysis-I
+B.Tech,Civil,4,CE-402,Fluid Mechanics-II
+B.Tech,Civil,4,CE-403,Strength of Materials-II
+B.Tech,Civil,4,CE-404,Transportation Engineering-I
+B.Tech,Civil,4,CE-405,Geotechnical Engineering-I
+B.Tech,Civil,4,CE-406,Surveying Lab
+B.Tech,Civil,4,BT-407,Internship-II Evaluation
+B.Tech,Civil,5,CE-501,Structural Analysis-II
+B.Tech,Civil,5,CE-502,Design of RCC Structures
+B.Tech,Civil,5,CE-503,Hydraulics & Hydraulic Machines
+B.Tech,Civil,5,CE-504,Geotechnical Engineering-II
+B.Tech,Civil,5,CE-505,Department Elective-I
+B.Tech,Civil,5,CE-506,Fluid Mechanics Lab
+B.Tech,Civil,6,CE-601,Design of Steel Structures
+B.Tech,Civil,6,CE-602,Transportation Engineering-II
+B.Tech,Civil,6,CE-603,Environmental Engineering-I
+B.Tech,Civil,6,CE-604,Department Elective-II
+B.Tech,Civil,6,CE-605,Open Elective-II
+B.Tech,Civil,6,CE-606,Project-I
+B.Tech,Civil,7,CE-701,Construction Planning & Management
+B.Tech,Civil,7,CE-702,Environmental Engineering-II
+B.Tech,Civil,7,CE-703,Department Elective-III
+B.Tech,Civil,7,CE-704,Department Elective-IV
+B.Tech,Civil,7,CE-705,Major Project Phase-I
+B.Tech,Civil,8,CE-801,Professional Elective
+B.Tech,Civil,8,CE-802,Open Elective-IV
+B.Tech,Civil,8,CE-803,Major Project Phase-II
+B.Tech,Civil,8,CE-804,Comprehensive Viva
+B.Tech,Mechanical,3,ME-301,Engineering Mathematics-III
+B.Tech,Mechanical,3,ME-302,Manufacturing Processes-I
+B.Tech,Mechanical,3,ME-303,Strength of Materials-I
+B.Tech,Mechanical,3,ME-304,Thermal Engineering-I
+B.Tech,Mechanical,3,ME-305,Fluid Mechanics-I
+B.Tech,Mechanical,3,ME-306,Computer Aided Engineering Graphics
+B.Tech,Mechanical,3,BT-307,Internship-II
+B.Tech,Mechanical,3,NC-301,NSS/NCC
+B.Tech,Mechanical,4,ME-401,Manufacturing Processes-II
+B.Tech,Mechanical,4,ME-402,Strength of Materials-II
+B.Tech,Mechanical,4,ME-403,Thermal Engineering-II
+B.Tech,Mechanical,4,ME-404,Fluid Mechanics-II
+B.Tech,Mechanical,4,ME-405,Machine Drawing & CAD
+B.Tech,Mechanical,4,ME-406,Workshop Technology Lab
+B.Tech,Mechanical,4,BT-407,Internship-II Evaluation
+B.Tech,Mechanical,5,ME-501,Design of Machine Elements-I
+B.Tech,Mechanical,5,ME-502,Heat Transfer
+B.Tech,Mechanical,5,ME-503,Measurements & Metrology
+B.Tech,Mechanical,5,ME-504,Department Elective-I
+B.Tech,Mechanical,5,ME-505,Open Elective-I
+B.Tech,Mechanical,5,ME-506,Fluid Mechanics Lab
+B.Tech,Mechanical,6,ME-601,Industrial Engineering
+B.Tech,Mechanical,6,ME-602,Manufacturing Processes-III
+B.Tech,Mechanical,6,ME-603,Automobile Engineering
+B.Tech,Mechanical,6,ME-604,Department Elective-II
+B.Tech,Mechanical,6,ME-605,Open Elective-II
+B.Tech,Mechanical,6,ME-606,Project-I
+B.Tech,Mechanical,7,ME-701,Heat & Mass Transfer
+B.Tech,Mechanical,7,ME-702,Refrigeration & Air Conditioning
+B.Tech,Mechanical,7,ME-703,Department Elective-III
+B.Tech,Mechanical,7,ME-704,Department Elective-IV
+B.Tech,Mechanical,7,ME-705,Major Project Phase-I
+B.Tech,Mechanical,8,ME-801,Professional Elective
+B.Tech,Mechanical,8,ME-802,Open Elective-IV
+B.Tech,Mechanical,8,ME-803,Major Project Phase-II
+B.Tech,Mechanical,8,ME-804,Comprehensive Viva
