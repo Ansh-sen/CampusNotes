@@ -1,17 +1,21 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { API_URL } from '@/config';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { UserAvatar } from '@/components/ui/UserAvatar';
 import { 
   LogOut, BookOpen, MessageSquare, Check, X, 
   Pencil, Dices, Upload, Camera, CheckCircle, 
-  Share2, ChevronRight, Star, Copy, Shield, Bell
+  Share2, ChevronRight, Star, Copy, Shield, Bell,
+  ChevronDown, History as HistoryIcon
 } from 'lucide-react';
 import { RatingStars } from '@/components/ui/RatingStars';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/components/ui/toast-provider';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useProgrammes, useBranches, useSemesters } from '@/hooks/useAcademicData';
+import { userService } from '@/services/userService';
 
 interface NotificationPrefs {
   messages: boolean;
@@ -24,11 +28,53 @@ export function Profile() {
   const { toast } = useToast();
   const { profile, stats, signOut, updateProfile, isLoading, jwt } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState<'overview' | 'listings' | 'reviews' | 'settings'>('overview');
+  const [enrollmentNumber, setEnrollmentNumber] = useState(profile?.enrollment_number || '');
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
   const [userReviews, setUserReviews] = useState<any[]>([]);
   const [myListings, setMyListings] = useState<any[]>([]);
   const [loadingListings, setLoadingListings] = useState(false);
+  // Local Academic State
+  const [localAcademic, setLocalAcademic] = useState({
+    programme: profile?.programme || '',
+    branch: profile?.branch || '',
+    semester: profile?.semester || 0
+  });
+
+  // Sync with profile if it changes (e.g., on first load)
+  useEffect(() => {
+    if (profile) {
+      setLocalAcademic({
+        programme: profile.programme || '',
+        branch: profile.branch || '',
+        semester: profile.semester || 0
+      });
+    }
+  }, [profile?.programme, profile?.branch, profile?.semester]);
+
+  const { programmes } = useProgrammes();
+  const { branches } = useBranches(localAcademic.programme);
+  const { semesters } = useSemesters(localAcademic.programme, localAcademic.branch);
+
+  const hasAcademicChanges = useMemo(() => {
+    return localAcademic.programme !== (profile?.programme || '') ||
+           localAcademic.branch !== (profile?.branch || '') ||
+           localAcademic.semester !== (profile?.semester || 0);
+  }, [localAcademic, profile]);
+
+  const handleSaveAcademic = async () => {
+    try {
+      await updateProfile({
+        programme: localAcademic.programme,
+        branch: localAcademic.branch,
+        semester: localAcademic.semester
+      });
+      toast({ title: 'Academic career updated!', type: 'success' });
+    } catch (err: any) {
+      toast({ title: 'Update failed', description: err.message, type: 'error' });
+    }
+  };
 
   // Stats Logic
   const salesCount = stats?.sold || 0;
@@ -54,9 +100,16 @@ export function Profile() {
     (completenessItems.filter(i => i.done).length / completenessItems.length) * 100
   );
 
+  useEffect(() => {
+    if (searchParams.get('action') === 'verify') {
+      setActiveTab('settings');
+      // Scroll to verification section if needed or just switch tab
+    }
+  }, [searchParams]);
+
   const fetchUserReviews = async (userId: string) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/reviews/user/${userId}`);
+      const response = await fetch(`${API_URL}/reviews/user/${userId}`);
       const data = await response.json();
       if (response.ok) {
         setUserReviews(data.data || []);
@@ -69,7 +122,7 @@ export function Profile() {
   const fetchMyListings = async () => {
     try {
       setLoadingListings(true);
-      const response = await fetch('http://localhost:3001/api/listings/me', {
+      const response = await fetch(`${API_URL}/listings/me`, {
         headers: { Authorization: `Bearer ${jwt}` }
       });
       const data = await response.json();
@@ -103,8 +156,22 @@ export function Profile() {
           setIsAvatarModalOpen(false);
           toast({ title: 'Avatar updated!', type: 'success' });
         } else {
-          await updateProfile({ college_id_url: base64String });
-          toast({ title: 'College ID uploaded for verification', type: 'success' });
+          // If it's college ID, we need enrollment number too
+          if (!enrollmentNumber) {
+            toast({ title: 'Please enter enrollment number first', type: 'error' });
+            return;
+          }
+          try {
+            await userService.submitVerification({
+              id_image_url: base64String,
+              enrollment_number: enrollmentNumber
+            }, jwt!);
+            toast({ title: 'Verification submitted!', description: 'Admin will review it soon.', type: 'success' });
+            // Profile will be re-fetched or we can optimistically update
+            await updateProfile({ verification_status: 'pending' });
+          } catch (err: any) {
+            toast({ title: 'Failed to submit', description: err.message, type: 'error' });
+          }
         }
       };
       reader.readAsDataURL(file);
@@ -126,7 +193,7 @@ export function Profile() {
   const handleToggleListingStatus = async (id: string, currentStatus: string) => {
     const newStatus = currentStatus === 'available' ? 'paused' : 'available';
     try {
-      const response = await fetch(`http://localhost:3001/api/listings/${id}`, {
+      const response = await fetch(`${API_URL}/listings/${id}`, {
         method: 'PUT',
         headers: { 
           'Content-Type': 'application/json',
@@ -156,25 +223,25 @@ export function Profile() {
     <div className="bg-[#f0f4f8] min-h-screen">
       
       {/* 1. Dark Navy Header (Matches Image) */}
-      <div className="bg-[#1a2744] text-white pt-8 pb-14 px-6 rounded-b-[3rem] relative shadow-2xl">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none" />
+      <div className="bg-[#1a2744] text-white pt-4 pb-6 px-5 rounded-b-[2rem] relative shadow-xl">
+        <div className="absolute top-0 right-0 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl -mr-24 -mt-24 pointer-events-none" />
         
         {/* Title Bar */}
-        <div className="flex justify-between items-center mb-10 relative z-10">
-          <h1 className="text-2xl font-black tracking-tight">My Profile</h1>
-          <button onClick={() => setActiveTab('settings')} className="h-11 w-11 bg-white/5 hover:bg-white/15 rounded-xl flex items-center justify-center transition-all border border-white/10">
-            <Pencil size={20} className="text-gray-400" />
+        <div className="flex justify-between items-center mb-6 relative z-10">
+          <h1 className="text-xl font-black tracking-tight">My Profile</h1>
+          <button onClick={() => setActiveTab('settings')} className="h-9 w-9 bg-white/5 hover:bg-white/15 rounded-lg flex items-center justify-center transition-all border border-white/10">
+            <Pencil size={18} className="text-gray-400" />
           </button>
         </div>
 
         {/* Profile Info Row: Avatar Left, Info Right */}
         <div className="flex items-center gap-6 mb-10 relative z-10">
           <div className="relative shrink-0 group">
-             <div className="p-1 rounded-full bg-gradient-to-tr from-blue-400 to-indigo-400 ring-2 ring-[#1a2744] shadow-xl">
+             <div className="p-1 rounded-full bg-gradient-to-tr from-blue-400 to-indigo-400 ring-2 ring-[#1a2744] shadow-lg">
                <UserAvatar 
                  src={profile?.avatar_url} 
                  alt={profile?.full_name || 'User'} 
-                 size="xl"
+                 size="lg"
                  className="border-2 border-[#1a2744]"
                />
              </div>
@@ -187,13 +254,13 @@ export function Profile() {
           </div>
 
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1 flex-wrap">
-              <h2 className="text-2xl font-black truncate">{profile?.full_name}</h2>
+            <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+              <h2 className="text-xl font-black truncate">{profile?.full_name}</h2>
               {!!profile?.is_student_verified && (
                  <CheckCircle size={20} fill="#f59e0b" className="text-[#1a2744]" />
               )}
             </div>
-            <p className="text-blue-200/60 text-xs font-black uppercase tracking-widest mb-4 leading-relaxed">
+            <p className="text-blue-200/60 text-[9px] font-black uppercase tracking-wider mb-3 leading-relaxed">
               {profile?.programme || 'Branch'} • {profile?.branch || 'Major'} • Sem {profile?.semester || '0'} <br/> {profile?.university || 'Campus Institute'}
             </p>
             
@@ -203,9 +270,14 @@ export function Profile() {
                    Verified Topper
                 </div>
               )}
-              {!!profile?.is_student_verified && (
+              {profile?.verification_status === 'verified' && (
                 <div className="px-3 py-1 bg-white/10 text-white border border-white/20 rounded-full text-[10px] font-black uppercase tracking-wider backdrop-blur-sm">
                    Verified Student
+                </div>
+              )}
+              {profile?.verification_status === 'pending' && (
+                <div className="px-3 py-1 bg-blue-500/20 text-blue-200 border border-blue-400/30 rounded-full text-[10px] font-black uppercase tracking-wider backdrop-blur-sm">
+                   Verification Pending
                 </div>
               )}
             </div>
@@ -213,7 +285,7 @@ export function Profile() {
         </div>
 
         {/* 2. Integrated 4-Stat Summary Bar */}
-        <div className="grid grid-cols-4 bg-white/5 border border-white/10 rounded-3xl py-6 relative z-10 divide-x divide-white/10">
+        <div className="grid grid-cols-4 bg-white/5 border border-white/10 rounded-2xl py-3 relative z-10 divide-x divide-white/10">
           <StatItem label="Sales" value={stats?.sold || 0} />
           <StatItem label="Rating" value={avgRating.toFixed(1)} />
           <StatItem label="Earned" value={`₹${(Number(stats?.earned || 0) / 1000).toFixed(1)}k`} />
@@ -222,8 +294,8 @@ export function Profile() {
       </div>
 
       {/* 3. Tab Navigation (Pill Style) */}
-      <div className="px-6 -mt-7 relative z-20">
-        <div className="flex bg-white p-1.5 rounded-[1.5rem] shadow-xl border border-gray-100/50 overflow-x-auto scrollbar-hide">
+      <div className="px-5 -mt-6 relative z-20">
+        <div className="flex bg-white p-1 rounded-[1.2rem] shadow-lg border border-gray-100/50 overflow-x-auto scrollbar-hide no-scrollbar">
           <TabButton label="Overview" active={activeTab === 'overview'} onClick={() => setActiveTab('overview')} />
           <TabButton label="Listings" active={activeTab === 'listings'} onClick={() => setActiveTab('listings')} />
           <TabButton label="Reviews" active={activeTab === 'reviews'} onClick={() => setActiveTab('reviews')} />
@@ -232,7 +304,7 @@ export function Profile() {
       </div>
 
       {/* 4. Tab Content */}
-      <div className="p-6 pt-8 pb-32 max-w-lg mx-auto overflow-x-hidden">
+      <div className="p-5 pt-8 pb-32 max-w-md mx-auto overflow-x-hidden">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
@@ -244,7 +316,7 @@ export function Profile() {
             {activeTab === 'overview' && (
               <div className="space-y-6 text-left">
                 {/* Profile Completeness */}
-                <div className="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm relative overflow-hidden">
+                <div className="bg-white rounded-[1.5rem] p-6 border border-gray-100 shadow-sm relative overflow-hidden">
                   <div className="flex justify-between items-center mb-6">
                     <h3 className="text-lg font-black text-gray-900">Profile Completeness</h3>
                     <span className="text-blue-600 font-black text-xl">{completenessPercentage}%</span>
@@ -262,7 +334,7 @@ export function Profile() {
                         key={idx} 
                         onClick={item.action}
                         disabled={item.done}
-                        className="flex items-center justify-between w-full p-5 rounded-2xl hover:bg-gray-50 transition-all text-left border border-transparent hover:border-gray-100 group"
+                        className="flex items-center justify-between w-full p-4 rounded-xl hover:bg-gray-50 transition-all text-left border border-transparent hover:border-gray-100 group"
                       >
                         <div className="flex items-center gap-4">
                           <div className={cn(
@@ -282,7 +354,7 @@ export function Profile() {
                 </div>
 
                 {/* Referral Card */}
-                <div className="bg-gradient-to-br from-[#1a2744] to-[#2563eb] rounded-[2rem] p-8 text-white shadow-2xl relative overflow-hidden group">
+                <div className="bg-gradient-to-br from-[#1a2744] to-[#2563eb] rounded-[1.5rem] p-6 text-white shadow-xl relative overflow-hidden group">
                   <div className="relative z-10">
                     <div className="flex justify-between items-start mb-6">
                       <div className="h-14 w-14 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-md border border-white/20 shadow-xl group-hover:rotate-12 transition-transform">
@@ -297,7 +369,7 @@ export function Profile() {
                       Refer a classmate and unlock <span className="font-black text-blue-200 underline underline-offset-4 decoration-white/30">3 Days Boost</span> for your notes rank!
                     </p>
                     
-                    <div className="flex items-center gap-4 bg-white/10 border border-white/20 rounded-2xl p-5 backdrop-blur-md shadow-inner">
+                    <div className="flex items-center gap-4 bg-white/10 border border-white/20 rounded-xl p-4 backdrop-blur-md shadow-inner">
                       <div className="flex-1">
                         <p className="text-[10px] font-black uppercase opacity-50 mb-1 tracking-widest">Unique Code</p>
                         <p className="font-mono text-xl font-bold tracking-[0.1em]">REFER-ANS-42</p>
@@ -330,7 +402,7 @@ export function Profile() {
                   </div>
                 ) : (
                   myListings.map(listing => (
-                    <div key={listing.id} className="bg-white rounded-[2rem] p-6 border border-gray-100 shadow-sm hover:shadow-xl transition-all flex items-center gap-5 group">
+                    <div key={listing.id} className="bg-white rounded-[1.5rem] p-4 border border-gray-100 shadow-sm hover:shadow-lg transition-all flex items-center gap-4 group">
                        <div className="h-20 w-20 bg-blue-50 rounded-3xl flex items-center justify-center shrink-0 border border-blue-100 group-hover:bg-blue-600 group-hover:text-white transition-colors">
                           <BookOpen size={32} />
                        </div>
@@ -360,7 +432,7 @@ export function Profile() {
             {activeTab === 'reviews' && (
               <div className="space-y-6 text-left">
                 {/* Aggregate Summary (Matches Image) */}
-                <div className="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm flex justify-between items-center">
+                <div className="bg-white rounded-[1.5rem] p-6 border border-gray-100 shadow-sm flex justify-between items-center">
                   <div>
                     <h3 className="text-xl font-black text-gray-900 mb-1">Reviews received</h3>
                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Verified Feedbacks</p>
@@ -382,7 +454,7 @@ export function Profile() {
                     </div>
                   ) : (
                     userReviews.map(review => (
-                      <div key={review.id} className="bg-white rounded-[2rem] p-7 border border-gray-100 shadow-sm space-y-5 relative group hover:shadow-xl transition-all">
+                      <div key={review.id} className="bg-white rounded-[1.5rem] p-5 border border-gray-100 shadow-sm space-y-4 relative group hover:shadow-xl transition-all">
                         <div className="flex justify-between items-start">
                           <div className="flex items-center gap-4">
                             <UserAvatar src={review.reviewer_avatar} seed={review.reviewer_id} size="lg" className="shadow-2xl shadow-gray-200" />
@@ -413,7 +485,7 @@ export function Profile() {
             {activeTab === 'settings' && (
               <div className="space-y-6 text-left">
                 {/* ID Verification */}
-                <div className="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm relative overflow-hidden group">
+                <div className="bg-white rounded-[1.5rem] p-6 border border-gray-100 shadow-sm relative overflow-hidden group">
                   <div className="flex items-center gap-5 mb-10 relative z-10">
                     <div className={cn(
                       "h-16 w-16 rounded-3xl flex items-center justify-center transition-all shadow-xl",
@@ -427,40 +499,123 @@ export function Profile() {
                     </div>
                   </div>
 
-                  {profile?.is_student_verified ? (
+                  {profile?.verification_status === 'verified' ? (
                     <div className="bg-blue-50 border border-blue-100 rounded-2xl p-6 flex items-center gap-4 text-blue-700 font-black relative z-10">
                       <CheckCircle size={24} fill="currentColor" className="text-blue-500" />
                       Verified Institution Account
                     </div>
+                  ) : profile?.verification_status === 'pending' ? (
+                    <div className="bg-amber-50 border border-amber-100 rounded-2xl p-6 flex flex-col gap-2 relative z-10">
+                      <div className="flex items-center gap-4 text-amber-700 font-black">
+                        <HistoryIcon size={24} className="text-amber-500" />
+                        Verification under review
+                      </div>
+                      <p className="text-[10px] text-amber-600 font-bold ml-10">We are checking your ID. This usually takes 24 hours.</p>
+                    </div>
                   ) : (
-                    <label className="flex flex-col items-center justify-center border-2 border-dashed border-gray-100 rounded-[2.5rem] py-14 hover:border-blue-500 hover:bg-blue-50/30 cursor-pointer transition-all relative z-10 group/btn">
-                       <div className="h-16 w-16 bg-gray-50 rounded-2xl flex items-center justify-center mb-5 group-hover/btn:bg-blue-600 group-hover/btn:text-white transition-all shadow-sm">
-                          <Upload size={32} />
-                       </div>
-                       <span className="text-lg font-black text-gray-900 mb-1">Upload College ID</span>
-                       <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Get verified badge</span>
-                       <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, 'college_id')} />
-                    </label>
+                    <div className="space-y-4 relative z-10">
+                      <div className="space-y-2">
+                        <label className="text-[9px] font-black uppercase text-gray-400 tracking-widest pl-1">Enrollment Number</label>
+                        <input 
+                          type="text" 
+                          placeholder="e.g. 0101CS211001"
+                          value={enrollmentNumber}
+                          onChange={(e) => setEnrollmentNumber(e.target.value)}
+                          className="w-full h-12 bg-gray-50 border border-gray-100 rounded-2xl px-4 text-sm font-bold text-gray-900 focus:bg-white focus:border-blue-500 transition-all outline-none"
+                        />
+                      </div>
+                      <label className="flex flex-col items-center justify-center border-2 border-dashed border-gray-100 rounded-[2.5rem] py-14 hover:border-blue-500 hover:bg-blue-50/30 cursor-pointer transition-all group/btn">
+                        <div className="h-16 w-16 bg-gray-50 rounded-2xl flex items-center justify-center mb-5 group-hover/btn:bg-blue-600 group-hover/btn:text-white transition-all shadow-sm">
+                            <Upload size={32} />
+                        </div>
+                        <span className="text-lg font-black text-gray-900 mb-1">Upload College ID</span>
+                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Submit for verification</span>
+                        <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, 'college_id')} />
+                      </label>
+                      {profile?.verification_status === 'rejected' && (
+                        <div className="p-4 bg-red-50 border border-red-100 rounded-2xl">
+                          <p className="text-[10px] font-black text-red-600 uppercase tracking-widest mb-1">Submission Rejected</p>
+                          <p className="text-xs font-bold text-red-500">{profile.verification_rejected_reason || "ID image was not clear."}</p>
+                        </div>
+                      )}
+                    </div>
                   )}
                   <div className="absolute top-0 right-0 w-48 h-48 bg-blue-50 rounded-full blur-3xl -mr-24 -mt-24 pointer-events-none" />
                 </div>
 
                 {/* Academic Profile */}
-                <div className="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm space-y-8">
+                <div className="bg-white rounded-[1.5rem] p-6 border border-gray-100 shadow-sm space-y-6">
                    <div className="flex items-center gap-3">
                       <BookOpen size={20} className="text-blue-500" />
                       <h3 className="text-lg font-black text-gray-900">Academic Career</h3>
                    </div>
-                   <div className="space-y-5">
-                      <AcademicInput label="Department" value={profile?.programme} onSave={(val) => updateProfile({ programme: val })} />
-                      <AcademicInput label="Degree / Main" value={profile?.branch} onSave={(val) => updateProfile({ branch: val })} />
-                      <AcademicInput label="Semester" value={profile?.semester?.toString()} onSave={(val) => updateProfile({ semester: parseInt(val) || 0 })} type="number" />
-                      <AcademicInput label="Short Bio" value={profile?.bio} onSave={(val) => updateProfile({ bio: val })} />
+                   <div className="space-y-4">
+                      <AcademicSelect 
+                        label="Department / Programme" 
+                        value={localAcademic.programme} 
+                        options={programmes}
+                        onChange={(val: string) => {
+                          setLocalAcademic(prev => ({ 
+                            ...prev, 
+                            programme: val, 
+                            branch: '', 
+                            semester: 0 
+                          }));
+                        }} 
+                      />
+                      
+                      <AcademicSelect 
+                        label="Degree / Major" 
+                        value={localAcademic.branch} 
+                        options={branches}
+                        disabled={!localAcademic.programme}
+                        onChange={(val: string) => {
+                          setLocalAcademic(prev => ({ 
+                            ...prev, 
+                            branch: val, 
+                            semester: 0 
+                          }));
+                        }} 
+                      />
+
+                      <AcademicSelect 
+                        label="Current Semester" 
+                        value={localAcademic.semester?.toString() || ''} 
+                        options={semesters.map(String)}
+                        disabled={!localAcademic.branch}
+                        onChange={(val: string) => {
+                          setLocalAcademic(prev => ({ 
+                            ...prev, 
+                            semester: parseInt(val) || 0 
+                          }));
+                        }} 
+                      />
+
+                      {hasAcademicChanges && (
+                        <motion.div 
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          className="pt-2"
+                        >
+                          <Button 
+                            onClick={handleSaveAcademic}
+                            className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-black uppercase tracking-widest text-[10px] rounded-2xl shadow-lg shadow-blue-200"
+                          >
+                            Save Academic Details
+                          </Button>
+                        </motion.div>
+                      )}
+
+                      <AcademicInput 
+                        label="Short Bio" 
+                        value={profile?.bio} 
+                        onSave={(val) => updateProfile({ bio: val })} 
+                      />
                    </div>
                 </div>
 
                 {/* Notify Settings */}
-                <div className="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm space-y-6">
+                <div className="bg-white rounded-[1.5rem] p-6 border border-gray-100 shadow-sm space-y-4">
                    <div className="flex items-center gap-3">
                       <Bell size={20} className="text-blue-500" />
                       <h3 className="text-lg font-black text-gray-900">Preferences</h3>
@@ -475,7 +630,7 @@ export function Profile() {
                 {/* Logout Button */}
                 <button 
                   onClick={signOut}
-                  className="w-full h-18 rounded-[2rem] bg-red-50 text-red-500 font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:bg-red-100 transition-all border border-red-100/50 shadow-sm active:scale-95"
+                  className="w-full h-14 rounded-[1.5rem] bg-red-50 text-red-500 font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 hover:bg-red-100 transition-all border border-red-100/50 shadow-sm active:scale-95"
                 >
                   <LogOut size={20} /> Log out current account
                 </button>
@@ -543,9 +698,9 @@ export function Profile() {
 // Fixed StatItem for Dark Navy Header
 function StatItem({ label, value }: { label: string, value: string | number }) {
   return (
-    <div className="flex flex-col items-center justify-center px-4">
-      <div className="text-2xl font-black text-white mb-0.5 tracking-tight">{value}</div>
-      <div className="text-[10px] font-black text-blue-300 uppercase tracking-widest opacity-60">{label}</div>
+    <div className="flex flex-col items-center justify-center px-2">
+      <div className="text-lg font-black text-white mb-0.5 tracking-tight">{value}</div>
+      <div className="text-[9px] font-black text-blue-300 uppercase tracking-widest opacity-60">{label}</div>
     </div>
   );
 }
@@ -556,7 +711,7 @@ function TabButton({ label, active, onClick }: { label: string, active: boolean,
     <button 
       onClick={onClick}
       className={cn(
-        "flex-1 py-4 text-[10px] font-black rounded-[1.2rem] transition-all relative z-10 flex items-center justify-center uppercase tracking-widest mx-1",
+        "flex-1 py-4 text-[9px] font-black rounded-[1.2rem] transition-all relative z-10 flex items-center justify-center uppercase tracking-widest mx-1",
         active ? "text-white" : "text-gray-400 hover:text-gray-600"
       )}
     >
@@ -600,7 +755,7 @@ function AcademicInput({ label, value, onSave, type = 'text' }: { label: string,
 
   return (
     <div className="relative">
-      <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest pl-1 mb-1 block">{label}</label>
+      <label className="text-[9px] font-black uppercase text-gray-400 tracking-widest pl-1 mb-1 block">{label}</label>
       <div className="relative group">
         <input 
           type={type}
@@ -612,6 +767,44 @@ function AcademicInput({ label, value, onSave, type = 'text' }: { label: string,
           className="w-full h-12 bg-gray-50 border border-gray-100 rounded-2xl px-4 text-sm font-bold text-gray-900 focus:bg-white focus:border-blue-500 transition-all outline-none"
         />
         <Pencil size={12} className="absolute right-4 top-4 text-gray-300 group-hover:text-blue-500 transition-colors pointer-events-none" />
+      </div>
+    </div>
+  );
+}
+
+// Cascading Academic Select Component
+function AcademicSelect({ 
+  label, value, options, onChange, disabled = false 
+}: { 
+  label: string, value: string, options: string[], onChange: (val: string) => void, disabled?: boolean 
+}) {
+  return (
+    <div className="relative">
+      <label className="text-[9px] font-black uppercase text-gray-400 tracking-widest pl-1 mb-1 block">
+        {label}
+      </label>
+      <div className="relative group">
+        <select
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          disabled={disabled}
+          className={cn(
+            "w-full h-11 pl-4 pr-10 bg-gray-50 border border-gray-100 rounded-2xl text-[13px] font-bold outline-none transition-all appearance-none cursor-pointer",
+            disabled ? "opacity-40 cursor-not-allowed" : "text-gray-900 focus:bg-white focus:border-blue-500 hover:border-blue-200"
+          )}
+        >
+          <option value="">{disabled ? '-- Locked --' : `Select ${label.split(' / ')[0]}`}</option>
+          {options.map(opt => (
+            <option key={opt} value={opt}>{opt}</option>
+          ))}
+        </select>
+        <ChevronDown 
+          size={14} 
+          className={cn(
+            "absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none transition-colors",
+            disabled ? "text-gray-200" : "text-gray-400 group-hover:text-blue-500"
+          )} 
+        />
       </div>
     </div>
   );

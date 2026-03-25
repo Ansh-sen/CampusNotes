@@ -5,7 +5,7 @@
 
 @layer base {
   :root {
-    --primary: 220 64% 33%; /* #1a2744 */
+    --primary: 221 44% 19%; /* #1a2744 */
     --primary-foreground: 0 0% 100%;
     
     --background: 60 9% 98%; /* #fafaf9 */

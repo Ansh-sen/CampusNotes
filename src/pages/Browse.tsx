@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_URL } from '@/config';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { SearchBar } from '@/components/domain/SearchBar';
@@ -76,7 +77,7 @@ export function Browse() {
       if (searchParams.get('sort')) params.append('sort', searchParams.get('sort')!);
       if (searchParams.get('search')) params.append('search', searchParams.get('search')!);
 
-      const response = await fetch(`http://localhost:3001/api/listings?${params.toString()}`);
+      const response = await fetch(`${API_URL}/listings?${params.toString()}`);
       const json = await response.json();
       setListings(json.data || []);
     } catch (error) {

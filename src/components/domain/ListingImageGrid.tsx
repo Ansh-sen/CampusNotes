@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { API_URL, API_BASE_URL } from '@/config';
 import { 
   X, UploadCloud, Loader2, 
   AlertTriangle, 
@@ -52,7 +53,7 @@ export function ListingImageGrid({
         setScoring(true);
         const [dupRes, scoreRes] = await Promise.all([
           listingService.checkDuplicate(newUrl, jwt!),
-          fetch('http://localhost:3001/api/listings/score-test', {
+          fetch(`${API_URL}/listings/score-test`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${jwt}` },
             body: JSON.stringify({ image_url: newUrl })
@@ -142,7 +143,7 @@ export function ListingImageGrid({
             )}
           >
             <img 
-              src={`http://localhost:3001${img.url}`} 
+              src={`${API_BASE_URL}${img.url}`} 
               alt={`Upload ${idx}`} 
               className="w-full h-full object-cover" 
             />

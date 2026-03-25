@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { API_URL } from '@/config';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { MessageSquare, Trash2, Search, X, ChevronUp, ChevronDown, AlertCircle } from 'lucide-react';
@@ -52,7 +53,7 @@ export function Messages() {
 
   useEffect(() => {
     if (user && jwt) {
-      socketRef.current = initSocket(convId);
+      socketRef.current = initSocket(jwt, convId);
 
       if (!socketRef.current) return;
 
@@ -167,7 +168,7 @@ export function Messages() {
   const fetchSafetyCheckin = async () => {
     if (!convId || !jwt) return;
     try {
-      const res = await fetch(`http://localhost:3001/api/messages/conversations/${convId}/safety-checkin`, {
+      const res = await fetch(`${API_URL}/messages/conversations/${convId}/safety-checkin`, {
         headers: { 'Authorization': `Bearer ${jwt}` }
       });
       const json = await res.json();
@@ -308,9 +309,14 @@ export function Messages() {
     }
 
     try {
-      await messageService.sendMessage(convId, JSON.stringify({...data, status: 'pending'}), jwt, 'meetup_proposal');
+      const res = await messageService.sendMessage(convId, JSON.stringify({...data, status: 'pending'}), jwt, 'meetup_proposal');
+      if (res.data) {
+          setMessages(prev => [...prev, res.data]);
+          const recipientId = currentConv.buyer_id === user?.id ? currentConv.seller_id : currentConv.buyer_id;
+          socketRef.current?.emit('send_message', { ...res.data, recipient_id: recipientId });
+      }
       setIsSchedulerOpen(false);
-      loadMessages();
+      // loadMessages(); // No longer strictly needed if we update state manually, but keep if preferred for sync
     } catch (error) {
       console.error('Error sending proposal:', error);
     }
@@ -530,7 +536,7 @@ export function Messages() {
 
                 return (
                   <div key={msg.id} id={`msg-${msg.id}`} className={`transition-all duration-300 ${isCurrentMatch ? 'ring-4 ring-blue-100 rounded-[2rem] -mx-2 px-2' : ''}`}>
-                    {msg.message_type === 'meetup_proposal' ? (
+                    {(msg.message_type === 'meetup_proposal' || (msg.content?.startsWith('{') && msg.content?.includes('"location"'))) ? (
                       <div className={`flex w-full ${msg.sender_id === user?.id ? 'justify-end' : 'justify-start'} py-2`}>
                         <MeetupProposalCard 
                           message={msg} 

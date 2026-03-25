@@ -1,0 +1,1 @@
+id, seller_id, title, course_code, subject, description, price, condition_status, type, images, status, created_at, branch, year, semester, material_type, item_condition, is_draft, file_url, approval_status, rejection_reason, approved_at, approved_by, programme, subject_code, view_count, ai_score, ai_reasons, buyer_id

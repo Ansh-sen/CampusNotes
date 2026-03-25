@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_URL, API_BASE_URL } from '@/config';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { useProgrammes, useBranches, useSemesters, useSubjects } from '@/hooks/useAcademicData';
@@ -40,9 +41,8 @@ export function Home() {
     description: ''
   });
 
-  // Exam and Study Gap state
+  // Exam state
   const [upcomingExam, setUpcomingExam] = useState<any>(null);
-  const [studyGap, setStudyGap] = useState<any>(null);
   const [dismissedExams, setDismissedExams] = useState<string[]>(() => {
     const saved = localStorage.getItem('dismissed_exams');
     return saved ? JSON.parse(saved) : [];
@@ -133,7 +133,6 @@ export function Home() {
     fetchTrending();
     if (profile?.programme && profile?.branch && profile?.semester) {
       fetchUpcomingExam();
-      fetchStudyGap();
       fetchTopRequests();
     }
   }, [profile]);
@@ -168,7 +167,7 @@ export function Home() {
         semester: profile?.semester?.toString() || '',
         programme: profile?.programme || ''
       });
-      const response = await fetch(`http://localhost:3001/api/requests/top?${params.toString()}`, {
+      const response = await fetch(`${API_URL}/requests/top?${params.toString()}`, {
         headers: { 'Authorization': `Bearer ${jwt}` }
       });
       const json = await response.json();
@@ -189,7 +188,7 @@ export function Home() {
     
     setIsSubmitting(true);
     try {
-      const response = await fetch('http://localhost:3001/api/requests', {
+      const response = await fetch(`${API_URL}/requests`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -271,7 +270,7 @@ export function Home() {
         if (filters.sort) params.append('sort', filters.sort);
         if (searchQuery) params.append('search', searchQuery);
 
-        const response = await fetch(`http://localhost:3001/api/listings?${params.toString()}`);
+        const response = await fetch(`${API_URL}/listings?${params.toString()}`);
         const json = await response.json();
         
         // Client-side local filtering as a fallback/enhancement for searchQuery
@@ -286,7 +285,7 @@ export function Home() {
         }
         setForYouListings(data);
       } else {
-        const response = await fetch(`http://localhost:3001/api/listings/for-you`, {
+        const response = await fetch(`${API_URL}/listings/for-you`, {
           headers: { 'Authorization': `Bearer ${jwt}` }
         });
         const json = await response.json();
@@ -301,7 +300,7 @@ export function Home() {
 
   const fetchNewOnCampus = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/api/listings?sort=latest&limit=6`);
+      const response = await fetch(`${API_URL}/listings?sort=latest&limit=6`);
       const json = await response.json();
       setNewOnCampusListings(json.data || []);
     } catch (error) {
@@ -317,7 +316,7 @@ export function Home() {
         branch: profile?.branch || '',
         semester: profile?.semester?.toString() || ''
       });
-      const response = await fetch(`http://localhost:3001/api/exams/upcoming?${params.toString()}`);
+      const response = await fetch(`${API_URL}/exams/upcoming?${params.toString()}`);
       const json = await response.json();
       if (response.ok && json.data) {
         setUpcomingExam(json.data);
@@ -327,25 +326,6 @@ export function Home() {
     }
   };
 
-  const fetchStudyGap = async () => {
-    if (!profile?.branch || !profile?.semester || !profile?.programme) return;
-    try {
-      const params = new URLSearchParams({
-        programme: profile?.programme || '',
-        branch: profile?.branch || '',
-        semester: profile?.semester?.toString() || ''
-      });
-      const response = await fetch(`http://localhost:3001/api/study-gap?${params.toString()}`, {
-        headers: { 'Authorization': `Bearer ${jwt}` }
-      });
-      const json = await response.json();
-      if (response.ok && json.coverage_percent < 100) {
-        setStudyGap(json);
-      }
-    } catch (error) {
-      console.error("Failed to fetch study gap:", error);
-    }
-  };
 
   const dismissExam = (e: React.MouseEvent, code: string) => {
     e.stopPropagation();
@@ -356,7 +336,7 @@ export function Home() {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/categories');
+      const response = await fetch(`${API_URL}/categories`);
       const json = await response.json();
       if (response.ok && json.data) {
         setCategories([{ id: 'all', label: 'All' }, ...json.data]);
@@ -369,7 +349,7 @@ export function Home() {
   const fetchTrending = async () => {
     setTrendingLoading(true);
     try {
-      const response = await fetch('http://localhost:3001/api/listings/trending');
+      const response = await fetch(`${API_URL}/listings/trending`);
       const json = await response.json();
       if (response.ok) {
         const data = json.data || [];
@@ -556,38 +536,6 @@ export function Home() {
           </div>
         )}
 
-        {/* Step 6: Study Gap Detector Widget */}
-        {studyGap && (
-          <div className="bg-white border border-gray-100 rounded-[2rem] p-6 shadow-sm space-y-5 relative overflow-hidden">
-            <div className="absolute top-4 right-4 bg-purple-50 text-purple-600 px-2.5 py-1 rounded-lg text-[10px] font-black border border-purple-100 flex items-center gap-1 shadow-sm uppercase tracking-tighter">
-              AI
-            </div>
-            
-            <div className="space-y-1">
-              <h2 className="text-lg font-black text-[#1a2744]">Your study gap</h2>
-              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest text-left">
-                Missing topics in Sem {profile?.semester || 4}
-              </p>
-            </div>
-
-            <div className="flex flex-wrap gap-2">
-              {studyGap.missing.map((topic: any, i: number) => (
-                <button 
-                  key={`missing-${i}`}
-                  onClick={() => navigate(`/browse?subject_code=${encodeURIComponent(topic.subject_code)}`)}
-                  className="px-3 py-1.5 bg-pink-50 text-pink-700 rounded-lg text-[10px] font-black border border-pink-100/50 hover:bg-pink-100 transition-colors flex items-center gap-1.5 active:scale-95 uppercase tracking-tighter"
-                >
-                  {topic.topic_name}
-                </button>
-              ))}
-              {studyGap.covered.map((topic: any, i: number) => (
-                <div key={`covered-${i}`} className="px-3 py-1.5 bg-purple-50 text-purple-700 rounded-lg text-[10px] font-black border border-purple-100/50 flex items-center gap-1.5 uppercase tracking-tighter">
-                  {topic.topic_name}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
 
         {/* Selected Filter Tags */}
         {activeFilterTags.length > 0 && (
@@ -708,7 +656,7 @@ export function Home() {
                   {item.listing_images?.[0] ? (
                     <img 
                       src={item.listing_images[0].image_url.startsWith('/') 
-                        ? `http://localhost:3001${item.listing_images[0].image_url}` 
+                        ? `${API_BASE_URL}${item.listing_images[0].image_url}` 
                         : item.listing_images[0].image_url
                       } 
                       alt={item.title} 

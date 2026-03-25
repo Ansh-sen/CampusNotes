@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { API_BASE_URL } from '@/config';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -6,7 +7,7 @@ import { useToast } from '@/components/ui/toast-provider';
 import { 
   ArrowRight, ArrowLeft, Send, 
   CheckCircle2, Sparkles, X, Camera,
-  History, Trash2
+  History, Trash2, Shield
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { AcademicSelector } from '@/components/domain/AcademicSelector';
@@ -198,6 +199,42 @@ export function CreateListing() {
     { num: 2, label: 'Photos' },
     { num: 3, label: 'Pricing' }
   ];
+
+  if (profile && profile.verification_status !== 'verified') {
+    return (
+      <div className="max-w-2xl mx-auto px-4 pb-32 pt-12 text-center flex flex-col items-center justify-center min-h-[60vh]">
+        <div className="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center mb-6">
+          <Shield className="w-12 h-12 text-blue-600" />
+        </div>
+        <h1 className="text-3xl font-black text-[#1a2744] mb-4">Verification Required</h1>
+        <p className="text-gray-500 font-medium mb-8 max-w-sm">
+          {profile.verification_status === 'pending' 
+            ? "Your student ID is currently being reviewed. You'll be notified once approved."
+            : "To maintain a safe marketplace, only verified students can sell notes."}
+        </p>
+        
+        {profile.verification_status === 'pending' ? (
+          <button onClick={() => navigate('/')} className="h-14 px-8 bg-gray-100 text-[#1a2744] rounded-2xl font-black hover:bg-gray-200 transition-all">
+            Back to Home
+          </button>
+        ) : (
+          <button 
+            onClick={() => navigate('/profile?action=verify')}
+            className="h-14 px-8 bg-blue-600 text-white rounded-2xl font-black shadow-lg shadow-blue-200 hover:translate-y-[-2px] transition-all active:scale-95"
+          >
+            Verify My Student ID
+          </button>
+        )}
+
+        {profile.verification_status === 'rejected' && (
+           <div className="mt-8 p-5 bg-red-50 rounded-[2rem] border border-red-100 max-w-sm">
+             <p className="text-[10px] font-black text-red-600 uppercase tracking-widest mb-1.5">Verification Rejected</p>
+             <p className="text-sm font-bold text-red-500 leading-tight">Reason: {profile.verification_rejected_reason || "Invalid ID image."}</p>
+           </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-2xl mx-auto px-4 pb-32 pt-6">
@@ -469,7 +506,7 @@ export function CreateListing() {
                 <div className="bg-white rounded-[2rem] border-2 border-gray-100 p-5 shadow-sm">
                    <div className="aspect-[4/3] rounded-[1.5rem] bg-gray-50 mb-4 overflow-hidden relative border border-gray-100">
                       {formData.images[0] ? (
-                        <img src={`http://localhost:3001${formData.images[0].url}`} className="w-full h-full object-cover" />
+                        <img src={`${API_BASE_URL}${formData.images[0].url}`} className="w-full h-full object-cover" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center"><Camera className="w-10 h-10 text-gray-200" /></div>
                       )}

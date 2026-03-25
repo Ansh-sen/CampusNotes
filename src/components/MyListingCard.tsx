@@ -1,4 +1,5 @@
 import { Card, CardContent } from '@/components/ui/card';
+import { API_BASE_URL } from '@/config';
 import { 
   Eye, 
   MessageCircle, 
@@ -22,7 +23,7 @@ export function MyListingCard({ listing, onAction }: MyListingCardProps) {
   let coverImage = hasImages ? images[0].image_url : null;
   
   if (coverImage && coverImage.startsWith('/')) {
-    coverImage = `http://localhost:3001${coverImage}`;
+    coverImage = `${API_BASE_URL}${coverImage}`;
   }
 
   const aiScore = listing.ai_score;
@@ -43,6 +44,10 @@ export function MyListingCard({ listing, onAction }: MyListingCardProps) {
     
     if (isDraft) {
       badges.push(<Badge key="draft" variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-200 text-[10px]">Draft</Badge>);
+    } else if (listing.approval_status === 'pending_approval') {
+      badges.push(<Badge key="pending" variant="outline" className="bg-blue-100 text-blue-700 border-blue-200 text-[10px]">Pending Approval</Badge>);
+    } else if (listing.approval_status === 'rejected') {
+      badges.push(<Badge key="rejected" variant="outline" className="bg-red-100 text-red-700 border-red-200 text-[10px]">Rejected</Badge>);
     } else if (status === 'available') {
       badges.push(<Badge key="active" variant="outline" className="bg-green-100 text-green-700 border-green-200 text-[10px]">Available</Badge>);
     } else if (status === 'paused') {

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Copy, Edit2, Trash2, Check, CheckCheck, FileText } from 'lucide-react';
+import { API_BASE_URL } from '@/config';
 
 interface MessageBubbleProps {
   message: any;
@@ -84,14 +85,14 @@ export function MessageBubble({ message, isMe, onCopy, onEdit, onDelete }: Messa
             <div className="mb-2">
               {message.message_type === 'image' || message.file_type?.startsWith('image/') ? (
                 <img 
-                  src={`http://localhost:3001${message.file_url || message.attachment_url}`} 
+                  src={`${API_BASE_URL}${message.file_url || message.attachment_url}`} 
                   alt="Attachment" 
                   className="max-w-full rounded-lg border border-white/20 shadow-sm"
                   onLoad={() => window.scrollTo(0, document.body.scrollHeight)}
                 />
               ) : (
                 <a 
-                  href={`http://localhost:3001${message.file_url || message.attachment_url}`} 
+                  href={`${API_BASE_URL}${message.file_url || message.attachment_url}`} 
                   target="_blank" 
                   rel="noreferrer" 
                   className={`flex items-center gap-3 p-3 rounded-xl transition-colors ${

@@ -1,0 +1,39 @@
+--- verification_log ---
+id: int (NO, PRI, null, auto_increment)
+user_id: varchar(36) (NO, MUL, null, )
+admin_id: int (NO, MUL, null, )
+action: enum('approved','rejected') (NO, , null, )
+reason: text (YES, , null, )
+created_at: datetime (YES, , CURRENT_TIMESTAMP, DEFAULT_GENERATED)
+
+--- listing_approval_log ---
+id: int (NO, PRI, null, auto_increment)
+listing_id: varchar(36) (NO, MUL, null, )
+admin_id: int (NO, MUL, null, )
+action: enum('approved','rejected','removed') (NO, , null, )
+reason: text (YES, , null, )
+created_at: datetime (YES, , CURRENT_TIMESTAMP, DEFAULT_GENERATED)
+
+--- academic_programmes ---
+id: int (NO, PRI, null, auto_increment)
+name: varchar(100) (NO, , null, )
+code: varchar(50) (NO, UNI, null, )
+created_at: timestamp (YES, , CURRENT_TIMESTAMP, DEFAULT_GENERATED)
+
+--- academic_branches ---
+id: int (NO, PRI, null, auto_increment)
+programme_id: int (NO, MUL, null, )
+name: varchar(150) (NO, , null, )
+code: varchar(50) (NO, , null, )
+created_at: timestamp (YES, , CURRENT_TIMESTAMP, DEFAULT_GENERATED)
+
+--- academic_subjects ---
+id: int (NO, PRI, null, auto_increment)
+branch_id: int (NO, MUL, null, )
+semester: int (NO, , null, )
+subject_code: varchar(50) (NO, , null, )
+subject_name: varchar(255) (NO, , null, )
+credits: int (YES, , 0, )
+type: varchar(50) (YES, , Core, )
+created_at: timestamp (YES, , CURRENT_TIMESTAMP, DEFAULT_GENERATED)
+

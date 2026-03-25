@@ -7,7 +7,11 @@ const { Server } = require('socket.io');
 require('dotenv').config();
 
 const app = express();
+app.set('trust proxy', 1); // Trust first proxy (e.g., local router) for rate limiting
 const PORT = process.env.PORT || 3001;
+app.get("/", (req, res) => {
+    res.send("Hii")
+})
 
 // General API Rate Limiter
 const apiLimiter = rateLimit({
@@ -25,13 +29,37 @@ const { router: authRouter, authenticateToken } = require('./routes/auth');
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET || 'your_secret_key_here_change_in_production';
 
+// Common CORS Configuration
+const allowedOrigins = [
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    // We add a dynamic check in the cors middleware below
+];
+
+const corsOptions = {
+    origin: (origin, callback) => {
+        // Allow requests with no origin (like mobile apps or curl)
+        if (!origin) return callback(null, true);
+        
+        // Check if origin is localhost or a local network IP
+        const localRegex = /^http:\/\/(localhost|127\.0\.0\.1|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+|172\.(1[6-9]|2[0-9]|3[0-1])\.\d+\.\d+)(:\d+)?$/;
+        const isLocal = allowedOrigins.includes(origin) || localRegex.test(origin);
+        
+        if (isLocal) {
+            callback(null, true);
+        } else {
+            console.warn(`[CORS BLOCKED] ${origin}`);
+            callback(null, false); // Return false instead of error to avoid 500
+        }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+};
+
 // Initialize Socket.io
 const io = new Server(server, {
-    cors: {
-        origin: 'http://localhost:5173', // Vite port
-        methods: ["GET", "POST"],
-        credentials: true
-    }
+    cors: corsOptions
 });
 
 // Socket.io Authentication Middleware
@@ -54,14 +82,18 @@ app.set('io', io);
 app.use(helmet({
     crossOriginResourcePolicy: { policy: "cross-origin" } // Required for serving uploaded images to React on a different port
 }));
-app.use(cors({
-    origin: 'http://localhost:5173',
-    credentials: true
-}));
+
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use('/api/', apiLimiter);
 
 // Request Logging Middleware
+app.use((req, res, next) => {
+    const origin = req.headers.origin || 'No Origin';
+    console.log(`[${new Date().toLocaleTimeString()}] ${req.method} ${req.url} - From: ${origin} - IP: ${req.ip}`);
+    next();
+});
 
 // Routes
 const listingsRouter = require('./routes/listings');
@@ -71,7 +103,10 @@ const academicRouter = require('./routes/academic'); // RGPV Academic
 const requestsRouter = require('./routes/requests'); // NEW
 const usersRouter = require('./routes/users'); // NEW
 
+const adminRouter = require('./routes/admin'); // NEW: Admin API
+
 app.use('/api/auth', authRouter);
+app.use('/admin', adminRouter); // Mount Admin API
 app.use('/api/listings', listingsRouter);
 app.use('/api/messages', messagesRouter);
 app.use('/api/reviews', reviewsRouter);
@@ -96,9 +131,9 @@ io.on('connection', (socket) => {
         // SECURITY: Only allow joining your OWN user room
         const targetUserId = socket.user.id;
         socket.join(`user_${targetUserId}`);
-        socket.userId = targetUserId; 
+        socket.userId = targetUserId;
         console.log(`Client ${socket.id} joined global user room: user_${targetUserId}`);
-        
+
         // Broadcast that this user is online
         io.emit('user_online', { userId: targetUserId });
     });
@@ -107,15 +142,15 @@ io.on('connection', (socket) => {
     socket.on('send_message', (data) => {
         // SECURITY: Use authenticated user ID as sender
         data.sender_id = socket.user.id;
-        
+
         // Broadcast to everyone else in the conversation room
         socket.to(data.conversation_id).emit('receive_message', data);
-        
+
         // Notify recipient globally to update unread badge
         if (data.recipient_id) {
-            socket.to(`user_${data.recipient_id}`).emit('unread_update', { 
+            socket.to(`user_${data.recipient_id}`).emit('unread_update', {
                 conversation_id: data.conversation_id,
-                increment: true 
+                increment: true
             });
         }
     });
@@ -158,8 +193,8 @@ io.on('connection', (socket) => {
     });
 
     socket.on('messages_read', (data) => {
-       // data: { conversation_id, reader_id, sender_id }
-       socket.to(`user_${data.sender_id}`).emit('messages_read', data);
+        // data: { conversation_id, reader_id, sender_id }
+        socket.to(`user_${data.sender_id}`).emit('messages_read', data);
     });
 
     socket.on('disconnect', () => {
@@ -185,7 +220,7 @@ app.use((err, req, res, next) => {
 });
 
 // Start Server on the combined HTTP + Socket Server
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
     console.log(`   Health check: http://localhost:${PORT}/api/health`);
 });

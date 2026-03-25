@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const db = require('../db');
 const { v4: uuidv4 } = require('uuid');
 const crypto = require('crypto');
+const { sendEmail } = require('../utils/email');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_secret_key_here_change_in_production';
 
@@ -91,6 +92,11 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ error: 'Invalid email or password.' });
         }
 
+        // Check if user is blocked
+        if (user.is_blocked) {
+            return res.status(403).json({ error: 'Your account has been blocked. Contact support.' });
+        }
+
         // Generate JWT
         const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
 
@@ -149,7 +155,7 @@ router.put('/profile', authenticateToken, async (req, res) => {
     try {
         const { 
             bio, avatar_url, full_name, branch, semester, programme,
-            is_student_verified, college_id_url, referral_code, notification_prefs 
+            is_student_verified, id_image_url, referral_code, notification_prefs 
         } = req.body;
         
         // Fetch current profile to handle partial updates safely
@@ -164,7 +170,7 @@ router.put('/profile', authenticateToken, async (req, res) => {
         const newSemester = semester !== undefined ? semester : current.semester;
         const newProgramme = programme !== undefined ? programme : current.programme;
         const newIsVerified = is_student_verified !== undefined ? is_student_verified : current.is_student_verified;
-        const newCollegeIdUrl = college_id_url !== undefined ? college_id_url : current.college_id_url;
+        const newIdImageUrl = id_image_url !== undefined ? id_image_url : current.id_image_url;
         const newReferralCode = referral_code !== undefined ? referral_code : current.referral_code;
         const newNotificationPrefs = notification_prefs !== undefined ? 
             (typeof notification_prefs === 'object' ? JSON.stringify(notification_prefs) : notification_prefs) 
@@ -174,12 +180,12 @@ router.put('/profile', authenticateToken, async (req, res) => {
             `UPDATE profiles SET 
                 bio = ?, avatar_url = ?, full_name = ?, branch = ?, 
                 semester = ?, programme = ?, is_student_verified = ?, 
-                college_id_url = ?, referral_code = ?, notification_prefs = ? 
+                id_image_url = ?, referral_code = ?, notification_prefs = ? 
              WHERE id = ?`,
             [
                 newBio, newAvatar, newFullName, newBranch, 
                 newSemester, newProgramme, newIsVerified, 
-                newCollegeIdUrl, newReferralCode, newNotificationPrefs, 
+                newIdImageUrl, newReferralCode, newNotificationPrefs, 
                 req.user.id
             ]
         );
@@ -214,12 +220,27 @@ router.post('/forgot-password', async (req, res) => {
             [resetToken, expiry, email]
         );
 
-        // Mock Email: In a real app, send a real email here.
-        console.log('--- PASSWORD RESET SYSTEM ---');
-        console.log(`Reset link for ${email}: http://localhost:5173/reset-password?token=${resetToken}`);
-        console.log('-----------------------------');
+        const protocol = req.protocol;
+        const host = req.get('host');
+        // If the request came from 3001, we want the frontend link (usually 5173 or the same host)
+        // For simplicity on LAN, we'll use the same host but try to infer the frontend port if it's different.
+        // However, a safer way is to use an ENV variable for the frontend URL.
+        const frontendUrl = process.env.FRONTEND_URL || `${protocol}://${host.split(':')[0]}:5173`;
+        const resetLink = `${frontendUrl}/reset-password?token=${resetToken}`;
 
-        res.json({ message: 'If an account exists with that email, a reset link has been sent.' });
+        // Send Email (or Mock)
+        await sendEmail({
+            to: email,
+            subject: 'CampusNotes - Password Reset Request',
+            text: `Hi there,\n\nYou requested a password reset. Click the link below to set a new password:\n\n${resetLink}\n\nIf you did not request this, please ignore this email.`,
+            html: `<h3>Password Reset</h3><p>Click the link below to reset your password:</p><a href="${resetLink}">${resetLink}</a>`
+        });
+
+        // Always return success message, and include link for development/testing
+        res.json({ 
+            message: 'If an account exists with that email, a reset link has been sent.',
+            resetLink: process.env.NODE_ENV === 'production' ? null : resetLink 
+        });
 
     } catch (error) {
         console.error('Forgot Password Error:', error);

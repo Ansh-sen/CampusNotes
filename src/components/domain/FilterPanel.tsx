@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_URL } from '@/config';
 import { X, ArrowRight, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useProgrammes, useBranches, useSemesters, useSubjects } from '@/hooks/useAcademicData';
@@ -53,7 +54,7 @@ export function FilterPanel({ isOpen, onClose, onApply, currentFilters }: Filter
         if (filters.minPrice) params.append('min_price', filters.minPrice);
         if (filters.maxPrice) params.append('max_price', filters.maxPrice);
         
-        const response = await fetch(`http://localhost:3001/api/listings?${params.toString()}`);
+        const response = await fetch(`${API_URL}/listings?${params.toString()}`);
         const json = await response.json();
         setResultCount(json.count || 0);
       } catch (err) {

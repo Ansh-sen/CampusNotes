@@ -13,7 +13,12 @@ interface MeetupProposalCardProps {
 }
 
 export function MeetupProposalCard({ message, currentUserId, onAccept, onDecline }: MeetupProposalCardProps) {
-  const proposal = JSON.parse(message.content);
+  let proposal: any = {};
+  try {
+    proposal = JSON.parse(message.content);
+  } catch (e) {
+    console.error('Failed to parse meetup proposal content', e);
+  }
   const isSender = message.sender_id === currentUserId;
   const status = proposal.status || 'pending';
 

@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { API_BASE_URL } from '@/config';
 import { X, ImageIcon, UploadCloud, Loader2, Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { listingService } from '@/services/listingService';
@@ -63,7 +64,7 @@ export function ImageUploader({ images, onChange, maxImages = 5 }: ImageUploader
       )}>
         {images.map((img, idx) => (
           <div key={idx} className="relative aspect-square rounded-2xl overflow-hidden border-2 border-[hsl(var(--muted))] group">
-            <img src={`http://localhost:3001${img.url}`} alt={`Upload ${idx}`} className="w-full h-full object-cover" />
+            <img src={`${API_BASE_URL}${img.url}`} alt={`Upload ${idx}`} className="w-full h-full object-cover" />
             
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
               <button 

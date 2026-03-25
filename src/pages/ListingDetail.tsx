@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { API_URL, API_BASE_URL } from '@/config';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -17,7 +18,7 @@ import { Helmet } from 'react-helmet-async';
 export function ListingDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user, jwt } = useAuth() as any;
+  const { user, jwt, profile } = useAuth() as any;
   const { toast } = useToast();
   
   const [listing, setListing] = useState<any>(null);
@@ -49,8 +50,8 @@ export function ListingDetail() {
     try {
       // For Tutoring, we show all reviews of the tutor to build trust
       const url = (type === 'Tutoring' && sellerId) 
-        ? `http://localhost:3001/api/reviews/user/${sellerId}`
-        : `http://localhost:3001/api/reviews/listing/${id}`;
+        ? `${API_URL}/reviews/user/${sellerId}`
+        : `${API_URL}/reviews/listing/${id}`;
         
       const response = await fetch(url);
       const json = await response.json();
@@ -66,7 +67,7 @@ export function ListingDetail() {
     if (!id) return;
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:3001/api/listings/${id}`);
+      const response = await fetch(`${API_URL}/listings/${id}`);
       const json = await response.json();
       
       if (response.ok && json.data) {
@@ -165,8 +166,18 @@ export function ListingDetail() {
   const handleContactSeller = async () => {
     if (!user || !listing || !jwt) return;
     
+    if (profile?.verification_status !== 'verified') {
+      toast({ 
+        title: 'Verification Required', 
+        description: 'You must verify your student ID to contact sellers.',
+        type: 'error'
+      });
+      navigate('/profile?action=verify');
+      return;
+    }
+    
     try {
-      const response = await fetch('http://localhost:3001/api/messages/conversations', {
+      const response = await fetch(`${API_URL}/messages/conversations`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -193,9 +204,19 @@ export function ListingDetail() {
 
   const handleDownload = async () => {
     if (!jwt || !id) return;
+    
+    if (profile?.verification_status !== 'verified') {
+      toast({ 
+        title: 'Verification Required', 
+        description: 'You must verify your student ID to download notes.',
+        type: 'error'
+      });
+      navigate('/profile?action=verify');
+      return;
+    }
     try {
       // Use the secure download route which returns the file - since it's free, any authenticated user can download
-      window.open(`http://localhost:3001/api/listings/download/${id}?token=${jwt}`, '_blank');
+      window.open(`${API_URL}/listings/download/${id}?token=${jwt}`, '_blank');
     } catch (e) {
       toast({ title: 'Download Failed', description: 'Could not access the file.', type: 'error' });
     }
@@ -241,8 +262,8 @@ export function ListingDetail() {
   }
 
   const images = listing?.listing_images || [];
-  const firstImageUrl = images[0]?.image_url ? `http://localhost:3001${images[0].image_url}` : null;
-  const activeImageUrl = images[activeImageIdx]?.image_url ? `http://localhost:3001${images[activeImageIdx].image_url}` : null;
+  const firstImageUrl = images[0]?.image_url ? `${API_BASE_URL}${images[0].image_url}` : null;
+  const activeImageUrl = images[activeImageIdx]?.image_url ? `${API_BASE_URL}${images[activeImageIdx].image_url}` : null;
 
   const handleDelete = async () => {
     if (!id || !jwt) return;
@@ -322,7 +343,7 @@ export function ListingDetail() {
                   activeImageIdx === idx ? "border-[#1a2744] scale-105 shadow-md" : "border-transparent opacity-60"
                 )}
               >
-                <img src={`http://localhost:3001${img.image_url}`} className="w-full h-full object-cover" />
+                <img src={`${API_BASE_URL}${img.image_url}`} className="w-full h-full object-cover" />
               </button>
             ))}
           </div>
@@ -596,7 +617,7 @@ export function ListingDetail() {
               onClick={handleContactSeller}
             >
               <MessageSquare className="mr-2 h-5 w-5" />
-              {listing.file_url ? 'Message' : 'Contact Seller'}
+              {profile?.verification_status !== 'verified' ? 'Verify to Contact' : (listing.file_url ? 'Message' : 'Contact Seller')}
             </Button>
           </>
         )}

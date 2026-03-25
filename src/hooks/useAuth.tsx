@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { API_URL } from "@/config";
 import { Database } from "@/types/database.types";
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
@@ -25,7 +26,7 @@ const AuthContext = createContext<AuthContextType>({
   updateProfile: async () => {},
 });
 
-const API_BASE = "http://localhost:3001/api";
+const API_BASE = API_URL;
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<{ id: string, email: string } | null>(null);

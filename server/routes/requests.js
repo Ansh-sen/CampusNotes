@@ -14,7 +14,7 @@ router.get('/top', authenticateToken, async (req, res) => {
         const query = `
             SELECT id, subject_name, subject_code, upvote_count, is_fulfilled 
             FROM note_requests 
-            WHERE branch = ? AND semester = ? AND programme = ? AND is_fulfilled = FALSE
+            WHERE branch = ? AND semester = ? AND programme = ? AND (is_fulfilled = FALSE OR is_fulfilled IS NULL)
             ORDER BY upvote_count DESC, id DESC 
             LIMIT 5
         `;
@@ -81,22 +81,17 @@ router.post('/', authenticateToken, async (req, res) => {
             }
         }
 
-        // Create new request
+        // Create new request with initial state
         const [result] = await db.execute(
-            'INSERT INTO note_requests (requester_id, subject_name, subject_code, branch, semester, programme, description) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            'INSERT INTO note_requests (requester_id, subject_name, subject_code, branch, semester, programme, description, is_fulfilled, upvote_count) VALUES (?, ?, ?, ?, ?, ?, ?, 0, 1)',
             [userId, subject_name, subject_code, branch, parseInt(semester, 10), programme, description || null]
         );
-
         const newRequestId = result.insertId;
 
-        // Upvote for the requester
+        // Add to upvotes table
         await db.execute(
             'INSERT INTO request_upvotes (request_id, user_id) VALUES (?, ?)',
             [newRequestId, userId]
-        );
-        await db.execute(
-            'UPDATE note_requests SET upvote_count = 1 WHERE id = ?',
-            [newRequestId]
         );
 
         res.status(201).json({ message: 'Request posted — sellers will be notified.', id: newRequestId });

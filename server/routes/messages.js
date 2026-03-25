@@ -258,8 +258,8 @@ router.patch('/:id/meetup', authenticateToken, async (req, res) => {
         const message = msgs[0];
         const content = JSON.parse(message.content);
         content.status = status;
-
-        await db.execute('UPDATE messages SET content = ? WHERE id = ?', [JSON.stringify(content), messageId]);
+        const updatedContent = JSON.stringify(content);
+        await db.execute('UPDATE messages SET content = ? WHERE id = ?', [updatedContent, messageId]);
 
         if (status === 'accepted') {
             const [convs] = await db.execute('SELECT * FROM conversations WHERE id = ?', [message.conversation_id]);
@@ -268,6 +268,26 @@ router.patch('/:id/meetup', authenticateToken, async (req, res) => {
                 INSERT INTO scheduled_meetups (listing_id, buyer_id, seller_id, meetup_date, meetup_time, location, amount)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
             `, [conv.listing_id, conv.buyer_id, conv.seller_id, content.date, content.time, content.location, content.amount]);
+        }
+
+        // Emit socket event to notify other participant in real-time
+        const io = req.app.get('io');
+        if (io) {
+            io.to(message.conversation_id).emit('message_edited', {
+                id: messageId,
+                conversation_id: message.conversation_id,
+                content: updatedContent,
+                is_edited: true
+            });
+            
+            // If accepted, also notify recipient globally for the safety checkin banner
+            if (status === 'accepted') {
+                const otherId = message.sender_id === userId ? message.recipient_id : message.sender_id;
+                io.to(`user_${otherId}`).emit('unread_update', { 
+                    conversation_id: message.conversation_id,
+                    increment: false // Just a trigger to refresh if needed
+                });
+            }
         }
 
         res.json({ success: true, status });
@@ -359,6 +379,19 @@ router.post('/', authenticateToken, async (req, res) => {
 
         if (!conversation_id) {
             return res.status(400).json({ error: 'Conversation ID is required.' });
+        }
+
+        // Check verification status
+        try {
+            const [profiles] = await db.execute('SELECT verification_status FROM profiles WHERE id = ?', [sender_id]);
+            if (profiles.length === 0 || profiles[0].verification_status !== 'verified') {
+                return res.status(403).json({ 
+                    error: 'verification_required', 
+                    message: 'Verify your student ID to send messages.' 
+                });
+            }
+        } catch (err) {
+            return res.status(500).json({ error: 'Failed to verify status' });
         }
 
         if (!content && !file_url) {
@@ -515,7 +548,20 @@ router.delete('/clear/:conversationId', authenticateToken, async (req, res) => {
 router.post('/conversations', authenticateToken, async (req, res) => {
     try {
         const { listing_id, seller_id } = req.body;
-        const buyer_id = req.user.id;
+        const buyer_id = req.user.id; 
+
+        // Check verification status
+        try {
+            const [profiles] = await db.execute('SELECT verification_status FROM profiles WHERE id = ?', [buyer_id]);
+            if (profiles.length === 0 || profiles[0].verification_status !== 'verified') {
+                return res.status(403).json({ 
+                    error: 'verification_required', 
+                    message: 'Verify your student ID to start a conversation.' 
+                });
+            }
+        } catch (err) {
+            return res.status(500).json({ error: 'Failed' });
+        }
 
         // Check if conversation already exists between that buyer and seller for that listing
         const [existing] = await db.execute(

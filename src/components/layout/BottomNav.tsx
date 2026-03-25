@@ -51,7 +51,7 @@ export function BottomNav() {
                   </span>
                 )}
               </div>
-              <span className={cn("text-[10px] font-bold tracking-tight", isActive ? "text-[#1a2744]" : "text-gray-400")}>
+              <span className={cn("text-[9px] font-bold tracking-tight px-0.5 text-center", isActive ? "text-[#1a2744]" : "text-gray-400")}>
                 {item.label}
               </span>
               

@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { API_URL, API_BASE_URL } from '@/config';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { 
@@ -46,10 +47,10 @@ export function MyListings() {
     setLoading(true);
     try {
       const [listingsRes, statsRes, analyticsRes, tipRes] = await Promise.all([
-        fetch('http://localhost:3001/api/listings/me', { headers: { 'Authorization': `Bearer ${jwt}` } }).then(r => r.json()),
-        fetch('http://localhost:3001/api/listings/me/stats', { headers: { 'Authorization': `Bearer ${jwt}` } }).then(r => r.json()),
-        fetch('http://localhost:3001/api/listings/analytics/views', { headers: { 'Authorization': `Bearer ${jwt}` } }).then(r => r.json()),
-        fetch('http://localhost:3001/api/listings/analytics/tip', { headers: { 'Authorization': `Bearer ${jwt}` } }).then(r => r.json())
+        fetch(`${API_URL}/listings/me`, { headers: { 'Authorization': `Bearer ${jwt}` } }).then(r => r.json()),
+        fetch(`${API_URL}/listings/me/stats`, { headers: { 'Authorization': `Bearer ${jwt}` } }).then(r => r.json()),
+        fetch(`${API_URL}/listings/analytics/views`, { headers: { 'Authorization': `Bearer ${jwt}` } }).then(r => r.json()),
+        fetch(`${API_URL}/listings/analytics/tip`, { headers: { 'Authorization': `Bearer ${jwt}` } }).then(r => r.json())
       ]);
 
       setListings(listingsRes.data || []);
@@ -77,7 +78,7 @@ export function MyListings() {
         setListings(prev => prev.map(l => l.id === id ? { ...l, status: newStatus } : l));
         
         try {
-          const res = await fetch(`http://localhost:3001/api/listings/${id}/status`, {
+          const res = await fetch(`${API_URL}/listings/${id}/status`, {
             method: 'PATCH',
             headers: { 
               'Content-Type': 'application/json',
@@ -107,7 +108,7 @@ export function MyListings() {
         
         setListings(prev => prev.filter(l => l.id !== id));
         try {
-          const endpoint = action === 'delete' ? `http://localhost:3001/api/listings/${id}` : `http://localhost:3001/api/listings/draft/${id}`;
+          const endpoint = action === 'delete' ? `${API_URL}/listings/${id}` : `${API_URL}/listings/draft/${id}`;
           const res = await fetch(endpoint, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${jwt}` }
@@ -123,7 +124,7 @@ export function MyListings() {
 
       case 'relist': {
         try {
-          const res = await fetch(`http://localhost:3001/api/listings/${id}/relist`, {
+          const res = await fetch(`${API_URL}/listings/${id}/relist`, {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${jwt}` }
           }).then(r => r.json());
@@ -155,7 +156,7 @@ export function MyListings() {
     if (!window.confirm("Are you sure you want to clear all drafts? This action cannot be undone.")) return;
     
     try {
-      const res = await fetch('http://localhost:3001/api/listings/me/drafts/all', {
+      const res = await fetch(`${API_URL}/listings/me/drafts/all`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${jwt}` }
       }).then(r => r.json());
@@ -214,7 +215,7 @@ export function MyListings() {
             )}
             <button 
               onClick={() => navigate('/create')}
-              className="h-9 w-9 flex items-center justify-center bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200 active:scale-95"
+              className="h-9 w-9 flex items-center justify-center bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors active:scale-95 shadow-md"
             >
               <Plus size={18} />
             </button>
@@ -336,7 +337,7 @@ export function MyListings() {
                             <div className="flex gap-3">
                                 <div className="h-16 w-16 bg-gray-50 rounded-xl overflow-hidden shrink-0">
                                     {listings[0].listing_images?.[0] ? (
-                                        <img src={`http://localhost:3001${listings[0].listing_images[0].image_url}`} className="h-full w-full object-cover" />
+                                        <img src={`${API_BASE_URL}${listings[0].listing_images[0].image_url}`} className="h-full w-full object-cover" />
                                     ) : <FileText className="m-auto h-6 w-6 text-gray-300" />}
                                 </div>
                                 <div className="flex-1">

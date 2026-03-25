@@ -9,16 +9,35 @@ interface MessageInputProps {
   conversationId?: string;
   initialValue?: string;
   onInputValueChange?: (value: string) => void;
+  isVerified?: boolean;
 }
 
-export function MessageInput({ onSend, conversationId, initialValue = '', onInputValueChange }: MessageInputProps) {
+export function MessageInput({ onSend, conversationId, initialValue = '', onInputValueChange, isVerified = true }: MessageInputProps) {
   const [text, setText] = useState(initialValue);
   const [file, setFile] = useState<File | null>(null);
   const [isSending, setIsSending] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
+
+  const isActuallyVerified = isVerified && profile?.verification_status === 'verified';
+
+  if (!isActuallyVerified) {
+    return (
+      <div className="p-4 border-t border-gray-100 bg-gray-50/50 backdrop-blur-xl sticky bottom-0 left-0 right-0 z-10 text-center flex flex-col items-center gap-3">
+        <div className="text-[10px] font-black uppercase tracking-widest text-[#1a2744]/40">
+          Verification Required to send messages
+        </div>
+        <button 
+          onClick={() => window.location.href = '/profile?action=verify'}
+          className="px-6 h-11 bg-[#1a2744] text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-[#1a2744]/10 active:scale-95 transition-all"
+        >
+          Verify My Student ID
+        </button>
+      </div>
+    );
+  }
 
   const adjustHeight = () => {
     const textarea = textareaRef.current;

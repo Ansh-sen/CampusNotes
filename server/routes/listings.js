@@ -17,10 +17,10 @@ router.get('/', async (req, res) => {
         } = req.query;
 
         let query = `
-            SELECT l.*, p.full_name as seller_name, p.avatar_url as seller_avatar, p.is_topper as seller_is_topper, p.rating_avg as seller_rating, p.major as seller_major
+            SELECT l.*, p.full_name as seller_name, p.avatar_url as seller_avatar, p.is_topper as seller_is_topper, p.is_student_verified as seller_is_verified, p.rating_avg as seller_rating, p.major as seller_major
             FROM listings l 
             JOIN profiles p ON l.seller_id = p.id 
-            WHERE l.status = 'available' AND l.is_draft = FALSE
+            WHERE l.status = 'available' AND l.is_draft = FALSE AND l.approval_status = 'approved'
         `;
         const params = [];
 
@@ -160,7 +160,7 @@ router.get('/subject/:subject_code', async (req, res) => {
             SELECT l.*, p.full_name as seller_name, p.avatar_url as seller_avatar, p.is_topper as seller_is_topper, p.rating_avg as seller_rating, p.major as seller_major
             FROM listings l 
             JOIN profiles p ON l.seller_id = p.id 
-            WHERE l.subject_code = ? AND l.status = 'available' AND l.is_draft = FALSE
+            WHERE l.subject_code = ? AND l.status = 'available' AND l.is_draft = FALSE AND l.approval_status = 'approved'
             ORDER BY l.created_at DESC
         `;
         const [listings] = await db.execute(query, [subject_code]);
@@ -192,12 +192,13 @@ router.get('/for-you', authenticateToken, async (req, res) => {
 
         // 1. Fetch personalized results
         let personalQuery = `
-            SELECT l.*, p.full_name as seller_name, p.avatar_url as seller_avatar, p.is_topper as seller_is_topper, p.rating_avg as seller_rating, p.major as seller_major
+            SELECT l.*, p.full_name as seller_name, p.avatar_url as seller_avatar, p.is_topper as seller_is_topper, p.is_student_verified as seller_is_verified, p.rating_avg as seller_rating, p.major as seller_major
             FROM listings l
             JOIN profiles p ON l.seller_id = p.id
             LEFT JOIN purchases pur ON l.id = pur.listing_id AND pur.buyer_id = ?
             WHERE l.status = 'available' 
               AND l.is_draft = FALSE 
+              AND l.approval_status = 'approved'
               AND l.seller_id != ?
               AND pur.id IS NULL
         `;
@@ -220,13 +221,14 @@ router.get('/for-you', authenticateToken, async (req, res) => {
         if (personalizedListings.length < 5) {
             const excludeIds = personalizedListings.map(l => l.id);
             let backfillQuery = `
-                SELECT l.*, p.full_name as seller_name, p.avatar_url as seller_avatar, p.is_topper as seller_is_topper, p.rating_avg as seller_rating, p.major as seller_major
+                SELECT l.*, p.full_name as seller_name, p.avatar_url as seller_avatar, p.is_topper as seller_is_topper, p.is_student_verified as seller_is_verified, p.rating_avg as seller_rating, p.major as seller_major
                 FROM listings l
                 JOIN profiles p ON l.seller_id = p.id
                 LEFT JOIN purchases pur ON l.id = pur.listing_id AND pur.buyer_id = ?
                 WHERE l.status = 'available' 
                   AND l.is_draft = FALSE 
                   AND l.seller_id != ?
+                  AND l.approval_status = 'approved'
                   AND pur.id IS NULL
             `;
             const backfillParams = [userId, userId];
@@ -262,7 +264,7 @@ router.get('/for-you', authenticateToken, async (req, res) => {
 router.get('/trending', async (req, res) => {
     try {
         const query = `
-            SELECT l.*, p.full_name as seller_name, p.avatar_url as seller_avatar, p.is_topper as seller_is_topper, p.rating_avg as seller_rating, p.major as seller_major
+            SELECT l.*, p.full_name as seller_name, p.avatar_url as seller_avatar, p.is_topper as seller_is_topper, p.is_student_verified as seller_is_verified, p.rating_avg as seller_rating, p.major as seller_major
             FROM listings l
             JOIN profiles p ON l.seller_id = p.id
             WHERE l.status = 'available' AND l.is_draft = FALSE
@@ -471,7 +473,7 @@ router.get('/:id', async (req, res) => {
         }
 
         const query = `
-            SELECT l.*, p.full_name as seller_name, p.avatar_url as seller_avatar, p.is_topper as seller_is_topper, p.rating_avg as seller_rating, p.major as seller_major
+            SELECT l.*, p.full_name as seller_name, p.avatar_url as seller_avatar, p.is_topper as seller_is_topper, p.is_student_verified as seller_is_verified, p.rating_avg as seller_rating, p.major as seller_major
             FROM listings l 
             JOIN profiles p ON l.seller_id = p.id 
             WHERE l.id = ?
@@ -501,47 +503,84 @@ const crypto = require('crypto');
 // POST /api/listings - Create a new listing (Protected Route)
 router.post('/', authenticateToken, async (req, res) => {
     const { 
-        title, description, price, material_type,
+        id, title, description, price, material_type,
         images, tags, is_draft, file_url,
         programme, branch, semester, 
         subject_code, subject_name 
     } = req.body;
     
     const seller_id = req.user.id; 
-    const listingId = crypto.randomUUID();
+
+    // Check verification status
+    try {
+        const [profiles] = await db.execute('SELECT verification_status FROM profiles WHERE id = ?', [seller_id]);
+        if (profiles.length === 0 || profiles[0].verification_status !== 'verified') {
+            return res.status(403).json({ 
+                error: 'verification_required', 
+                message: 'Verify your student ID to list notes.' 
+            });
+        }
+    } catch (err) {
+        return res.status(500).json({ error: 'Failed to verify status' });
+    }
+
+    const listingId = id || crypto.randomUUID();
+    const isUpdate = !!id;
 
     if (!title) {
         return res.status(400).json({ error: 'Title is required.' });
     }
 
     try {
-        // 1. Insert listing
-        await db.execute(
-            `INSERT INTO listings (
-                id, seller_id, title, description, price, 
-                programme, branch, semester, subject_code, subject,
-                material_type, is_draft, status, file_url
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'available', ?)`,
-            [
-                listingId, seller_id, title, description || null, price || 0,
-                programme || null, branch || null, semester ? semester.toString() : null, 
-                subject_code || null, subject_name || null,
-                material_type || null, is_draft || false, file_url || null
-            ]
-        );
+        if (isUpdate) {
+            // Update existing listing (usually converting a draft to a live listing)
+            await db.execute(
+                `UPDATE listings SET 
+                    title = ?, description = ?, price = ?, 
+                    programme = ?, branch = ?, semester = ?, subject_code = ?, subject = ?,
+                    material_type = ?, is_draft = FALSE, status = 'pending', file_url = ?, 
+                    approval_status = 'pending_approval'
+                 WHERE id = ? AND seller_id = ?`,
+                [
+                    title, description || null, price || 0,
+                    programme || null, branch || null, semester ? semester.toString() : null, 
+                    subject_code || null, subject_name || null,
+                    material_type || null, file_url || null,
+                    listingId, seller_id
+                ]
+            );
+            // Clear existing images and tags for this listing to avoid duplicates on re-insertion
+            await db.execute('DELETE FROM listing_images WHERE listing_id = ?', [listingId]);
+            await db.execute('DELETE FROM listing_tags WHERE listing_id = ?', [listingId]);
+        } else {
+            // 1. Insert new listing
+            await db.execute(
+                `INSERT INTO listings (
+                    id, seller_id, title, description, price, 
+                    programme, branch, semester, subject_code, subject,
+                    material_type, is_draft, status, file_url, approval_status
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, FALSE, 'pending', ?, 'pending_approval')`,
+                [
+                    listingId, seller_id, title, description || null, price || 0,
+                    programme || null, branch || null, semester ? semester.toString() : null, 
+                    subject_code || null, subject_name || null,
+                    material_type || null, file_url || null
+                ]
+            );
+        }
 
-        // 2. Insert images
+        // 2. Insert images (new or replaced)
         if (images && Array.isArray(images)) {
             for (let i = 0; i < images.length; i++) {
                 const img = images[i];
                 await db.execute(
                     `INSERT INTO listing_images (listing_id, image_url, is_cover, order_index) VALUES (?, ?, ?, ?)`,
-                    [listingId, img.url, img.is_cover || (i === 0), i]
+                    [listingId, img.url || img.image_url, img.is_cover || (i === 0), i]
                 );
             }
         }
 
-        // 3. Insert tags
+        // 3. Insert tags (new or replaced)
         if (tags && Array.isArray(tags)) {
             for (const tag of tags) {
                 await db.execute(
@@ -551,14 +590,17 @@ router.post('/', authenticateToken, async (req, res) => {
             }
         }
 
-        res.status(201).json({ message: 'Listing created successfully!', id: listingId });
+        res.status(isUpdate ? 200 : 201).json({ 
+            message: isUpdate ? 'Listing updated and published!' : 'Listing created successfully!', 
+            id: listingId 
+        });
 
         // Background tasks
         (async () => {
             try {
                 // 1. AI Scoring
                 if (images && images.length > 0) {
-                    const firstImage = images[0].url;
+                    const firstImage = images[0].url || images[0].image_url;
                     const result = await scoreNote(firstImage);
                     if (result) {
                         await db.execute(

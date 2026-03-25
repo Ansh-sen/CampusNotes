@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { API_URL } from '@/config';
 import { Button } from '@/components/ui/button';
 import { RatingStars } from '@/components/ui/RatingStars';
 import { useToast } from '@/components/ui/toast-provider';
@@ -27,7 +28,7 @@ export function ReviewForm({ listingId, revieweeId, onSuccess, onCancel }: Revie
 
     setSubmitting(true);
     try {
-      const response = await fetch('http://localhost:3001/api/reviews', {
+      const response = await fetch(`${API_URL}/reviews`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

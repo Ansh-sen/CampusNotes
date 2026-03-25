@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_URL } from '@/config';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -32,7 +33,7 @@ export function ResetPassword() {
 
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:3001/api/auth/reset-password', {
+      const response = await fetch(`${API_URL}/auth/reset-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token, newPassword }),
@@ -109,7 +110,7 @@ export function ResetPassword() {
                         <Button 
                             type="submit" 
                             disabled={loading}
-                            className="w-full h-14 rounded-2xl font-black text-base bg-[hsl(var(--primary))] hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-[hsl(var(--primary))/20]"
+                            className="w-full h-14 rounded-2xl font-black text-base hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/20"
                         >
                             {loading ? "Updating..." : "Update Password"}
                         </Button>

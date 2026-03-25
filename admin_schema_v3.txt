@@ -1,0 +1,17 @@
+Tables: academic_branches, academic_programmes, academic_subjects, admin_sessions, admin_users, blocked_users, bookmarks, conversations, exam_schedule, image_hashes, listing_approval_log, listing_images, listing_tags, listing_views, listings, messages, note_requests, notifications, profiles, purchases, request_upvotes, reviews, rgpv_subjects, scheduled_meetups, syllabus_topics, verification_log
+
+--- admin_users ---
+id: varchar(36) (NO, PRI, null, )
+name: varchar(100) (NO, , null, )
+email: varchar(100) (NO, UNI, null, )
+password_hash: varchar(255) (NO, , null, )
+role: enum('superadmin','moderator') (YES, , moderator, )
+created_at: timestamp (YES, , CURRENT_TIMESTAMP, DEFAULT_GENERATED)
+
+--- admin_sessions ---
+id: varchar(191) (NO, PRI, null, )
+admin_id: varchar(255) (NO, , null, )
+token: text (NO, , null, )
+expires_at: datetime (NO, , null, )
+created_at: datetime (YES, , CURRENT_TIMESTAMP, DEFAULT_GENERATED)
+

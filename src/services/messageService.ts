@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client';
 
-const API_URL = 'http://localhost:3001/api';
+import { API_URL, API_BASE_URL } from '@/config';
 
 export const messageService = {
   async getConversations(jwt: string, archived: boolean = false) {
@@ -192,12 +192,16 @@ export const messageService = {
 
 let socket: any = null;
 
-export const initSocket = (convId?: string | null) => {
+export const initSocket = (jwt: string, convId?: string | null) => {
   if (!socket) {
-    socket = io('http://localhost:3001', {
+    socket = io(API_BASE_URL, {
+      auth: { token: jwt },
       withCredentials: true,
       transports: ['websocket'], // Force websocket to avoid polling 400 errors
     });
+  } else if (socket.auth.token !== jwt) {
+    socket.auth.token = jwt;
+    socket.disconnect().connect();
   }
 
   if (convId) {

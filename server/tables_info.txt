@@ -1,0 +1,235 @@
+Tables in database: ["admin_sessions","blocked_users","bookmarks","conversations","exam_schedule","image_hashes","listing_approval_log","listing_images","listing_tags","listing_views","listings","messages","note_requests","notifications","profiles","purchases","request_upvotes","reviews","rgpv_subjects","scheduled_meetups","syllabus_topics","verification_log"]
+
+--- admin_sessions ---
+id: int | Null: NO | Key: PRI
+admin_id: int | Null: NO | Key: 
+token: varchar(500) | Null: NO | Key: 
+expires_at: datetime | Null: NO | Key: 
+created_at: datetime | Null: YES | Key: 
+
+--- blocked_users ---
+blocker_id: char(36) | Null: NO | Key: PRI
+blocked_id: char(36) | Null: NO | Key: PRI
+created_at: datetime | Null: YES | Key: 
+
+--- bookmarks ---
+id: int | Null: NO | Key: PRI
+user_id: int | Null: NO | Key: MUL
+listing_id: int | Null: NO | Key: MUL
+created_at: timestamp | Null: YES | Key: 
+
+--- conversations ---
+id: varchar(36) | Null: NO | Key: PRI
+listing_id: varchar(36) | Null: NO | Key: MUL
+buyer_id: varchar(36) | Null: NO | Key: MUL
+seller_id: varchar(36) | Null: NO | Key: MUL
+last_message_at: timestamp | Null: YES | Key: 
+unread_count: int | Null: YES | Key: 
+is_muted: tinyint(1) | Null: YES | Key: 
+is_archived: tinyint(1) | Null: YES | Key: 
+
+--- exam_schedule ---
+id: int | Null: NO | Key: PRI
+university: varchar(255) | Null: YES | Key: 
+programme: varchar(100) | Null: YES | Key: 
+branch: varchar(255) | Null: YES | Key: 
+semester: int | Null: YES | Key: 
+subject_name: varchar(255) | Null: YES | Key: 
+subject_code: varchar(50) | Null: YES | Key: 
+exam_date: date | Null: YES | Key: 
+created_at: timestamp | Null: YES | Key: 
+
+--- image_hashes ---
+id: int | Null: NO | Key: PRI
+listing_id: varchar(255) | Null: NO | Key: MUL
+image_hash: varchar(128) | Null: NO | Key: MUL
+created_at: datetime | Null: YES | Key: 
+
+--- listing_approval_log ---
+id: int | Null: NO | Key: PRI
+listing_id: varchar(36) | Null: NO | Key: MUL
+admin_id: int | Null: NO | Key: MUL
+action: enum('approved','rejected','removed') | Null: NO | Key: 
+reason: text | Null: YES | Key: 
+created_at: datetime | Null: YES | Key: 
+
+--- listing_images ---
+id: int | Null: NO | Key: PRI
+listing_id: varchar(36) | Null: NO | Key: MUL
+image_url: varchar(255) | Null: NO | Key: 
+is_cover: tinyint(1) | Null: YES | Key: 
+order_index: int | Null: YES | Key: 
+created_at: timestamp | Null: YES | Key: 
+
+--- listing_tags ---
+id: int | Null: NO | Key: PRI
+listing_id: varchar(36) | Null: NO | Key: MUL
+tag_name: varchar(50) | Null: NO | Key: 
+
+--- listing_views ---
+id: int | Null: NO | Key: PRI
+listing_id: varchar(36) | Null: NO | Key: MUL
+viewer_id: varchar(36) | Null: YES | Key: MUL
+ip_address: varchar(45) | Null: YES | Key: 
+viewed_at: timestamp | Null: YES | Key: 
+
+--- listings ---
+id: varchar(36) | Null: NO | Key: PRI
+seller_id: varchar(36) | Null: NO | Key: MUL
+title: varchar(255) | Null: NO | Key: 
+course_code: varchar(100) | Null: YES | Key: 
+subject: varchar(100) | Null: YES | Key: 
+description: text | Null: YES | Key: 
+price: decimal(10,2) | Null: NO | Key: 
+condition_status: varchar(50) | Null: YES | Key: 
+type: varchar(50) | Null: YES | Key: 
+images: json | Null: YES | Key: 
+status: varchar(50) | Null: YES | Key: 
+created_at: timestamp | Null: YES | Key: 
+branch: varchar(100) | Null: YES | Key: 
+year: varchar(50) | Null: YES | Key: 
+semester: varchar(50) | Null: YES | Key: 
+material_type: varchar(100) | Null: YES | Key: 
+item_condition: varchar(50) | Null: YES | Key: 
+is_draft: tinyint(1) | Null: YES | Key: 
+file_url: varchar(255) | Null: YES | Key: 
+programme: varchar(100) | Null: YES | Key: 
+subject_code: varchar(50) | Null: YES | Key: MUL
+view_count: int | Null: YES | Key: 
+ai_score: int | Null: YES | Key: 
+ai_reasons: json | Null: YES | Key: 
+buyer_id: varchar(255) | Null: YES | Key: 
+
+--- messages ---
+id: varchar(36) | Null: NO | Key: PRI
+conversation_id: varchar(36) | Null: NO | Key: MUL
+sender_id: varchar(36) | Null: NO | Key: MUL
+recipient_id: varchar(36) | Null: NO | Key: 
+content: text | Null: NO | Key: 
+read_status: tinyint(1) | Null: YES | Key: 
+created_at: timestamp | Null: YES | Key: 
+file_url: varchar(255) | Null: YES | Key: 
+file_name: varchar(255) | Null: YES | Key: 
+file_type: varchar(50) | Null: YES | Key: 
+is_edited: tinyint(1) | Null: YES | Key: 
+message_type: enum('text','image','file') | Null: YES | Key: 
+attachment_url: varchar(255) | Null: YES | Key: 
+updated_at: timestamp | Null: YES | Key: 
+is_read: tinyint(1) | Null: YES | Key: 
+is_deleted: tinyint(1) | Null: YES | Key: 
+delivered_at: timestamp | Null: NO | Key: 
+
+--- note_requests ---
+id: int | Null: NO | Key: PRI
+requester_id: varchar(36) | Null: YES | Key: 
+subject_name: varchar(255) | Null: YES | Key: 
+subject_code: varchar(50) | Null: YES | Key: 
+branch: varchar(255) | Null: YES | Key: 
+semester: int | Null: YES | Key: 
+programme: varchar(100) | Null: YES | Key: 
+description: text | Null: YES | Key: 
+upvote_count: int | Null: YES | Key: 
+is_fulfilled: tinyint(1) | Null: YES | Key: 
+created_at: timestamp | Null: YES | Key: 
+
+--- notifications ---
+id: int | Null: NO | Key: PRI
+user_id: varchar(36) | Null: YES | Key: 
+message: text | Null: YES | Key: 
+is_read: tinyint(1) | Null: YES | Key: 
+listing_id: varchar(36) | Null: YES | Key: 
+created_at: timestamp | Null: YES | Key: 
+
+--- profiles ---
+id: varchar(36) | Null: NO | Key: PRI
+email: varchar(191) | Null: NO | Key: UNI
+password_hash: varchar(255) | Null: NO | Key: 
+full_name: varchar(255) | Null: YES | Key: 
+university: varchar(255) | Null: YES | Key: 
+major: varchar(255) | Null: YES | Key: 
+year: varchar(50) | Null: YES | Key: 
+avatar_url: mediumtext | Null: YES | Key: 
+bio: text | Null: YES | Key: 
+rating_avg: decimal(3,2) | Null: YES | Key: 
+created_at: timestamp | Null: YES | Key: 
+earnings_total: decimal(10,2) | Null: YES | Key: 
+notes_sold: int | Null: YES | Key: 
+reset_token: varchar(255) | Null: YES | Key: 
+reset_token_expiry: datetime | Null: YES | Key: 
+is_topper: tinyint(1) | Null: YES | Key: 
+branch: varchar(100) | Null: YES | Key: 
+semester: int | Null: YES | Key: 
+programme: varchar(100) | Null: YES | Key: 
+last_seen_at: datetime | Null: YES | Key: 
+total_sales: int | Null: YES | Key: 
+is_student_verified: tinyint(1) | Null: YES | Key: 
+college_id_url: mediumtext | Null: YES | Key: 
+referral_code: varchar(100) | Null: YES | Key: 
+notification_prefs: json | Null: YES | Key: 
+
+--- purchases ---
+id: varchar(36) | Null: NO | Key: PRI
+listing_id: varchar(36) | Null: NO | Key: MUL
+buyer_id: varchar(36) | Null: NO | Key: MUL
+seller_id: varchar(36) | Null: NO | Key: MUL
+amount: decimal(10,2) | Null: NO | Key: 
+created_at: timestamp | Null: YES | Key: 
+purchase_status: enum('pending','paid_online','verification_pending','approved','rejected','cash_verified') | Null: YES | Key: 
+transaction_id: varchar(255) | Null: YES | Key: 
+payment_method: enum('online','upi','cash') | Null: YES | Key: 
+payment_screenshot: varchar(255) | Null: YES | Key: 
+otp_code: varchar(10) | Null: YES | Key: 
+otp_expiry: datetime | Null: YES | Key: 
+
+--- request_upvotes ---
+request_id: int | Null: NO | Key: PRI
+user_id: varchar(36) | Null: NO | Key: PRI
+created_at: timestamp | Null: YES | Key: 
+
+--- reviews ---
+id: varchar(36) | Null: NO | Key: PRI
+listing_id: varchar(36) | Null: YES | Key: MUL
+reviewer_id: varchar(36) | Null: NO | Key: MUL
+reviewee_id: varchar(36) | Null: NO | Key: MUL
+rating: int | Null: NO | Key: 
+comment: text | Null: YES | Key: 
+created_at: timestamp | Null: YES | Key: 
+seller_id: int | Null: NO | Key: 
+
+--- rgpv_subjects ---
+id: int | Null: NO | Key: PRI
+programme: varchar(50) | Null: NO | Key: MUL
+branch: varchar(100) | Null: NO | Key: 
+semester: tinyint unsigned | Null: NO | Key: 
+subject_code: varchar(30) | Null: NO | Key: MUL
+subject_name: varchar(200) | Null: NO | Key: 
+created_at: timestamp | Null: YES | Key: 
+
+--- scheduled_meetups ---
+id: int | Null: NO | Key: PRI
+listing_id: char(36) | Null: YES | Key: 
+buyer_id: char(36) | Null: YES | Key: 
+seller_id: char(36) | Null: YES | Key: 
+meetup_date: date | Null: YES | Key: 
+meetup_time: time | Null: YES | Key: 
+location: varchar(255) | Null: YES | Key: 
+amount: decimal(10,2) | Null: YES | Key: 
+status: enum('scheduled','completed','cancelled','reported') | Null: YES | Key: 
+created_at: datetime | Null: YES | Key: 
+
+--- syllabus_topics ---
+id: int | Null: NO | Key: PRI
+programme: varchar(100) | Null: YES | Key: 
+branch: varchar(255) | Null: YES | Key: 
+semester: int | Null: YES | Key: 
+subject_code: varchar(50) | Null: YES | Key: 
+subject_name: varchar(255) | Null: YES | Key: 
+topic_name: varchar(255) | Null: YES | Key: 
+
+--- verification_log ---
+id: int | Null: NO | Key: PRI
+user_id: varchar(36) | Null: NO | Key: MUL
+admin_id: int | Null: NO | Key: MUL
+action: enum('approved','rejected') | Null: NO | Key: 
+reason: text | Null: YES | Key: 
+created_at: datetime | Null: YES | Key: 

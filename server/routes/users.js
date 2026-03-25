@@ -57,4 +57,27 @@ router.patch('/meetups/:id/checkin', authenticateToken, async (req, res) => {
     }
 });
 
+// POST /api/users/submit-verification - Submit ID for student verification
+router.post('/submit-verification', authenticateToken, async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { id_image_url, enrollment_number } = req.body;
+
+        if (!id_image_url || !enrollment_number) {
+            return res.status(400).json({ error: 'ID image and enrollment number are required.' });
+        }
+
+        // Update profile
+        await db.execute(
+            'UPDATE profiles SET id_image_url = ?, enrollment_number = ?, verification_status = "pending" WHERE id = ?',
+            [id_image_url, enrollment_number, userId]
+        );
+
+        res.json({ success: true, message: 'Verification submitted successfully. Admin will review it shortly.' });
+    } catch (error) {
+        console.error('Error submitting verification:', error);
+        res.status(500).json({ error: 'Failed to submit verification.' });
+    }
+});
+
 module.exports = router;

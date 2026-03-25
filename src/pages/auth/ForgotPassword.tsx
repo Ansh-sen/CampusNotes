@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { API_URL } from '@/config';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -11,6 +12,7 @@ export function ForgotPassword() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [resetLink, setResetLink] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,7 +20,7 @@ export function ForgotPassword() {
 
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:3001/api/auth/forgot-password', {
+      const response = await fetch(`${API_URL}/auth/forgot-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
@@ -27,6 +29,7 @@ export function ForgotPassword() {
       const data = await response.json();
       if (response.ok) {
         setSubmitted(true);
+        if (data.resetLink) setResetLink(data.resetLink);
         toast({ title: 'Success', description: data.message, type: 'success' });
       } else {
         toast({ title: 'Error', description: data.error, type: 'error' });
@@ -86,7 +89,7 @@ export function ForgotPassword() {
                             <Button 
                                 type="submit" 
                                 disabled={loading}
-                                className="w-full h-14 rounded-2xl font-black text-base bg-[hsl(var(--primary))] hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-[hsl(var(--primary))/20]"
+                                className="w-full h-14 rounded-2xl font-black text-base hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/20"
                             >
                                 {loading ? "Sending..." : "Send Reset Link"}
                             </Button>
@@ -94,7 +97,23 @@ export function ForgotPassword() {
                     ) : (
                         <div className="text-center space-y-6 py-4">
                             <div className="p-4 bg-green-50 rounded-2xl border border-green-100 text-green-700 text-sm font-bold">
-                                A reset link has been generated. Since this is a sample project, check the backend console logs for the link.
+                                {resetLink ? (
+                                  <div className="space-y-3">
+                                    <p>Reset link generated successfully!</p>
+                                    <div className="p-3 bg-white rounded-xl border border-green-200 break-all font-mono text-xs">
+                                      {resetLink}
+                                    </div>
+                                    <Button 
+                                      variant="default" 
+                                      className="w-full h-10 rounded-xl text-xs"
+                                      onClick={() => window.open(resetLink, '_blank')}
+                                    >
+                                      Go to Reset Page
+                                    </Button>
+                                  </div>
+                                ) : (
+                                  "A reset link has been generated. Since this is a development environment, check the backend console or wait for the email if configured."
+                                )}
                             </div>
                             <Button 
                                 onClick={() => navigate('/login')}

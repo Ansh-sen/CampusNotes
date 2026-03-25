@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_URL } from '@/config';
 import { useParams, Link } from 'react-router-dom';
 import { BookOpen, ArrowLeft, Search, GraduationCap } from 'lucide-react';
 import { ListingCard } from '@/components/domain/ListingCard';
@@ -28,9 +29,9 @@ export function SubjectPage() {
     try {
       // Fetch listings for this subject
       const [listingsRes] = await Promise.all([
-        fetch(`http://localhost:3001/api/listings/subject/${encodeURIComponent(subject_code!)}`),
+        fetch(`${API_URL}/listings/subject/${encodeURIComponent(subject_code!)}`),
         // Fetch subject info from the rgpv_subjects table via subjects endpoint
-        fetch(`http://localhost:3001/api/subjects?programme=&branch=&semester=0&subject_code=${encodeURIComponent(subject_code!)}`)
+        fetch(`${API_URL}/subjects?programme=&branch=&semester=0&subject_code=${encodeURIComponent(subject_code!)}`)
           .catch(() => null),
       ]);
 
@@ -60,7 +61,7 @@ export function SubjectPage() {
   useEffect(() => {
     if (!subject_code) return;
     // Try to resolve subject name from a known listing's data if not already resolved
-    fetch(`http://localhost:3001/api/subjects?programme=B.E.&branch=Computer Science %26 Engineering&semester=1`)
+    fetch(`${API_URL}/subjects?programme=B.E.&branch=Computer Science %26 Engineering&semester=1`)
       .then(r => r.json())
       .catch(() => ({}));
   }, []);

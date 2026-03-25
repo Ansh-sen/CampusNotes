@@ -29,6 +29,11 @@ export interface Database {
           programme: string | null
           is_student_verified: boolean
           college_id_url: string | null
+          verification_status: 'unverified' | 'pending' | 'verified' | 'rejected'
+          enrollment_number: string | null
+          verified_at: string | null
+          verification_rejected_reason: string | null
+          is_blocked: boolean
           referral_code: string | null
           notification_prefs: Json | null
         }
@@ -86,6 +91,10 @@ export interface Database {
           view_count: number
           file_url: string | null
           is_draft: boolean
+          approval_status: 'pending_approval' | 'approved' | 'rejected'
+          rejection_reason: string | null
+          approved_at: string | null
+          approved_by: number | null
         }
         Insert: {
           id?: string

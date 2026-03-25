@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
-import { FileText } from 'lucide-react';
+import { API_BASE_URL } from '@/config';
+import { FileText, CheckCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/components/ui/toast-provider';
 
@@ -18,11 +19,12 @@ export function ListingCard({ listing, index = 0 }: { listing: any, index?: numb
   
   // Add backend URL prefix if it's a relative path
   if (coverImage && coverImage.startsWith('/')) {
-    coverImage = `http://localhost:3001${coverImage}`;
+    coverImage = `${API_BASE_URL}${coverImage}`;
   }
 
   const aiScore = listing.ai_score;
   const isTopper = listing.seller_is_topper;
+  const isVerified = !!listing.seller_is_verified;
 
   // AI score color logic - Updating to match search image (dark pills)
   const getAiScoreColor = (score: number) => {
@@ -105,11 +107,19 @@ export function ListingCard({ listing, index = 0 }: { listing: any, index?: numb
           </p>
         </div>
 
-        {isTopper && (
-          <div className="flex items-center gap-1 text-[9px] font-bold text-amber-600 bg-amber-50 w-fit px-2 py-0.5 rounded-full border border-amber-100">
-             Verified Topper
-          </div>
-        )}
+        <div className="flex flex-wrap gap-1">
+          {isTopper && (
+            <div className="flex items-center gap-1 text-[9px] font-bold text-amber-600 bg-amber-50 w-fit px-2 py-0.5 rounded-full border border-amber-100">
+               Verified Topper
+            </div>
+          )}
+          {isVerified && (
+            <div className="flex items-center gap-1 text-[9px] font-bold text-blue-600 bg-blue-50 w-fit px-2 py-0.5 rounded-full border border-blue-100">
+               <CheckCircle size={10} fill="currentColor" className="text-blue-500" />
+               Verified Student
+            </div>
+          )}
+        </div>
 
         <div className="flex items-center justify-between mt-auto pt-1">
           <div className="flex items-center gap-2">

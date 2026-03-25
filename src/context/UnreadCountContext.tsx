@@ -35,7 +35,7 @@ export function UnreadCountProvider({ children }: { children: React.ReactNode })
       fetchUnreadCount();
 
       // Setup notification socket
-      socketRef.current = initSocket();
+      socketRef.current = initSocket(jwt);
       if (socketRef.current) {
         socketRef.current.emit('join_user_room', user.id);
       }
