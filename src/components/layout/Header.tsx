@@ -7,28 +7,29 @@ export function Header() {
   const location = useLocation();
   const { profile } = useAuth();
   
-  if (['/login', '/signup'].includes(location.pathname)) {
+  if (['/login', '/signup'].includes(location.pathname) || 
+      (location.pathname === '/messages' && new URLSearchParams(location.search).get('conv'))) {
     return null;
   }
 
   return (
-    <header className="sticky top-0 z-[60] glass border-b border-[hsl(var(--muted))] pt-[env(safe-area-inset-top)]">
-      <div className="flex h-14 items-center justify-between px-4 max-w-md mx-auto w-full">
-        <Link to="/" className="flex items-center space-x-2">
-          <div className="bg-[hsl(var(--primary))] p-1.5 rounded-lg">
+    <header className="sticky top-0 z-[60] glass border-b border-border/50 pt-[env(safe-area-inset-top)]">
+      <div className="flex h-16 items-center justify-between px-6 max-w-md mx-auto w-full">
+        <Link to="/" className="flex items-center space-x-2.5">
+          <div className="bg-primary p-2 rounded-xl shadow-lg shadow-primary/20 animate-float">
             <GraduationCap className="h-5 w-5 text-white" />
           </div>
-          <span className="text-xl font-bold tracking-tight text-[hsl(var(--primary))]">
-            CampusNotes
+          <span className="text-xl font-black tracking-tighter text-foreground drop-shadow-sm">
+            Campus<span className="text-primary">Notes</span>
           </span>
         </Link>
-        <div className="flex items-center space-x-2">
-          <Link to="/profile">
+        <div className="flex items-center space-x-3">
+          <Link to="/profile" className="active:scale-95 transition-transform">
             <UserAvatar 
               src={profile?.avatar_url} 
               seed={profile?.id || 'Felix'} 
               size="sm"
-              className="border border-[hsl(var(--primary))/20]"
+              className="border-2 border-primary/20 hover:border-primary/50 transition-colors"
             />
           </Link>
         </div>

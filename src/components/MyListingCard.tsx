@@ -43,86 +43,86 @@ export function MyListingCard({ listing, onAction }: MyListingCardProps) {
     const badges = [];
     
     if (isDraft) {
-      badges.push(<Badge key="draft" variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-200 text-[10px]">Draft</Badge>);
+      badges.push(<Badge key="draft" variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-500/20 text-[9px] font-black uppercase tracking-widest">Draft</Badge>);
     } else if (listing.approval_status === 'pending_approval') {
-      badges.push(<Badge key="pending" variant="outline" className="bg-blue-100 text-blue-700 border-blue-200 text-[10px]">Pending Approval</Badge>);
+      badges.push(<Badge key="pending" variant="outline" className="bg-primary/10 text-primary border-primary/20 text-[9px] font-black uppercase tracking-widest">Pending Audit</Badge>);
     } else if (listing.approval_status === 'rejected') {
-      badges.push(<Badge key="rejected" variant="outline" className="bg-red-100 text-red-700 border-red-200 text-[10px]">Rejected</Badge>);
+      badges.push(<Badge key="rejected" variant="outline" className="bg-danger/10 text-danger border-danger/20 text-[9px] font-black uppercase tracking-widest">Rejected</Badge>);
     } else if (status === 'available') {
-      badges.push(<Badge key="active" variant="outline" className="bg-green-100 text-green-700 border-green-200 text-[10px]">Available</Badge>);
+      badges.push(<Badge key="active" variant="outline" className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 text-[9px] font-black uppercase tracking-widest">Live</Badge>);
     } else if (status === 'paused') {
-      badges.push(<Badge key="paused" variant="outline" className="bg-amber-100 text-amber-700 border-amber-200 text-[10px]">Paused</Badge>);
+      badges.push(<Badge key="paused" variant="outline" className="bg-muted text-muted-foreground border-border/50 text-[9px] font-black uppercase tracking-widest">Paused</Badge>);
     } else if (status === 'sold') {
-      badges.push(<Badge key="sold" variant="outline" className="bg-red-100 text-red-700 border-red-200 text-[10px]">Sold</Badge>);
+      badges.push(<Badge key="sold" variant="outline" className="bg-danger/10 text-danger border-danger/20 text-[9px] font-black uppercase tracking-widest">Sold</Badge>);
     }
 
     if (bookmarkCount > 0) {
-      badges.push(<Badge key="saved" variant="outline" className="bg-blue-50 text-blue-600 border-blue-200 text-[10px]">{bookmarkCount} saved</Badge>);
-    }
-
-    if (aiScore >= 9) {
-      badges.push(<Badge key="topper" variant="outline" className="bg-purple-50 text-purple-600 border-purple-200 text-[10px]">Topper pick</Badge>);
+      badges.push(<Badge key="saved" variant="outline" className="bg-primary/5 text-primary border-primary/10 text-[9px] font-black uppercase tracking-widest">{bookmarkCount} bookmarks</Badge>);
     }
 
     return badges;
   };
 
   const renderActions = () => {
+    const btnClass = "flex-1 py-4 text-[9px] font-black uppercase tracking-[0.2em] transition-all hover:bg-muted/50 active:scale-95";
+    
     if (isDraft) {
       return (
         <>
-          <button onClick={() => onAction('continue_draft', listing.id)} className="flex-1 py-4 text-[10px] font-black text-[#1a2744] uppercase tracking-widest hover:bg-gray-50 transition-colors">Continue draft</button>
-          <div className="w-[1px] h-6 bg-gray-100 self-center" />
-          <button onClick={() => onAction('discard_draft', listing.id)} className="flex-1 py-4 text-[10px] font-black text-red-500 uppercase tracking-widest hover:bg-red-50 transition-colors">Discard</button>
+          <button onClick={() => onAction('continue_draft', listing.id)} className={cn(btnClass, "text-primary")}>Resume Build</button>
+          <div className="w-[1px] h-6 bg-border/50 self-center" />
+          <button onClick={() => onAction('discard_draft', listing.id)} className={cn(btnClass, "text-danger")}>Flush Draft</button>
         </>
       );
     }
 
+    const secondaryBtnClass = cn(btnClass, "text-foreground opacity-60 hover:opacity-100");
+
     if (status === 'sold') {
       return (
         <>
-          <button onClick={() => onAction('relist', listing.id)} className="flex-1 py-4 text-[10px] font-black text-[#1a2744] uppercase tracking-widest hover:bg-gray-50 transition-colors">Relist</button>
-          <div className="w-[1px] h-6 bg-gray-100 self-center" />
-          <button onClick={() => onAction('view_review', listing.id)} className="flex-1 py-4 text-[10px] font-black text-[#1a2744] uppercase tracking-widest hover:bg-gray-50 transition-colors">Review</button>
-          <div className="w-[1px] h-6 bg-gray-100 self-center" />
-          <button onClick={() => onAction('delete', listing.id)} className="flex-1 py-4 text-[10px] font-black text-red-500 uppercase tracking-widest hover:bg-red-50 transition-colors">Delete</button>
+          <button onClick={() => onAction('relist', listing.id)} className={secondaryBtnClass}>Relist Asset</button>
+          <div className="w-[1px] h-6 bg-border/50 self-center" />
+          <button onClick={() => onAction('view_review', listing.id)} className={secondaryBtnClass}>Audits</button>
+          <div className="w-[1px] h-6 bg-border/50 self-center" />
+          <button onClick={() => onAction('delete', listing.id)} className={cn(btnClass, "text-danger")}>Terminate</button>
         </>
       );
     }
 
     return (
       <>
-        <button onClick={() => onAction('edit', listing.id)} className="flex-1 py-4 text-[10px] font-black text-[#1a2744] uppercase tracking-widest hover:bg-gray-50 transition-colors">Edit</button>
-        <div className="w-[1px] h-6 bg-gray-100 self-center" />
+        <button onClick={() => onAction('edit', listing.id)} className={secondaryBtnClass}>Refine</button>
+        <div className="w-[1px] h-6 bg-border/50 self-center" />
         {status === 'paused' ? (
-          <button onClick={() => onAction('resume', listing.id)} className="flex-1 py-4 text-[10px] font-black text-emerald-600 uppercase tracking-widest hover:bg-emerald-50 transition-colors">Resume</button>
+          <button onClick={() => onAction('resume', listing.id)} className={cn(btnClass, "text-emerald-500")}>Unarchive</button>
         ) : (
-          <button onClick={() => onAction('pause', listing.id)} className="flex-1 py-4 text-[10px] font-black text-[#1a2744] uppercase tracking-widest hover:bg-gray-50 transition-colors">Pause</button>
+          <button onClick={() => onAction('pause', listing.id)} className={secondaryBtnClass}>Archive</button>
         )}
-        <div className="w-[1px] h-6 bg-gray-100 self-center" />
-        <button onClick={() => onAction('mark_sold', listing.id)} className="flex-1 py-4 text-[10px] font-black text-blue-600 uppercase tracking-widest hover:bg-blue-50 transition-colors">Mark sold</button>
-        <div className="w-[1px] h-6 bg-gray-100 self-center" />
-        <button onClick={() => onAction('delete', listing.id)} className="flex-1 py-4 text-[10px] font-black text-red-500 uppercase tracking-widest hover:bg-red-50 transition-colors">Delete</button>
+        <div className="w-[1px] h-6 bg-border/50 self-center" />
+        <button onClick={() => onAction('mark_sold', listing.id)} className={cn(btnClass, "text-primary")}>Liquidate</button>
+        <div className="w-[1px] h-6 bg-border/50 self-center" />
+        <button onClick={() => onAction('delete', listing.id)} className={cn(btnClass, "text-danger")}>Terminate</button>
       </>
     );
   };
 
   return (
     <Card className={cn(
-      "overflow-hidden border border-gray-100 shadow-sm transition-all duration-300 bg-white rounded-xl mb-3",
-      isDraft && "border-amber-200 shadow-amber-50/50"
+      "overflow-hidden border border-border/50 shadow-xl shadow-black/5 transition-all duration-500 bg-card rounded-[2.5rem] mb-6 hover:border-primary/20",
+      isDraft && "border-amber-500/20 shadow-amber-500/5"
     )}>
       {isDraft && (
-        <div className="bg-amber-100/50 px-3 py-1.5 flex justify-between items-center">
-          <span className="text-[10px] font-bold text-amber-800">Draft — {listing.title || 'Untitled'}</span>
-          <span className="text-[10px] font-medium text-amber-700">Step {listing.last_step || 1} of 3</span>
+        <div className="bg-amber-500/10 px-6 py-3 flex justify-between items-center border-b border-amber-500/10">
+          <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest leading-none">Intelligence Staging — {listing.title || 'Incomplete'}</span>
+          <span className="text-[9px] font-black text-amber-500 opacity-60 uppercase tracking-widest">Phase {listing.last_step || 1} / 3</span>
         </div>
       )}
       
       {isDraft && (
-        <div className="h-1 bg-amber-100 w-full overflow-hidden">
+        <div className="h-[2px] bg-amber-500/10 w-full overflow-hidden">
           <div 
-            className="h-full bg-amber-400 transition-all duration-500" 
+            className="h-full bg-amber-500 transition-all duration-1000 ease-out" 
             style={{ width: `${(listing.last_step || 1) / 3 * 100}%` }}
           />
         </div>
@@ -130,29 +130,29 @@ export function MyListingCard({ listing, onAction }: MyListingCardProps) {
 
       <CardContent className="p-0">
         {/* Top Info Row */}
-        <div className="p-3 flex gap-3">
-          <div className="relative h-[52px] w-[52px] min-w-[52px] rounded-lg overflow-hidden bg-slate-100 flex items-center justify-center">
+        <div className="p-6 flex gap-6 items-center">
+          <div className="relative h-20 w-20 min-w-[80px] rounded-3xl overflow-hidden bg-muted flex items-center justify-center border border-border/50 shadow-inner group">
             {coverImage ? (
-              <img src={coverImage} alt="" className="h-full w-full object-cover" />
+              <img src={coverImage} alt="" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
             ) : (
-              <FileText className="h-6 w-6 text-slate-400" />
+              <FileText className="h-8 w-8 text-muted-foreground/20" />
             )}
             {aiScore !== null && !isDraft && (
               <div className={cn(
-                "absolute bottom-0 right-0 px-1 py-0.5 text-[8px] font-black text-white",
+                "absolute bottom-0 right-0 px-2 py-1 text-[9px] font-black text-white uppercase tracking-tighter",
                 getScoreColor(aiScore)
               )}>
-                {aiScore}
+                AI {aiScore}
               </div>
             )}
           </div>
 
-          <div className="flex-1 min-w-0">
-            <h3 className="text-sm font-bold text-[#1a2744] truncate">{listing.title || 'Untitled Listing'}</h3>
-            <p className="text-[10px] font-medium text-gray-500 mt-0.5">
-              {listing.subject_code} • {listing.semester} • {listing.material_type}
+          <div className="flex-1 min-w-0 space-y-2">
+            <h3 className="text-base font-black text-foreground truncate uppercase tracking-tight leading-none">{listing.title || 'Asset Untitled'}</h3>
+            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-40">
+              {listing.subject_code || 'GEN'} • Sem {listing.semester || 'N/A'} • {listing.material_type || 'Archive'}
             </p>
-            <div className="flex flex-wrap gap-1.5 mt-2">
+            <div className="flex flex-wrap gap-2 pt-1">
               {renderStatusBadges()}
             </div>
           </div>
@@ -160,32 +160,42 @@ export function MyListingCard({ listing, onAction }: MyListingCardProps) {
 
         {/* Stats Row */}
         <div className={cn(
-          "px-3 py-2 border-y border-gray-50 flex items-center justify-between",
-          isDraft && "opacity-50"
+          "px-8 py-4 border-y border-border/30 flex items-center justify-between bg-muted/20",
+          isDraft && "opacity-30 pointer-events-none"
         )}>
-          <div className="flex gap-4">
-            <div className="flex items-center gap-1">
-              <Eye className="h-3 w-3 text-gray-400" />
-              <span className="text-[11px] font-bold text-[#1a2744]">{viewCount}</span>
-              <span className="text-[10px] text-gray-400 font-medium">Views</span>
+          <div className="flex gap-8">
+            <div className="flex items-center gap-2 group/metric">
+              <Eye className="h-4 w-4 text-primary opacity-40 group-hover/metric:opacity-100 transition-opacity" />
+              <div className="flex flex-col">
+                <span className="text-xs font-black text-foreground tabular-nums leading-none">{viewCount}</span>
+                <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest opacity-30">Reach</span>
+              </div>
             </div>
-            <div className="flex items-center gap-1">
-              <MessageCircle className="h-3 w-3 text-gray-400" />
-              <span className="text-[11px] font-bold text-[#1a2744]">{inquiryCount}</span>
-              <span className="text-[10px] text-gray-400 font-medium">Inquiries</span>
+            <div className="flex items-center gap-2 group/metric">
+              <MessageCircle className="h-4 w-4 text-emerald-500 opacity-40 group-hover/metric:opacity-100 transition-opacity" />
+              <div className="flex flex-col">
+                <span className="text-xs font-black text-foreground tabular-nums leading-none">{inquiryCount}</span>
+                <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest opacity-30">Inquiry</span>
+              </div>
             </div>
           </div>
-          <div className="text-[11px] font-black text-[#1a2744]">
+          <div className="text-right">
             {status === 'sold' && listing.buyer_name ? (
-                <span className="text-gray-500">Sold to <span className="text-[#1a2744]">{listing.buyer_name}</span></span>
+                <div className="flex flex-col items-end">
+                  <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest opacity-30">Acquired by</span>
+                  <span className="text-[10px] font-black text-primary uppercase tracking-tight">{listing.buyer_name}</span>
+                </div>
             ) : (
-                <span>₹{listing.price}</span>
+                <div className="flex flex-col items-end">
+                  <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest opacity-30">Market Value</span>
+                  <span className="text-sm font-black text-foreground tracking-tighter tabular-nums leading-none">₹{listing.price}</span>
+                </div>
             )}
           </div>
         </div>
 
         {/* Actions Row */}
-        <div className="flex divide-x divide-gray-50">
+        <div className="flex divide-x divide-border/30 bg-muted/10 group-hover:bg-muted/20 transition-colors">
           {renderActions()}
         </div>
       </CardContent>

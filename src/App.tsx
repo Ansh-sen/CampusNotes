@@ -8,6 +8,7 @@ import { Login } from '@/pages/auth/Login';
 import { Signup } from '@/pages/auth/Signup';
 import { Home } from '@/pages/Home';
 import { Browse } from '@/pages/Browse';
+import { ThemeProvider } from '@/context/ThemeContext';
 
 import { Profile } from '@/pages/Profile';
 import { CreateListing } from '@/pages/CreateListing';
@@ -20,9 +21,10 @@ import { SubjectPage } from '@/pages/SubjectPage';
 
 export function App() {
   return (
-    <AuthProvider>
-      <UnreadCountProvider>
-        <ToastProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <UnreadCountProvider>
+          <ToastProvider>
           <Routes>
             {/* Public Routes */}
             <Route path="/login" element={<Login />} />
@@ -50,7 +52,8 @@ export function App() {
         </ToastProvider>
       </UnreadCountProvider>
     </AuthProvider>
-  );
+  </ThemeProvider>
+);
 }
 
 export default App;

@@ -34,43 +34,43 @@ export function ChatHeader({ conversation, onBack, onAction }: ChatHeaderProps) 
   };
 
   return (
-    <div className="w-full bg-white/95 backdrop-blur-xl border-b border-gray-100 px-4 py-3 flex items-center justify-between shadow-sm">
-      <div className="flex items-center gap-3">
-        <button onClick={onBack} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors active:scale-90">
-          <ArrowLeft className="h-5 w-5 text-[#1a2744]" />
+    <div className="w-full bg-card/80 backdrop-blur-xl border-b border-border/50 px-6 py-4 flex items-center justify-between shadow-lg shadow-black/5">
+      <div className="flex items-center gap-4">
+        <button onClick={onBack} className="p-2.5 -ml-2 hover:bg-muted rounded-full transition-colors active:scale-90">
+          <ArrowLeft className="h-5 w-5 text-foreground" />
         </button>
         
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           <div className="relative">
             <UserAvatar 
               src={otherUserAvatar} 
               seed={otherUserId} 
               size="sm"
-              className="h-10 w-10 ring-2 ring-white shadow-sm"
+              className="h-11 w-11 ring-2 ring-background shadow-md"
             />
             {isOnline && (
-              <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 bg-emerald-500 rounded-full border-2 border-white shadow-sm" />
+              <div className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 bg-emerald-500 rounded-full border-2 border-card shadow-sm" />
             )}
           </div>
           
           <div className="flex flex-col min-w-0">
-            <div className="flex items-center gap-1.5 min-w-0">
-              <span className="text-sm font-black text-[#1a2744] truncate max-w-[140px] leading-tight">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="text-sm font-black text-foreground truncate max-w-[140px] leading-tight tracking-tight">
                 {otherUserName}
               </span>
               {!!otherIsTopper && (
-                <div className="shrink-0 px-1.5 py-0.5 bg-[#f59e0b]/10 text-[#f59e0b] rounded-full text-[7px] font-black uppercase tracking-widest border border-[#f59e0b]/20">
+                <div className="shrink-0 px-2 py-0.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-lg text-[7px] font-black uppercase tracking-widest border border-amber-500/20">
                   Verified Topper
                 </div>
               )}
             </div>
-            <div className="flex items-center gap-1.5 mt-0.5 text-[9px] font-bold text-gray-400 uppercase tracking-tighter">
+            <div className="flex items-center gap-2 mt-1 text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
                <span>{otherSales} sales</span>
-               <span className="h-1 w-1 rounded-full bg-gray-200"></span>
+               <span className="h-1 w-1 rounded-full bg-border"></span>
                <span>{otherRating} rating</span>
-               <span className="h-1 w-1 rounded-full bg-gray-200"></span>
+               <span className="h-1 w-1 rounded-full bg-border"></span>
                {isOnline ? (
-                 <span className="text-emerald-500 font-black">Online now</span>
+                 <span className="text-emerald-500 font-black">Online</span>
                ) : (
                  <span className="truncate">Last seen {formatLastSeen(lastSeenAt)}</span>
                )}
@@ -83,7 +83,7 @@ export function ChatHeader({ conversation, onBack, onAction }: ChatHeaderProps) 
         <Button 
           variant="ghost" 
           size="icon" 
-          className="h-10 w-10 text-[#1a2744] hover:bg-gray-100 rounded-full"
+          className="h-11 w-11 text-foreground hover:bg-muted rounded-full transition-all active:scale-90"
           onClick={() => setShowMenu(!showMenu)}
         >
           <MoreVertical className="h-5 w-5" />
@@ -92,30 +92,30 @@ export function ChatHeader({ conversation, onBack, onAction }: ChatHeaderProps) 
         {showMenu && (
           <>
             <div className="fixed inset-0 z-40" onClick={() => setShowMenu(false)} />
-            <div className="absolute right-0 top-12 w-48 bg-white rounded-2xl shadow-2xl border border-gray-100 p-2 z-50 animate-in fade-in zoom-in-95 duration-200">
+            <div className="absolute right-0 top-14 w-56 bg-card rounded-[2rem] shadow-2xl border border-border/50 p-3 z-50 animate-in fade-in zoom-in-95 duration-300">
               <button 
                 onClick={() => { onAction(conversation.is_archived ? 'unarchive' : 'archive'); setShowMenu(false); }}
-                className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-[#1a2744] hover:bg-gray-50 rounded-xl transition-colors"
+                className="w-full text-left px-5 py-3.5 text-[10px] font-black uppercase tracking-widest text-foreground hover:bg-muted rounded-2xl transition-all active:scale-[0.98]"
               >
                 {conversation.is_archived ? 'Unarchive Chat' : 'Archive Chat'}
               </button>
               {conversation.seller_id === conversation.current_user_id && conversation.listing_status === 'available' && (
                 <button 
                   onClick={() => { onAction('mark_sold'); setShowMenu(false); }}
-                  className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-emerald-600 hover:bg-emerald-50 rounded-xl transition-colors"
+                  className="w-full text-left px-5 py-3.5 text-[10px] font-black uppercase tracking-widest text-emerald-500 hover:bg-emerald-500/10 rounded-2xl transition-all active:scale-[0.98]"
                 >
                   Mark as Sold
                 </button>
               )}
               <button 
                 onClick={() => { onAction('report'); setShowMenu(false); }}
-                className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-orange-500 hover:bg-orange-50 rounded-xl transition-colors"
+                className="w-full text-left px-5 py-3.5 text-[10px] font-black uppercase tracking-widest text-amber-500 hover:bg-amber-500/10 rounded-2xl transition-all active:scale-[0.98]"
               >
                 Report User
               </button>
               <button 
                 onClick={() => { onAction('block'); setShowMenu(false); }}
-                className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-red-500 hover:bg-red-50 rounded-xl transition-colors"
+                className="w-full text-left px-5 py-3.5 text-[10px] font-black uppercase tracking-widest text-danger hover:bg-danger/10 rounded-2xl transition-all active:scale-[0.98]"
               >
                 Block User
               </button>

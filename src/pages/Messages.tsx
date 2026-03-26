@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { API_URL } from '@/config';
+import { API_BASE_URL, API_URL } from '@/config';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { MessageSquare, Trash2, Search, X, ChevronUp, ChevronDown, AlertCircle } from 'lucide-react';
@@ -50,6 +50,65 @@ export function Messages() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const socketRef = useRef<Socket | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!window.visualViewport || !containerRef.current) return;
+
+    const container = containerRef.current;
+    
+    // Initial setup for persistent fixed layout - Now using 100dvh because BottomNav is hidden
+    container.style.setProperty('--chat-height', '100dvh');
+    container.style.setProperty('--chat-top', '0px');
+    container.style.setProperty('--chat-position', 'fixed');
+    container.style.setProperty('--chat-z-index', '50');
+    container.style.setProperty('--chat-pb', 'calc(env(safe-area-inset-bottom) + 16px)');
+
+    const handleFocus = () => {
+      // Proactively reset any browser-initiated scroll jump
+      window.scrollTo(0, 0);
+      document.body.scrollTo(0, 0);
+    };
+
+    let rafId: number;
+
+    const handleResize = () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      
+      rafId = requestAnimationFrame(() => {
+        if (window.visualViewport) {
+          const vh = window.visualViewport.height;
+          const offsetTop = window.visualViewport.offsetTop;
+          const isKeyboardOpen = vh < window.innerHeight * 0.8;
+          
+          if (isKeyboardOpen) {
+            container.style.setProperty('--chat-height', `${vh}px`);
+            container.style.setProperty('--chat-top', `${offsetTop}px`);
+            container.style.setProperty('--chat-z-index', '100');
+            container.style.setProperty('--chat-pb', '0px');
+            document.body.style.overflow = 'hidden';
+          } else {
+            container.style.setProperty('--chat-height', '100dvh');
+            container.style.setProperty('--chat-top', '0px');
+            container.style.setProperty('--chat-z-index', '50');
+            container.style.setProperty('--chat-pb', 'calc(env(safe-area-inset-bottom) + 16px)');
+            document.body.style.overflow = '';
+          }
+        }
+      });
+    };
+
+    window.addEventListener('focusin', handleFocus);
+    window.visualViewport.addEventListener('resize', handleResize);
+    window.visualViewport.addEventListener('scroll', handleResize);
+    return () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      window.removeEventListener('focusin', handleFocus);
+      window.visualViewport?.removeEventListener('resize', handleResize);
+      window.visualViewport?.removeEventListener('scroll', handleResize);
+      document.body.style.overflow = '';
+    };
+  }, []);
 
   useEffect(() => {
     if (user && jwt) {
@@ -458,8 +517,19 @@ export function Messages() {
 
   if (convId) {
     return (
-      <div className="flex flex-col h-[calc(100vh-56px-80px)] bg-white relative animate-in fade-in duration-300">
-        <div className="sticky top-0 z-30">
+      <div 
+        ref={containerRef}
+        style={{ 
+          height: 'var(--chat-height, calc(100dvh - 80px))',
+          top: 'var(--chat-top, 0px)',
+          position: 'var(--chat-position, fixed)' as any,
+          width: '100%',
+          zIndex: 'var(--chat-z-index, 50)' as any,
+          left: 0
+        }}
+        className="flex flex-col bg-background animate-in fade-in duration-300 overflow-hidden"
+      >
+        <div className="shrink-0 z-30 bg-card/80 backdrop-blur-xl border-b border-border/50">
           <ChatHeader 
             conversation={currentConv} 
             onBack={() => navigate('/messages')} 
@@ -467,7 +537,7 @@ export function Messages() {
           />
         </div>
 
-        <div className="sticky top-[64px] z-20">
+        <div className="shrink-0 z-20 border-b border-border/50 bg-card/50 backdrop-blur-md">
           <ListingContextBar 
             listing={currentConv ? {
               id: currentConv.listing_id,
@@ -475,7 +545,7 @@ export function Messages() {
               subject_code: currentConv.listing_subject_code,
               price: currentConv.listing_price,
               status: currentConv.listing_status,
-              image: currentConv.listing_image
+              image: currentConv.listing_image ? (currentConv.listing_image.startsWith('http') ? currentConv.listing_image : `${API_BASE_URL}${currentConv.listing_image}`) : undefined
             } : null}
             onScheduleMeet={handleScheduleMeet}
             isSeller={currentConv?.seller_id === user?.id}
@@ -484,7 +554,7 @@ export function Messages() {
         </div>
 
         {safetyCheckin && (
-          <div className="z-20 bg-white">
+          <div className="z-20 bg-background">
             <SafetyCheckinCard 
               meetupId={safetyCheckin.id} 
               onConfirm={handleConfirmMeetup} 
@@ -494,21 +564,21 @@ export function Messages() {
         )}
 
         {showChatSearch && (
-          <div className="bg-white border-b border-gray-100 p-2 flex items-center gap-2 animate-in slide-in-from-top duration-200 z-10 sticky top-[128px]">
-            <Search className="w-4 h-4 text-gray-400 ml-2" />
+          <div className="shrink-0 z-10 bg-card/80 backdrop-blur-md border-b border-border p-2 flex items-center gap-2 animate-in slide-in-from-top duration-200">
+            <Search className="w-4 h-4 text-muted-foreground ml-2" />
             <input 
               autoFocus
               type="text" 
               value={chatSearchQuery}
               onChange={(e) => performChatSearch(e.target.value)}
               placeholder="Search messages..."
-              className="flex-1 bg-transparent border-none focus:ring-0 text-sm py-1 font-bold"
+              className="flex-1 bg-transparent border-none focus:ring-0 text-sm py-1 font-black text-foreground"
             />
             {chatSearchResults.length > 0 && (
-              <div className="flex items-center gap-1 text-[10px] font-black text-gray-400 uppercase tracking-tighter">
+              <div className="flex items-center gap-1 text-[10px] font-black text-muted-foreground uppercase tracking-tighter">
                 <span>{currentChatSearchIndex + 1}/{chatSearchResults.length}</span>
-                <button onClick={prevChatSearch} className="p-1 hover:bg-gray-100 rounded-lg"><ChevronUp className="w-3 h-3" /></button>
-                <button onClick={nextChatSearch} className="p-1 hover:bg-gray-100 rounded-lg"><ChevronDown className="w-3 h-3" /></button>
+                <button onClick={prevChatSearch} className="p-1 hover:bg-muted rounded-lg"><ChevronUp className="w-3 h-3" /></button>
+                <button onClick={nextChatSearch} className="p-1 hover:bg-muted rounded-lg"><ChevronDown className="w-3 h-3" /></button>
               </div>
             )}
             <button 
@@ -520,7 +590,7 @@ export function Messages() {
           </div>
         )}
         
-        <div className="flex-1 overflow-y-auto p-4 space-y-6 scrollbar-hide bg-white">
+        <div className="flex-1 overflow-y-auto p-4 space-y-6 scrollbar-hide bg-background">
           {loading ? (
              <div className="space-y-4">
                 <Skeleton className="h-10 w-1/3 rounded-xl ml-auto" />
@@ -564,10 +634,10 @@ export function Messages() {
               {/* Typing Indicator Bubble */}
               {isTyping && (
                 <div className="flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2">
-                  <div className="flex gap-1.5 p-3.5 bg-gray-50 rounded-[2rem] rounded-bl-none border border-gray-100 shadow-sm">
-                    <div className="w-1.5 h-1.5 bg-gray-300 rounded-full animate-bounce [animation-delay:0s]" />
-                    <div className="w-1.5 h-1.5 bg-gray-300 rounded-full animate-bounce [animation-delay:0.2s]" />
-                    <div className="w-1.5 h-1.5 bg-gray-300 rounded-full animate-bounce [animation-delay:0.4s]" />
+                  <div className="flex gap-1.5 p-3.5 bg-muted rounded-[2rem] rounded-bl-none border border-border shadow-sm">
+                    <div className="w-1.5 h-1.5 bg-muted-foreground/30 rounded-full animate-bounce [animation-delay:0s]" />
+                    <div className="w-1.5 h-1.5 bg-muted-foreground/30 rounded-full animate-bounce [animation-delay:0.2s]" />
+                    <div className="w-1.5 h-1.5 bg-muted-foreground/30 rounded-full animate-bounce [animation-delay:0.4s]" />
                   </div>
                 </div>
               )}
@@ -577,7 +647,7 @@ export function Messages() {
         </div>
 
         {showQuickReplies && (
-          <div className="px-4 py-3 flex gap-2 overflow-x-auto scrollbar-hide bg-white border-t border-gray-50 animate-in slide-in-from-bottom duration-300">
+          <div className="px-4 py-4 flex gap-3 overflow-x-auto scrollbar-hide bg-background border-t border-border/30 animate-in slide-in-from-bottom duration-300">
             {[
               "Is this available?", 
               `Best price ₹${Math.round((currentConv?.listing_price || 0) * 0.8 / 10) * 10}?`, 
@@ -590,7 +660,7 @@ export function Messages() {
                   setPrefilledText(reply);
                   setShowQuickReplies(false);
                 }}
-                className="shrink-0 px-5 py-2.5 bg-gray-50 hover:bg-gray-100 rounded-full border border-gray-100 text-[10px] font-black uppercase tracking-widest text-[#1a2744] transition-all active:scale-95 shadow-sm"
+                className="shrink-0 px-6 py-3 bg-card hover:bg-muted rounded-full border border-border text-[10px] font-black uppercase tracking-widest text-foreground transition-all active:scale-95 shadow-sm"
               >
                 {reply}
               </button>
@@ -598,12 +668,14 @@ export function Messages() {
           </div>
         )}
 
-        <MessageInput 
-          onSend={handleSendMessage} 
-          conversationId={convId} 
-          initialValue={prefilledText}
-          onInputValueChange={setPrefilledText}
-        />
+        <div className="shrink-0 z-10 bg-background/95 backdrop-blur-2xl">
+          <MessageInput 
+            onSend={handleSendMessage} 
+            conversationId={convId} 
+            initialValue={prefilledText}
+            onInputValueChange={setPrefilledText}
+          />
+        </div>
 
         <MeetupScheduler 
           isOpen={isSchedulerOpen} 
@@ -662,11 +734,11 @@ export function Messages() {
   });
 
   return (
-    <div className="w-full max-w-screen-sm mx-auto space-y-4 animate-in fade-in duration-300 px-4 pb-20">
-      <div className="flex items-center justify-between py-2">
-        <h1 className="text-3xl font-black text-[#1a2744]">Messages</h1>
+    <div className="w-full max-w-screen-sm mx-auto space-y-6 animate-in fade-in duration-300 px-6 pb-20">
+      <div className="flex items-center justify-between py-6">
+        <h1 className="text-3xl font-black text-foreground tracking-tight">Messages</h1>
         {conversations.length > 0 && (
-          <div className="bg-[#1a2744]/5 px-4 py-2 rounded-2xl text-[#1a2744] text-[10px] font-black uppercase tracking-widest border border-[#1a2744]/10">
+          <div className="bg-primary/5 px-4 py-2 rounded-2xl text-primary text-[10px] font-black uppercase tracking-widest border border-primary/10 backdrop-blur-sm">
             {conversations.length} Threads
           </div>
         )}
@@ -675,21 +747,21 @@ export function Messages() {
       {/* Search Input */}
       <div className="relative group">
         <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
-          <Search className="h-4 w-4 text-gray-400 group-focus-within:text-[#1a2744] transition-colors" />
+          <Search className="h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
         </div>
         <input 
           type="text" 
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search name, listing, or message..."
-          className="w-full h-14 bg-white border border-gray-100 rounded-2xl pl-12 pr-12 text-sm font-bold shadow-sm focus:ring-2 focus:ring-[#1a2744]/10 focus:border-[#1a2744]/20 transition-all outline-none"
+          className="w-full h-16 bg-card border border-border rounded-[2rem] pl-12 pr-12 text-sm font-black shadow-sm focus:ring-4 focus:ring-primary/10 focus:border-primary/20 transition-all outline-none placeholder:text-muted-foreground/30"
         />
         {searchQuery && (
           <button 
             onClick={() => setSearchQuery('')}
             className="absolute inset-y-0 right-5 flex items-center"
           >
-            <X className="h-4 w-4 text-gray-400 hover:text-red-500 transition-colors" />
+            <X className="h-4 w-4 text-muted-foreground hover:text-danger transition-colors" />
           </button>
         )}
       </div>
@@ -702,10 +774,10 @@ export function Messages() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap border ${
+              className={`px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap border ${
                 isActive 
-                  ? 'bg-[#1a2744] text-white border-[#1a2744] shadow-lg shadow-[#1a2744]/20' 
-                  : 'bg-white text-gray-500 border-gray-100 hover:border-gray-200'
+                  ? 'bg-primary text-white border-primary shadow-xl shadow-primary/20 scale-105' 
+                  : 'bg-card text-muted-foreground border-border hover:border-primary/30'
               }`}
             >
               {tab}
@@ -717,41 +789,41 @@ export function Messages() {
       {loading ? (
         <div className="space-y-4">
           {[1,2,3,4].map(n => (
-            <div key={n} className="h-24 bg-white border border-gray-100 rounded-[12px] p-4 flex gap-4">
-              <Skeleton className="h-12 w-12 rounded-full shrink-0" />
-              <div className="flex-1 space-y-2">
-                <Skeleton className="h-4 w-1/3" />
-                <Skeleton className="h-3 w-1/2" />
-                <Skeleton className="h-3 w-full" />
+            <div key={n} className="h-28 bg-card border border-border/50 rounded-[2.5rem] p-6 flex gap-6">
+              <Skeleton className="h-14 w-14 rounded-2xl shrink-0" />
+              <div className="flex-1 space-y-3">
+                <Skeleton className="h-5 w-1/3 rounded-lg" />
+                <Skeleton className="h-4 w-1/2 rounded-lg" />
+                <Skeleton className="h-4 w-full rounded-lg" />
               </div>
             </div>
           ))}
         </div>
       ) : conversations.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-[2rem] border border-gray-100 px-6 space-y-4">
-          <div className="bg-[#1a2744]/5 h-20 w-20 rounded-full flex items-center justify-center mx-auto">
-             <MessageSquare className="h-10 w-10 text-[#1a2744]/40" />
+        <div className="text-center py-24 bg-card rounded-[3.5rem] border border-border px-8 space-y-8 shadow-xl shadow-black/5">
+          <div className="bg-primary/5 h-24 w-24 rounded-3xl flex items-center justify-center mx-auto shadow-inner">
+             <MessageSquare className="h-12 w-12 text-primary/40" />
           </div>
-          <div className="space-y-1">
-            <h3 className="text-lg font-black text-[#1a2744]">No conversations yet</h3>
-            <p className="text-xs text-gray-400 font-bold max-w-[200px] mx-auto">Browse notes and contact a seller to get started</p>
+          <div className="space-y-3">
+            <h3 className="text-xl font-black text-foreground tracking-tight">No conversations yet</h3>
+            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest max-w-[200px] mx-auto leading-relaxed">Browse notes and contact a seller to get started</p>
           </div>
-          <Button onClick={() => navigate('/browse')} className="bg-[#1a2744] hover:bg-[#1a2744]/90 text-white rounded-xl px-8 h-12 text-[10px] font-black uppercase tracking-widest">
+          <Button onClick={() => navigate('/browse')} className="bg-primary hover:bg-primary/90 text-white rounded-[2rem] px-10 h-16 text-xs font-black uppercase tracking-widest shadow-xl shadow-primary/20 transition-all active:scale-95">
             Browse Notes
           </Button>
         </div>
       ) : filteredConversations.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-[2rem] border border-gray-100 px-6 space-y-4">
-          <div className="bg-gray-50 h-16 w-16 rounded-full flex items-center justify-center mx-auto">
-             <AlertCircle className="h-8 w-8 text-gray-300" />
+        <div className="text-center py-24 bg-card rounded-[3.5rem] border border-border px-8 space-y-8 shadow-xl shadow-black/5">
+          <div className="bg-muted h-20 w-20 rounded-3xl flex items-center justify-center mx-auto shadow-inner">
+             <AlertCircle className="h-10 w-10 text-muted-foreground/30" />
           </div>
-          <div className="space-y-1">
-            <h3 className="text-base font-black text-[#1a2744]">
+          <div className="space-y-3">
+            <h3 className="text-lg font-black text-foreground tracking-tight">
               {activeTab === 'Unread' ? 'All caught up' : 
                activeTab === 'Buying' ? "No buying chats" :
                activeTab === 'Selling' ? "No selling chats" : "No results found"}
             </h3>
-            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">
+            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest leading-relaxed">
               {activeTab === 'Unread' ? 'No unread messages' : 
                activeTab === 'Buying' ? "You haven't contacted any sellers yet" :
                activeTab === 'Selling' ? "No one has messaged you about your listings" : "Try a different search or clear filters"}
@@ -765,7 +837,7 @@ export function Messages() {
               else setActiveTab('All');
             }} 
             variant="outline"
-            className="rounded-xl px-6 h-10 text-[10px] font-black uppercase tracking-widest border-gray-200"
+            className="rounded-2xl px-10 h-14 text-[10px] font-black uppercase tracking-widest border-border hover:bg-muted transition-all active:scale-95"
           >
             {searchQuery ? 'Clear Search' : 
              activeTab === 'Buying' ? 'Find Notes' :
@@ -786,7 +858,7 @@ export function Messages() {
               <div 
                 key={conv.id} 
                 onClick={() => navigate(`/messages?conv=${conv.id}`)}
-                className="group relative bg-white border border-gray-100 rounded-[12px] p-4 flex gap-4 hover:shadow-xl hover:shadow-[#1a2744]/5 hover:border-[#1a2744]/10 transition-all cursor-pointer active:scale-[0.98]"
+                className="group relative bg-card border border-border/50 rounded-[2rem] p-5 flex gap-5 hover:shadow-2xl hover:shadow-primary/5 hover:border-primary/20 transition-all cursor-pointer active:scale-[0.98] animate-in fade-in duration-500"
               >
                 {/* Avatar with Online Dot */}
                 <div className="relative shrink-0">

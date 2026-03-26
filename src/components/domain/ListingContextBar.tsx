@@ -24,35 +24,35 @@ export function ListingContextBar({ listing, isSeller, onScheduleMeet, onAction 
   const isSold = listing.status === 'sold';
 
   return (
-    <div className="w-full bg-white/95 backdrop-blur-sm border-b border-gray-100 px-4 py-3 flex items-center justify-between shadow-sm animate-in slide-in-from-top duration-300">
+    <div className="w-full bg-card/80 backdrop-blur-md border-b border-border/50 px-6 py-4 flex items-center justify-between shadow-xl shadow-black/5 animate-in slide-in-from-top duration-300">
       <div 
         onClick={() => !isSold && navigate(`/listing/${listing.id}`)}
-        className={`flex items-center gap-3 flex-1 min-w-0 ${!isSold ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''}`}
+        className={`flex items-center gap-4 flex-1 min-w-0 ${!isSold ? 'cursor-pointer hover:opacity-80 transition-all active:scale-[0.98]' : ''}`}
       >
-        <div className="h-10 w-10 rounded-lg overflow-hidden bg-gray-50 flex items-center justify-center shrink-0 border border-gray-100">
+        <div className="h-12 w-12 rounded-xl overflow-hidden bg-muted flex items-center justify-center shrink-0 border border-border/50 shadow-inner">
           {listing.image ? (
             <img src={listing.image} alt="Listing" className="h-full w-full object-cover" />
           ) : (
-            <FileText className="h-5 w-5 text-gray-300" />
+            <FileText className="h-6 w-6 text-muted-foreground/30" />
           )}
         </div>
         <div className="flex-1 min-w-0">
-          <h4 className="text-[11px] font-black text-[#1a2744] truncate uppercase tracking-tight leading-tight">
+          <h4 className="text-xs font-black text-foreground truncate uppercase tracking-tight leading-none mb-1">
             {listing.title}
           </h4>
-          <div className="flex items-center gap-2 mt-0.5 whitespace-nowrap overflow-hidden">
-            <span className="text-[10px] font-bold text-emerald-600 shrink-0">₹{listing.price}</span>
-            <span className="text-[8px] text-gray-400 font-black uppercase tracking-widest truncate shrink-0">• {listing.subject_code}</span>
+          <div className="flex items-center gap-2 mt-1 whitespace-nowrap overflow-hidden">
+            <span className="text-[11px] font-black text-emerald-500 shrink-0 tabular-nums">₹{listing.price}</span>
+            <span className="text-[8px] text-muted-foreground font-black uppercase tracking-widest truncate shrink-0 opacity-60">• {listing.subject_code}</span>
             {isSold ? (
-              <span className="px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded text-[7px] font-black uppercase tracking-widest border border-gray-200 shrink-0">Sold</span>
+              <span className="px-2 py-0.5 bg-muted text-muted-foreground rounded-lg text-[7px] font-black uppercase tracking-widest border border-border shrink-0">Sold</span>
             ) : (
-              <span className="px-1.5 py-0.5 bg-emerald-50 text-emerald-600 rounded text-[7px] font-black uppercase tracking-widest border border-emerald-100 shrink-0">Available</span>
+              <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-500 rounded-lg text-[7px] font-black uppercase tracking-widest border border-emerald-500/20 shrink-0">Available</span>
             )}
           </div>
         </div>
       </div>
 
-      <div className="flex items-center gap-2 ml-4">
+      <div className="flex items-center gap-3 ml-4">
         {!isSold && (
           <>
             {isSeller ? (
@@ -61,10 +61,10 @@ export function ListingContextBar({ listing, isSeller, onScheduleMeet, onAction 
                   e.stopPropagation();
                   onAction?.('mark_sold');
                 }}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl h-9 px-4 text-[9px] font-black uppercase tracking-widest shadow-lg shadow-emerald-600/10"
+                className="bg-emerald-500 hover:bg-emerald-600 text-white rounded-[1.25rem] h-11 px-6 text-[9px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/10 transition-all active:scale-95"
               >
-                <CheckCircle2 className="h-3.5 w-3.5 mr-1.5" />
-                Sold
+                <CheckCircle2 className="h-4 w-4 mr-2" />
+                Mark Sold
               </Button>
             ) : (
                 <Button 
@@ -72,9 +72,9 @@ export function ListingContextBar({ listing, isSeller, onScheduleMeet, onAction 
                   e.stopPropagation();
                   onAction?.('mark_sold'); // Currently using same logic as intent
                 }}
-                className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-9 px-4 text-[9px] font-black uppercase tracking-widest shadow-lg shadow-blue-600/10"
+                className="bg-primary hover:bg-primary/90 text-white rounded-[1.25rem] h-11 px-6 text-[9px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 transition-all active:scale-95"
               >
-                <ShoppingBag className="h-3.5 w-3.5 mr-1.5" />
+                <ShoppingBag className="h-4 w-4 mr-2" />
                 Purchase
               </Button>
             )}
@@ -85,18 +85,18 @@ export function ListingContextBar({ listing, isSeller, onScheduleMeet, onAction 
                 onScheduleMeet();
               }}
               variant="outline"
-              className="border-gray-200 hover:bg-gray-50 text-[#1a2744] rounded-xl h-9 px-4 text-[9px] font-black uppercase tracking-widest"
+              className="border-border/50 bg-background/50 hover:bg-muted text-foreground rounded-[1.25rem] h-11 px-6 text-[9px] font-black uppercase tracking-widest transition-all active:scale-95"
             >
-              <Calendar className="h-3.5 w-3.5 mr-1.5" />
+              <Calendar className="h-4 w-4 mr-2" />
               Meet
             </Button>
           </>
         )}
         
         {isSold && (
-          <div className="flex items-center gap-1.5 px-3 py-2 bg-gray-50 rounded-xl border border-gray-200">
-            <CheckCircle2 className="h-3.5 w-3.5 text-gray-400" />
-            <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Completed</span>
+          <div className="flex items-center gap-2 px-4 py-2.5 bg-muted/50 rounded-[1.25rem] border border-border/50 shadow-inner">
+            <CheckCircle2 className="h-4 w-4 text-muted-foreground/40" />
+            <span className="text-[9px] font-black text-muted-foreground/40 uppercase tracking-widest">Completed</span>
           </div>
         )}
       </div>

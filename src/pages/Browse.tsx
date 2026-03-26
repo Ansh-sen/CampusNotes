@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { API_URL } from '@/config';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { SearchBar } from '@/components/domain/SearchBar';
 import { FilterPanel } from '@/components/domain/FilterPanel';
@@ -128,32 +128,32 @@ export function Browse() {
   };
 
   return (
-    <div className="w-full max-w-screen-sm mx-auto min-h-screen bg-[#f8f9fc] pb-24">
+    <div className="w-full max-w-screen-sm mx-auto min-h-screen bg-background pb-24">
       {/* Header */}
-      <div className="bg-white border-b border-gray-100 sticky top-0 z-40 px-4 pt-4 pb-4 space-y-4 shadow-sm">
+      <div className="bg-card/80 backdrop-blur-xl border-b border-border/50 sticky top-0 z-40 px-4 pt-10 pb-6 space-y-6 shadow-2xl shadow-black/5">
         <div className="flex items-center gap-4">
           <button 
             onClick={() => navigate('/')}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            className="h-10 w-10 flex items-center justify-center bg-muted hover:bg-muted/80 rounded-xl transition-all active:scale-90 border border-border/50 shadow-inner"
           >
-            <ArrowLeft className="h-5 w-5 text-[#1a2744]" />
+            <ArrowLeft className="h-5 w-5 text-foreground" />
           </button>
           <div className="flex-1">
-            <h1 className="text-xl font-black text-[#1a2744] uppercase tracking-tight">Browse Notes</h1>
-            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-              {loading ? 'Searching...' : `${listings.length} Results found`}
+            <h1 className="text-2xl font-black text-foreground uppercase tracking-tighter">Browse Notes</h1>
+            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] opacity-60">
+              {loading ? 'Scanning Campus...' : `${listings.length} Results matched`}
             </p>
           </div>
-          <div className="flex items-center gap-1 bg-gray-50 p-1 rounded-xl">
+          <div className="flex items-center gap-1 bg-muted/50 p-1 rounded-2xl border border-border/50 shadow-inner">
             <button 
               onClick={() => setViewMode('grid')}
-              className={cn("p-1.5 rounded-lg transition-all", viewMode === 'grid' ? "bg-white shadow-sm text-blue-600" : "text-gray-400")}
+              className={cn("p-2 rounded-xl transition-all duration-500", viewMode === 'grid' ? "bg-primary shadow-lg text-white scale-110" : "text-muted-foreground hover:text-foreground")}
             >
               <LayoutGrid className="h-4 w-4" />
             </button>
             <button 
               onClick={() => setViewMode('list')}
-              className={cn("p-1.5 rounded-lg transition-all", viewMode === 'list' ? "bg-white shadow-sm text-blue-600" : "text-gray-400")}
+              className={cn("p-2 rounded-xl transition-all duration-500", viewMode === 'list' ? "bg-primary shadow-lg text-white scale-110" : "text-muted-foreground hover:text-foreground")}
             >
               <List className="h-4 w-4" />
             </button>
@@ -169,11 +169,11 @@ export function Browse() {
           </div>
           <button 
             onClick={() => setIsFilterPanelOpen(true)}
-            className="h-12 w-12 flex items-center justify-center bg-white border border-gray-100 rounded-2xl shadow-sm hover:border-gray-200 hover:bg-gray-50 transition-all active:scale-95 relative shrink-0"
+            className="h-14 w-14 flex items-center justify-center bg-card border border-border/50 rounded-2xl shadow-xl hover:border-primary/50 hover:bg-muted transition-all active:scale-90 relative shrink-0 group"
           >
-            <SlidersHorizontal className="h-5 w-5 text-[#1a2744]" />
+            <SlidersHorizontal className="h-6 w-6 text-foreground group-hover:text-primary transition-colors" />
             {Object.values(filters).filter(v => v && v !== 'all' && v !== 'latest').length > 0 && (
-               <div className="absolute -top-1 -right-1 h-4 w-4 bg-blue-600 rounded-full border-2 border-white" />
+               <div className="absolute -top-1 -right-1 h-5 w-5 bg-primary rounded-full border-4 border-card shadow-lg animate-in zoom-in" />
             )}
           </button>
         </div>
@@ -181,42 +181,42 @@ export function Browse() {
 
       <div className="p-6">
         {loading ? (
-          <div className={cn(
-            "grid gap-4",
-            viewMode === 'grid' ? "grid-cols-2" : "grid-cols-1"
-          )}>
+          <div className="grid grid-cols-1 gap-6">
             {[1, 2, 3, 4, 5, 6].map(n => (
-              <div key={n} className="space-y-2">
+              <div key={n} className="space-y-4 bg-card p-4 rounded-[2rem] border border-border/50 shadow-sm animate-pulse">
                 <Skeleton className={cn("rounded-2xl w-full", viewMode === 'grid' ? "aspect-square" : "h-24")} />
-                <Skeleton className="h-4 w-3/4 rounded" />
-                <Skeleton className="h-3 w-1/2 rounded" />
+                <Skeleton className="h-6 w-3/4 rounded-lg" />
+                <Skeleton className="h-4 w-1/2 rounded-lg" />
               </div>
             ))}
           </div>
         ) : listings.length === 0 ? (
-          <div className="py-20 text-center space-y-6 bg-white rounded-[2rem] border border-gray-100 px-6">
-            <div className="bg-gray-50 h-20 w-20 rounded-full flex items-center justify-center mx-auto">
-              <Search className="h-10 w-10 text-gray-300" />
+          <div className="py-24 text-center space-y-8 bg-card rounded-[3rem] border border-border/50 px-8 shadow-xl shadow-black/5 relative overflow-hidden group">
+            <div className="bg-muted h-24 w-24 rounded-[2.5rem] flex items-center justify-center mx-auto shadow-inner group-hover:rotate-12 transition-transform duration-500">
+              <Search className="h-12 w-12 text-muted-foreground/20" />
             </div>
-            <div className="space-y-2">
-              <h3 className="text-xl font-black text-[#1a2744]">No results found</h3>
-              <p className="text-sm text-gray-400 font-bold max-w-xs mx-auto uppercase tracking-tight">Try adjusting your filters or search terms to find what you're looking for.</p>
+            <div className="space-y-3 relative z-10">
+              <h3 className="text-2xl font-black text-foreground tracking-tight">Nothing Found</h3>
+              <p className="text-xs text-muted-foreground font-black max-w-[200px] mx-auto uppercase tracking-widest opacity-60 leading-relaxed">Try adjusting your filters to discover more hidden gems.</p>
             </div>
             <Button 
               onClick={clearFilters}
               variant="outline"
-              className="rounded-xl px-8 h-12 text-[10px] font-black uppercase tracking-widest border-gray-200"
+              className="rounded-2xl px-10 h-14 text-[10px] font-black uppercase tracking-widest border-border/50 bg-muted hover:bg-primary hover:text-white hover:border-primary transition-all active:scale-95"
             >
-              Clear All Filters
+              Reset Filters
             </Button>
+            <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
           </div>
         ) : (
           <div className={cn(
-            "grid gap-x-4 gap-y-6",
+            "grid gap-4 transition-all duration-500",
             viewMode === 'grid' ? "grid-cols-2" : "grid-cols-1"
           )}>
-            {listings.map((listing, idx) => (
-              <ListingCard key={listing.id} listing={listing} index={idx} />
+            {listings.map((listing: any, idx: number) => (
+              <Link key={listing.id} to={`/listing/${listing.id}`} className="animate-in fade-in slide-in-from-bottom-5 duration-500" style={{ animationDelay: `${idx * 50}ms` }}>
+                <ListingCard listing={listing} index={idx} viewMode={viewMode} />
+              </Link>
             ))}
           </div>
         )}

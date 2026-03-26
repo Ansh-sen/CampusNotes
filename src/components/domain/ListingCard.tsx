@@ -1,13 +1,15 @@
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { API_BASE_URL } from '@/config';
-import { FileText, CheckCircle } from 'lucide-react';
+import { FileText, CheckCircle, Share2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/components/ui/toast-provider';
 
-export function ListingCard({ listing, index = 0 }: { listing: any, index?: number }) {
+export function ListingCard({ listing, index = 0, viewMode = 'list' }: { listing: any, index?: number, viewMode?: 'grid' | 'list' }) {
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  const isGrid = viewMode === 'grid';
 
   // Handle listing_images which might be a JSON string or an array depending on the backend driver
   const images = typeof listing.listing_images === 'string' 
@@ -28,9 +30,9 @@ export function ListingCard({ listing, index = 0 }: { listing: any, index?: numb
 
   // AI score color logic - Updating to match search image (dark pills)
   const getAiScoreColor = (score: number) => {
-    if (score >= 8) return 'bg-green-600 text-white border-transparent';
-    if (score >= 6) return 'bg-amber-500 text-white border-transparent';
-    return 'bg-red-500 text-white border-transparent';
+    if (score >= 8) return 'bg-emerald-500 text-white border-white/20';
+    if (score >= 6) return 'bg-amber-500 text-white border-white/20';
+    return 'bg-danger text-white border-white/10';
   };
 
   const formattedAiScore = aiScore ? `${Math.round(aiScore / 10)}/10` : null;
@@ -54,94 +56,111 @@ export function ListingCard({ listing, index = 0 }: { listing: any, index?: numb
     }
   };
 
-  const bgColors = ['bg-blue-50', 'bg-green-50', 'bg-purple-50', 'bg-orange-50'];
+  const bgColors = ['bg-primary/5', 'bg-emerald-500/5', 'bg-indigo-500/5', 'bg-amber-500/5'];
   const bgColor = bgColors[index % bgColors.length];
 
   return (
     <Card 
       onClick={() => navigate(`/listing/${listing.id}`)}
-      className="group cursor-pointer overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 bg-white rounded-2xl flex flex-col h-full"
+      className={cn(
+        "group cursor-pointer overflow-hidden border border-border/50 shadow-sm hover:shadow-xl hover:shadow-primary/5 transition-all duration-500 bg-card rounded-[2rem] flex flex-col active:scale-[0.98]",
+        isGrid ? "h-full" : "h-auto"
+      )}
     >
       {/* Image Section */}
-      <div className={cn("relative aspect-[4/3] w-full overflow-hidden", bgColor)}>
+      <div className={cn("relative w-full overflow-hidden", isGrid ? "aspect-square" : "aspect-[21/9]", bgColor, "dark:bg-muted/20")}>
         {coverImage ? (
           <img 
             src={coverImage} 
             alt={listing.title} 
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
           />
         ) : (
-          <div className="flex flex-col h-full w-full items-center justify-center gap-2 bg-slate-100">
-            <FileText className="h-8 w-8 text-slate-400" />
-            <span className="text-xs font-bold text-slate-400">No image</span>
+          <div className="flex flex-col h-full w-full items-center justify-center gap-2 bg-muted/30">
+            <FileText className="h-8 w-8 text-muted-foreground/30" />
+            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">No preview</span>
           </div>
         )}
         
         {/* Badges Overlay */}
-        <div className="absolute inset-0 p-2 flex flex-col justify-between pointer-events-none">
-          <div className="flex justify-between items-start">
+        <div className="absolute inset-0 p-3 flex flex-col justify-between pointer-events-none">
+          <div className="flex justify-between items-start gap-2 flex-wrap">
             {aiScore !== null && aiScore !== undefined && (
-              <div className={cn("px-2 py-0.5 rounded-md text-[8px] font-black border flex items-center gap-1 shadow-sm uppercase tracking-tighter", getAiScoreColor(aiScore))}>
+              <div className={cn("px-2.5 py-1 rounded-lg text-[9px] font-black border flex items-center gap-1 shadow-md uppercase tracking-tighter backdrop-blur-md", getAiScoreColor(aiScore))}>
                 AI {formattedAiScore}
               </div>
             )}
-            {hasImages && (
-              <div className="bg-white/90 backdrop-blur-sm px-2 py-0.5 rounded-md shadow-sm border border-gray-100 flex items-center justify-center">
-                <span className="text-[8px] font-black text-gray-500 uppercase tracking-tighter">Preview</span>
-              </div>
+            {listing.material_type && (
+               <div className="bg-primary/90 backdrop-blur-md px-2.5 py-1 rounded-lg shadow-xl flex items-center justify-center border border-white/10">
+                 <span className="text-[9px] font-black text-white uppercase tracking-widest leading-none">{listing.material_type}</span>
+               </div>
             )}
           </div>
         </div>
       </div>
       
       {/* Content Section */}
-      <CardContent className="p-3 pb-4 flex-1 flex flex-col gap-2">
-        <div className="space-y-0.5">
-          <h3 className="line-clamp-1 font-bold text-sm text-[#1a2744] tracking-tight group-hover:text-blue-600 transition-colors">
+      <CardContent className={cn("p-6 flex-1 flex flex-col", isGrid ? "gap-4 p-4" : "gap-5")}>
+        <div className="space-y-2">
+          <h3 className={cn(
+            "line-clamp-2 font-black text-foreground tracking-tight group-hover:text-primary transition-colors uppercase leading-[1.1]",
+            isGrid ? "text-sm" : "text-lg"
+          )}>
             {listing.title}
           </h3>
-          <p className="text-[10px] font-medium text-gray-400 flex items-center gap-1.5 uppercase tracking-tight">
-            <span>{listing.subject_code || listing.course_code || 'GNR'}</span>
-            <span>-</span>
-            <span>Sem {listing.semester || 'N/A'}</span>
-          </p>
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-[9px] font-black text-primary/60 uppercase tracking-widest bg-primary/5 px-2 py-1 rounded-lg border border-primary/10">
+              {listing.subject_code || 'General Notes'}
+            </span>
+            <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest opacity-40">
+              SEM {listing.semester || 'N/A'}
+            </span>
+          </div>
         </div>
 
-        <div className="flex flex-wrap gap-1">
-          {isTopper && (
-            <div className="flex items-center gap-1 text-[9px] font-bold text-amber-600 bg-amber-50 w-fit px-2 py-0.5 rounded-full border border-amber-100">
-               Verified Topper
-            </div>
-          )}
-          {isVerified && (
-            <div className="flex items-center gap-1 text-[9px] font-bold text-blue-600 bg-blue-50 w-fit px-2 py-0.5 rounded-full border border-blue-100">
-               <CheckCircle size={10} fill="currentColor" className="text-blue-500" />
-               Verified Student
-            </div>
-          )}
-        </div>
+        {!isGrid && (
+          <div className="flex flex-wrap gap-2">
+            {isTopper && (
+              <div className="flex items-center gap-2 text-[8px] font-black text-amber-500 bg-amber-500/10 px-3 py-1.5 rounded-xl border border-amber-500/20 uppercase tracking-widest shadow-sm">
+                 Topper Verified
+              </div>
+            )}
+            {isVerified && (
+              <div className="flex items-center gap-2 text-[8px] font-black text-blue-500 bg-blue-500/10 px-3 py-1.5 rounded-xl border border-blue-500/20 uppercase tracking-widest shadow-sm">
+                 <CheckCircle size={10} fill="currentColor" className="text-blue-500" />
+                 ID Verified
+              </div>
+            )}
+          </div>
+        )}
 
-        <div className="flex items-center justify-between mt-auto pt-1">
-          <div className="flex items-center gap-2">
-            <span className="text-[#1a2744] font-black text-base leading-none">
-              ₹{listing.price > 0 ? listing.price : 'Free'}
+        <div className={cn("flex items-center justify-between mt-auto border-t border-border/50", isGrid ? "pt-4" : "pt-6")}>
+          <div className="flex flex-col">
+            <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest opacity-40 mb-1">Price</span>
+            <span className={cn("text-foreground font-black leading-none tracking-tighter tabular-nums", isGrid ? "text-lg" : "text-2xl")}>
+              ₹{listing.price > 0 ? listing.price : 'FREE'}
             </span>
           </div>
           
-          <div className={cn("text-[9px] px-2 py-1 rounded-full font-black uppercase tracking-tight leading-none", 
-            listing.status === 'available' ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+          <div className={cn("px-3 py-1.5 rounded-xl text-[8px] font-black uppercase tracking-widest leading-none shadow-inner border", 
+            listing.status === 'available' 
+              ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" 
+              : "bg-danger/10 text-danger border-danger/20"
           )}>
-            {listing.status === 'available' ? 'Available' : 'Sold'}
+            {listing.status === 'available' ? 'Available' : 'Sold out'}
           </div>
         </div>
 
-        {/* Share Button (Image shows list style button for 'Available', pill for 'Sold') */}
-        <button 
-          onClick={handleShare}
-          className="w-full mt-1 py-1.5 px-3 bg-blue-50 text-blue-600 text-[10px] font-black rounded-lg hover:bg-blue-100 transition-colors flex items-center justify-center gap-1"
-        >
-          Share listing
-        </button>
+        {/* Share Button (Hide in Grid to save space) */}
+        {!isGrid && (
+          <button 
+            onClick={handleShare}
+            className="w-full mt-2 py-4 px-4 bg-muted/30 text-muted-foreground text-[10px] font-black rounded-2xl hover:bg-primary/10 hover:text-primary transition-all flex items-center justify-center gap-3 uppercase tracking-[0.25em] active:scale-95 border border-border/50 group/share shadow-lg"
+          >
+            <Share2 className="h-4 w-4 transition-transform group-hover/share:rotate-12" />
+            Share Notes
+          </button>
+        )}
       </CardContent>
     </Card>
   );

@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 import { listingService } from '@/services/listingService';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/components/ui/toast-provider';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 
 interface ImageItem {
   url: string;
@@ -106,27 +106,19 @@ export function ListingImageGrid({
     onChange(finalImgs);
   };
 
-  const getScoreColor = (score: number) => {
-    if (score >= 8) return 'bg-green-600';
-    if (score >= 6) return 'bg-amber-500';
-    return 'bg-red-500';
-  };
-
-  const getScoreLabel = (score: number) => {
-    if (score >= 8) return 'Excellent Quality';
-    if (score >= 5) return 'Good Quality';
-    return 'Low Quality';
-  };
 
   return (
     <div className="space-y-6">
       {duplicateFile && (
-        <div className="bg-amber-50 border-2 border-amber-100 p-4 rounded-3xl flex items-start gap-3 animate-in fade-in slide-in-from-top-2">
-          <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-          <div>
-            <p className="text-sm font-black text-amber-900 tracking-tight">Similar Listing Detected</p>
-            <p className="text-xs text-amber-700 font-medium leading-relaxed">
-              This photo looks very similar to "{duplicateFile.title}" by {duplicateFile.seller}. 
+        <div className="bg-amber-500/10 border border-amber-500/20 p-6 rounded-[2.5rem] flex items-start gap-4 animate-in fade-in slide-in-from-top-2 relative overflow-hidden group/warn">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-full -mr-12 -mt-12 group-hover/warn:scale-150 transition-transform duration-1000" />
+          <div className="p-3 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-inner shrink-0 mt-0.5">
+            <AlertTriangle className="w-5 h-5 text-amber-500" />
+          </div>
+          <div className="space-y-1 relative z-10">
+            <p className="text-sm font-black text-foreground uppercase tracking-tight">Similar Listing Detected</p>
+            <p className="text-[10px] text-muted-foreground font-bold leading-relaxed uppercase tracking-widest opacity-60">
+              This photo looks very similar to <span className="text-amber-500">"{duplicateFile.title}"</span> by {duplicateFile.seller}. 
               Please ensure you are uploading your own original work.
             </p>
           </div>
@@ -138,8 +130,8 @@ export function ListingImageGrid({
           <div 
             key={idx} 
             className={cn(
-              "relative aspect-square rounded-3xl overflow-hidden border-4 group transition-all",
-              img.is_cover ? "border-blue-600 ring-4 ring-blue-50" : "border-gray-50 hover:border-gray-100"
+              "relative aspect-square rounded-[2rem] overflow-hidden border-4 group transition-all",
+              img.is_cover ? "border-primary ring-8 ring-primary/5" : "border-border/50 hover:border-primary/40"
             )}
           >
             <img 
@@ -183,9 +175,10 @@ export function ListingImageGrid({
 
         {images.length < 6 && (
           <label className={cn(
-            "aspect-square rounded-3xl border-4 border-dashed border-gray-100 flex flex-col items-center justify-center gap-2 cursor-pointer transition-all hover:bg-gray-50 hover:border-blue-100 group",
+            "aspect-square rounded-[2rem] border-4 border-dashed border-border/50 flex flex-col items-center justify-center gap-3 cursor-pointer transition-all hover:bg-primary/5 hover:border-primary/40 group relative overflow-hidden",
             uploading && "opacity-50 pointer-events-none"
           )}>
+            <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
             <input 
               type="file" 
               className="hidden" 
@@ -193,15 +186,15 @@ export function ListingImageGrid({
               onChange={(e) => e.target.files?.[0] && handleUpload(e.target.files[0])} 
             />
             {uploading ? (
-              <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+              <Loader2 className="w-10 h-10 text-primary animate-spin" />
             ) : (
               <>
-                <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <UploadCloud className="w-6 h-6 text-blue-600" />
+                <div className="w-14 h-14 rounded-2xl bg-muted flex items-center justify-center group-hover:scale-110 group-hover:bg-primary/10 transition-all shadow-inner group-hover:shadow-xl">
+                  <UploadCloud className="w-7 h-7 text-muted-foreground group-hover:text-primary transition-colors" />
                 </div>
-                <div className="text-center">
-                  <p className="text-[10px] font-black text-[#1a2744] uppercase tracking-widest">Add Photo</p>
-                  <p className="text-[9px] text-gray-400 font-bold mt-0.5">{images.length}/6 uploaded</p>
+                <div className="text-center relative z-10">
+                  <p className="text-[10px] font-black text-foreground uppercase tracking-widest">Add Photo</p>
+                  <p className="text-[9px] text-muted-foreground font-black uppercase tracking-widest opacity-40 mt-1">{images.length}/6</p>
                 </div>
               </>
             )}
@@ -210,45 +203,50 @@ export function ListingImageGrid({
       </div>
 
       {images.length > 0 && (
-        <Card className="rounded-[2rem] border-2 border-gray-50 overflow-hidden shadow-sm">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <div className="p-2 bg-blue-50 rounded-xl">
-                  <Sparkles className="w-4 h-4 text-blue-600" />
+        <Card className="rounded-[2.5rem] border border-border/50 bg-card overflow-hidden shadow-2xl shadow-black/5 relative group/ai">
+          <div className="space-y-3 p-8">
+          <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-primary/10 rounded-2xl border border-primary/20 shadow-inner group-hover/ai:scale-110 transition-transform duration-500">
+                  <Sparkles className="w-5 h-5 text-primary" />
                 </div>
-                <h3 className="text-sm font-black text-[#1a2744] uppercase tracking-tight">AI Quality Scorer</h3>
+                <div>
+                  <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] opacity-40 leading-none">Quality Check</h3>
+                  <h4 className="text-sm font-black text-foreground uppercase tracking-tight mt-1">AI Quality Score</h4>
+                </div>
               </div>
-              {scoring && <Loader2 className="w-4 h-4 text-blue-600 animate-spin" />}
+              {scoring && <Loader2 className="w-5 h-5 text-primary animate-spin" />}
             </div>
 
             {aiScore !== null ? (
               <div className="space-y-4 animate-in fade-in duration-700">
-                <div className="flex items-end justify-between">
-                  <div>
-                    <p className={cn("text-xl font-black tracking-tighter", 
-                      aiScore >= 8 ? "text-emerald-600" : aiScore >= 5 ? "text-amber-600" : "text-red-600"
-                    )}>
-                      {aiScore}/10 — <span className="text-sm font-bold uppercase tracking-wide opacity-80">{getScoreLabel(aiScore)}</span>
-                    </p>
-                  </div>
+                <div className="flex items-baseline gap-1 bg-muted/30 p-4 rounded-2xl border border-border/20 shadow-inner w-fit mx-auto">
+                   <span className={cn("text-5xl font-black tracking-tighter tabular-nums", 
+                     aiScore >= 8 ? "text-emerald-500" : aiScore >= 5 ? "text-amber-500" : "text-danger"
+                   )}>
+                     {aiScore}
+                   </span>
+                   <span className="text-xs font-black text-muted-foreground uppercase tracking-widest opacity-30">/ 10</span>
                 </div>
 
-                <div className="h-3 w-full bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-2 w-full bg-muted rounded-full overflow-hidden shadow-inner">
                   <div 
-                    className={cn("h-full transition-all duration-1000", getScoreColor(aiScore))}
+                    className={cn("h-full transition-all duration-1000", aiScore >= 8 ? "bg-emerald-500" : aiScore >= 5 ? "bg-amber-500" : "bg-danger")}
                     style={{ width: `${aiScore * 10}%` }}
                   />
                 </div>
 
-                <div className="space-y-2 pt-2">
+                <div className="grid grid-cols-1 gap-3 pt-4 border-t border-border/50">
                   {aiReasons.map((reason, i) => (
-                    <div key={i} className="flex gap-2 items-start">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
-                      <p className="text-[11px] font-medium text-gray-500 leading-tight">{reason}</p>
+                    <div key={i} className="flex gap-4 items-start p-4 bg-muted/20 rounded-2xl border border-border/10 hover:border-border/30 transition-all group/reason">
+                      <div className="h-5 w-5 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0 mt-0.5">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                      </div>
+                      <p className="text-[11px] font-black text-foreground/70 leading-relaxed uppercase tracking-tight italic">"{reason}"</p>
                     </div>
                   ))}
                 </div>
+                <div className="absolute bottom-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
               </div>
             ) : (
               <div className="text-center py-6">
@@ -259,16 +257,21 @@ export function ListingImageGrid({
                 )}
               </div>
             )}
-          </CardContent>
+          </div>
         </Card>
       )}
 
-      <div className="bg-[#1a2744]/5 p-4 rounded-3xl flex gap-3">
-        <Info className="w-4 h-4 text-[#1a2744] shrink-0 mt-0.5" />
-        <p className="text-[10px] font-bold text-gray-500 leading-relaxed uppercase tracking-tight">
-          Wait for AI feedback! High-quality ratings (8/10+) boost your visibility by <span className="text-blue-600 font-black">40%</span>. 
-          Make sure your first photo is the clearest.
-        </p>
+      <div className="p-6 rounded-[2.5rem] bg-card border border-border/50 shadow-xl shadow-black/5 flex gap-5 group/info transition-all hover:shadow-2xl">
+        <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center border border-primary/20 shrink-0 group-hover/info:rotate-12 transition-transform duration-500">
+          <Info className="w-6 h-6 text-primary" />
+        </div>
+        <div className="space-y-1">
+          <p className="text-[10px] font-black text-foreground uppercase tracking-widest leading-none">Pro Tip</p>
+          <p className="text-[10px] font-black text-muted-foreground/60 leading-relaxed uppercase tracking-widest opacity-60">
+            Wait for AI feedback! High-quality ratings (<span className="text-emerald-500">8/10+</span>) boost your visibility by <span className="text-primary opacity-100">40%</span>. 
+            Ensure your first capture is pristine.
+          </p>
+        </div>
       </div>
     </div>
   );

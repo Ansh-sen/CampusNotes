@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, forwardRef } from 'react';
 import { API_URL, API_BASE_URL } from '@/config';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -12,14 +12,13 @@ import {
   AlertCircle,
   Trophy,
   FileText,
-  Layout,
   Eye,
   MessageCircle
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/toast-provider';
 import { MyListingCard } from '@/components/MyListingCard';
 import { cn } from '@/lib/utils';
+import { motion, AnimatePresence } from 'framer-motion';
 
 type ViewType = 'listings' | 'analytics';
 type TabType = 'all' | 'active' | 'sold' | 'drafts';
@@ -185,202 +184,253 @@ export function MyListings() {
   }, [listings, activeTab]);
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24">
+    <div className="min-h-screen bg-background pb-32">
       {/* Header */}
-      <div className="bg-[#1a2744] text-white pt-8 pb-6 px-4 rounded-b-[2.5rem] shadow-lg">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-xl font-bold">My Listings</h1>
-          <div className="flex items-center gap-3">
-            <div className="bg-[#1a2744]/30 rounded-full p-1 flex">
+      <div className="bg-primary text-primary-foreground pt-12 pb-10 px-6 rounded-b-[3rem] shadow-2xl relative overflow-hidden group">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -mr-20 -mt-20 group-hover:bg-white/10 transition-colors duration-1000" />
+        
+        <div className="flex justify-between items-center mb-8 relative z-10">
+          <div className="space-y-1">
+            <h1 className="text-3xl font-black tracking-tighter uppercase leading-none">Dashboard</h1>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Portfolio Oversight</p>
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <div className="bg-black/20 backdrop-blur-md rounded-2xl p-1.5 flex border border-white/10 shadow-inner">
               <button 
                 onClick={() => setActiveView('listings')}
-                className={cn("p-1.5 rounded-full transition-all", activeView === 'listings' ? "bg-white text-[#1a2744] shadow-sm" : "text-gray-400")}
+                className={cn(
+                  "h-10 w-10 flex items-center justify-center rounded-xl transition-all duration-500", 
+                  activeView === 'listings' ? "bg-white text-primary shadow-xl scale-105" : "text-white/40 hover:text-white"
+                )}
               >
-                <List size={16} />
+                <List size={20} />
               </button>
               <button 
                 onClick={() => setActiveView('analytics')}
-                className={cn("p-1.5 rounded-full transition-all", activeView === 'analytics' ? "bg-white text-[#1a2744] shadow-sm" : "text-gray-400")}
+                className={cn(
+                  "h-10 w-10 flex items-center justify-center rounded-xl transition-all duration-500", 
+                  activeView === 'analytics' ? "bg-white text-primary shadow-xl scale-105" : "text-white/40 hover:text-white"
+                )}
               >
-                <BarChart2 size={16} />
+                <BarChart2 size={20} />
               </button>
             </div>
+
             {activeTab === 'drafts' && (stats?.draft_count || 0) > 0 && (
               <button 
                 onClick={handleClearDrafts}
-                className="px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-100 border border-red-500/30 rounded-full text-[10px] font-black uppercase tracking-wider transition-all active:scale-95"
+                className="px-5 h-10 bg-danger/20 hover:bg-danger text-white border border-danger/30 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg"
               >
-                Clear All
+                Flush System
               </button>
             )}
+
             <button 
               onClick={() => navigate('/create')}
-              className="h-9 w-9 flex items-center justify-center bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors active:scale-95 shadow-md"
+              className="h-12 w-12 flex items-center justify-center bg-white text-primary rounded-2xl hover:scale-110 transition-all active:scale-95 shadow-2xl shadow-black/20 group/btn"
             >
-              <Plus size={18} />
+              <Plus size={24} className="group-hover:rotate-90 transition-transform duration-500" />
             </button>
           </div>
         </div>
 
         {/* Stats Row */}
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-4 relative z-10">
           {loading ? (
              <>
-               <div className="h-16 bg-white/5 animate-pulse rounded-2xl" />
-               <div className="h-16 bg-white/5 animate-pulse rounded-2xl" />
-               <div className="h-16 bg-white/5 animate-pulse rounded-2xl" />
+               <div className="h-20 bg-white/5 animate-pulse rounded-[1.5rem]" />
+               <div className="h-20 bg-white/5 animate-pulse rounded-[1.5rem]" />
+               <div className="h-20 bg-white/5 animate-pulse rounded-[1.5rem]" />
              </>
           ) : activeView === 'listings' ? (
             <>
-              < StatItem label="Total" value={stats?.total_count || 0} />
               <StatItem label="Active" value={stats?.active_count || 0} />
-              <StatItem label="Notes Sold" value={stats?.sold_count || 0} variant="accent" />
+              <StatItem label="Fulfilled" value={stats?.sold_count || 0} variant="accent" />
+              <StatItem label="Total Hub" value={stats?.total_count || 0} />
             </>
           ) : (
             <>
-              <StatItem label="Earned" value={`₹${stats?.total_earned || 0}`} variant="accent" />
-              <StatItem label="Notes Sold" value={stats?.sold_count || 0} />
-              <StatItem label="Rating" value={stats?.avg_rating || 'N/A'} />
+              <StatItem label="Revenue" value={`₹${stats?.total_earned || 0}`} variant="accent" />
+              <StatItem label="Volume" value={stats?.sold_count || 0} />
+              <StatItem label="Trust Index" value={stats?.avg_rating || 'N/A'} />
             </>
           )}
         </div>
       </div>
 
-      <div className="px-4 mt-6">
+      <div className="max-w-md mx-auto px-6 mt-8 space-y-8">
         {activeView === 'listings' ? (
           <>
             {/* Tabs */}
-            <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide no-scrollbar">
-              <TabButton label="All" count={stats?.total_count} active={activeTab === 'all'} onClick={() => setActiveTab('all')} />
-              <TabButton label="Active" count={stats?.active_count} active={activeTab === 'active'} onClick={() => setActiveTab('active')} />
-              <TabButton label="Sold" count={stats?.sold_count} active={activeTab === 'sold'} onClick={() => setActiveTab('sold')} />
-              <TabButton label="Drafts" count={stats?.draft_count} active={activeTab === 'drafts'} onClick={() => setActiveTab('drafts')} />
+            <div className="flex gap-4 overflow-x-auto pb-6 no-scrollbar">
+              <TabButton label="Overview" count={stats?.total_count} active={activeTab === 'all'} onClick={() => setActiveTab('all')} />
+              <TabButton label="Live" count={stats?.active_count} active={activeTab === 'active'} onClick={() => setActiveTab('active')} />
+              <TabButton label="Locked" count={stats?.sold_count} active={activeTab === 'sold'} onClick={() => setActiveTab('sold')} />
+              <TabButton label="Backlog" count={stats?.draft_count} active={activeTab === 'drafts'} onClick={() => setActiveTab('drafts')} />
             </div>
 
             {/* List */}
-            {filteredListings.length > 0 ? (
-              <div className="space-y-1">
-                {filteredListings.map(listing => (
-                  <MyListingCard key={listing.id} listing={listing} onAction={handleAction} />
-                ))}
-                
-                {activeTab === 'sold' && user && (
-                    <TopperNudge stats={stats} isTopper={(user as any).is_topper} />
-                )}
-              </div>
-            ) : (
-              <EmptyState tab={activeTab} hasListings={listings.length > 0} onAction={() => navigate('/sell')} />
-            )}
+            <AnimatePresence mode="popLayout">
+              {filteredListings.length > 0 ? (
+                <div className="space-y-4">
+                  {filteredListings.map((listing, i) => (
+                    <motion.div
+                      key={listing.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.05 }}
+                    >
+                      <MyListingCard listing={listing} onAction={handleAction} />
+                    </motion.div>
+                  ))}
+                  
+                  {activeTab === 'sold' && user && (
+                      <TopperNudge stats={stats} isTopper={(user as any).is_topper} />
+                  )}
+                </div>
+              ) : (
+                <EmptyState tab={activeTab} hasListings={listings.length > 0} onAction={() => navigate('/sell')} />
+              )}
+            </AnimatePresence>
           </>
         ) : (
           /* Analytics View */
-          <div className="space-y-6">
+          <div className="space-y-8 pb-10">
             {!analytics || listings.length < 3 ? (
-                <div className="bg-white p-8 rounded-3xl text-center shadow-sm border border-gray-100">
-                    <Layout className="w-12 h-12 text-gray-200 mx-auto mb-4" />
-                    <h3 className="font-bold text-[#1a2744]">Not enough data yet</h3>
-                    <p className="text-xs text-gray-500 mt-2">Analytics will appear once your listings get some views.</p>
+                <div className="bg-card p-12 rounded-[2.5rem] text-center shadow-xl shadow-black/5 border border-border/50 flex flex-col items-center gap-6">
+                    <div className="h-20 w-20 bg-muted rounded-full flex items-center justify-center">
+                      <BarChart2 className="w-10 h-10 text-muted-foreground/30" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-black text-foreground uppercase tracking-tight">Gathering Intelligence</h3>
+                      <p className="text-xs font-medium text-muted-foreground mt-2 max-w-[200px] mx-auto opacity-60 italic">Your reach data is still encrypting. Check back after more views.</p>
+                    </div>
                 </div>
             ) : (
                 <>
                     {/* Views Chart */}
-                    <div className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
-                        <h3 className="text-sm font-bold text-[#1a2744] mb-6">Weekly Views</h3>
-                        <div className="flex items-end justify-between h-32 gap-2 mb-4">
+                    <div className="bg-card p-8 rounded-[2.5rem] shadow-xl shadow-black/5 border border-border/50 space-y-8">
+                        <div>
+                          <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] opacity-40">Intelligence Feed</h3>
+                          <h4 className="text-xl font-black text-foreground mt-1">Weekly Visibility Index</h4>
+                        </div>
+
+                        <div className="flex items-end justify-between h-40 gap-3">
                             {analytics.data.map((d: any, i: number) => (
-                                <div key={i} className="flex-1 flex flex-col items-center gap-2">
+                                <div key={i} className="flex-1 flex flex-col items-center gap-3 group/chart">
                                     <div 
                                         className={cn(
-                                            "w-full rounded-t-lg transition-all duration-700",
-                                            i === 6 ? "bg-[#0f172a]" : "bg-blue-100"
+                                            "w-full rounded-2xl transition-all duration-700 relative",
+                                            i === 6 ? "bg-primary shadow-lg shadow-primary/20 scale-x-110" : "bg-primary/10 group-hover/chart:bg-primary/20"
                                         )}
-                                        style={{ height: `${(d.view_count / Math.max(...analytics.data.map((x: any) => x.view_count))) * 100}%` }}
-                                    />
-                                    <span className="text-[10px] font-bold text-gray-400">{d.date}</span>
+                                        style={{ height: `${Math.max(10, (d.view_count / (Math.max(...analytics.data.map((x: any) => x.view_count)) || 1)) * 100)}%` }}
+                                    >
+                                      {d.view_count > 0 && (
+                                        <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-black text-primary opacity-0 group-hover/chart:opacity-100 transition-opacity">
+                                          {d.view_count}
+                                        </div>
+                                      )}
+                                    </div>
+                                    <span className={cn("text-[9px] font-black uppercase tracking-widest", i === 6 ? "text-primary" : "text-muted-foreground opacity-30")}>{d.date}</span>
                                 </div>
                             ))}
                         </div>
-                        <div className="grid grid-cols-2 gap-4 mt-6">
+
+                        <div className="grid grid-cols-2 gap-6 pt-6 border-t border-border/50">
                             <MetricBox 
-                                label="Total Views" 
+                                label="Total Reach" 
                                 value={analytics.total_week} 
-                                change={((analytics.total_week - analytics.prev_week) / analytics.prev_week) * 100}
+                                change={((analytics.total_week - analytics.prev_week) / (analytics.prev_week || 1)) * 100}
                             />
                             <MetricBox 
-                                label="Inquiries" 
+                                label="Conversion Lead" 
                                 value={analytics.total_inquiries} 
-                                change={((analytics.total_inquiries - analytics.prev_inquiries) / analytics.prev_inquiries) * 100}
+                                change={((analytics.total_inquiries - analytics.prev_inquiries) / (analytics.prev_inquiries || 1)) * 100}
                             />
                         </div>
                     </div>
 
-                    {/* Earnings */}
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-white p-4 rounded-3xl shadow-sm border border-gray-100">
-                            <p className="text-[10px] font-bold text-gray-400 uppercase">This Month</p>
-                            <p className="text-lg font-black text-[#1a2744] mt-1">₹{stats?.total_earned || 0}</p>
-                            <div className="flex items-center gap-1 mt-1 text-[10px] font-bold text-emerald-500">
-                                <TrendingUp size={12} />
-                                <span>+₹240 vs last month</span>
+                    {/* Performance Metrics */}
+                    <div className="grid grid-cols-2 gap-6">
+                        <div className="bg-card p-6 rounded-[2rem] shadow-xl shadow-black/5 border border-border/50 group hover:border-primary/20 transition-all active:scale-95">
+                            <p className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em] opacity-40">Monthly Revenue</p>
+                            <p className="text-2xl font-black text-foreground mt-2 tracking-tighter">₹{stats?.total_earned || 0}</p>
+                            <div className="flex items-center gap-2 mt-2 text-[10px] font-black text-emerald-500">
+                                <TrendingUp size={14} />
+                                <span className="uppercase tracking-widest">Growing Trend</span>
                             </div>
                         </div>
-                        <div className="bg-white p-4 rounded-3xl shadow-sm border border-gray-100">
-                            <p className="text-[10px] font-bold text-gray-400 uppercase">All Time</p>
-                            <p className="text-lg font-black text-[#1a2744] mt-1">₹{stats?.total_earned || 0}</p>
+                        <div className="bg-card p-6 rounded-[2rem] shadow-xl shadow-black/5 border border-border/50 group hover:border-primary/20 transition-all active:scale-95">
+                            <p className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em] opacity-40">Portfolio Value</p>
+                            <p className="text-2xl font-black text-foreground mt-2 tracking-tighter">₹{stats?.total_earned || 0}</p>
+                            <p className="text-[10px] font-black text-muted-foreground mt-2 uppercase tracking-widest opacity-30">Lifetime Yield</p>
                         </div>
                     </div>
 
                     {/* Top Performer */}
                     {listings.length > 0 && (
-                        <div className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
-                            <h3 className="text-sm font-bold text-[#1a2744] mb-4">Top Performing Listing</h3>
-                            <div className="flex gap-3">
-                                <div className="h-16 w-16 bg-gray-50 rounded-xl overflow-hidden shrink-0">
+                        <div className="bg-card p-8 rounded-[2.5rem] shadow-xl shadow-black/5 border border-border/50 space-y-6 relative overflow-hidden group">
+                            <div>
+                              <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] opacity-40">Apex Knowledge</h3>
+                              <h4 className="text-lg font-black text-foreground mt-1">Top Performing Listing</h4>
+                            </div>
+
+                            <div className="flex gap-6 items-center p-4 bg-muted/30 rounded-3xl border border-border/10">
+                                <div className="h-20 w-20 bg-muted rounded-2xl overflow-hidden shrink-0 border border-border/50 shadow-inner">
                                     {listings[0].listing_images?.[0] ? (
-                                        <img src={`${API_BASE_URL}${listings[0].listing_images[0].image_url}`} className="h-full w-full object-cover" />
-                                    ) : <FileText className="m-auto h-6 w-6 text-gray-300" />}
+                                        <img src={`${API_BASE_URL}${listings[0].listing_images[0].image_url}`} className="h-full w-full object-cover transition-transform group-hover:scale-110 duration-700" />
+                                    ) : <FileText className="m-auto h-8 w-8 text-muted-foreground/20" />}
                                 </div>
-                                <div className="flex-1">
-                                    <h4 className="text-sm font-bold truncate">{listings[0].title}</h4>
-                                    <div className="flex gap-4 mt-2">
-                                        <div className="flex items-center gap-1">
-                                            <Eye size={12} className="text-gray-400" />
-                                            <span className="text-xs font-bold">{listings[0].view_count}</span>
+                                <div className="flex-1 space-y-2">
+                                    <h4 className="text-base font-black text-foreground truncate leading-tight">{listings[0].title}</h4>
+                                    <div className="flex gap-6">
+                                        <div className="flex items-center gap-2">
+                                            <div className="h-6 w-6 bg-primary/10 rounded-lg flex items-center justify-center">
+                                              <Eye size={12} className="text-primary" />
+                                            </div>
+                                            <span className="text-xs font-black text-foreground tabular-nums">{listings[0].view_count}</span>
                                         </div>
-                                        <div className="flex items-center gap-1">
-                                            <MessageCircle size={12} className="text-gray-400" />
-                                            <span className="text-xs font-bold">{listings[0].inquiry_count}</span>
+                                        <div className="flex items-center gap-2">
+                                            <div className="h-6 w-6 bg-emerald-500/10 rounded-lg flex items-center justify-center">
+                                              <MessageCircle size={12} className="text-emerald-500" />
+                                            </div>
+                                            <span className="text-xs font-black text-foreground tabular-nums">{listings[0].inquiry_count}</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <button 
                                 onClick={() => navigate(`/listing/${listings[0].id}`)}
-                                className="w-full mt-4 flex items-center justify-between text-[11px] font-bold text-blue-600 bg-blue-50 py-2.5 px-4 rounded-xl"
+                                className="w-full flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-primary bg-primary/5 hover:bg-primary hover:text-white py-4 px-6 rounded-2xl transition-all shadow-xl shadow-primary/5 active:scale-95"
                             >
-                                <span>See full stats</span>
-                                <ChevronRight size={14} />
+                                <span>Deep Audit Stats</span>
+                                <ChevronRight size={16} />
                             </button>
                         </div>
                     )}
 
                     {/* AI Tip */}
                     {aiTip && (
-                        <div className="bg-[#fffbeb] p-5 rounded-3xl border border-amber-100 shadow-sm relative overflow-hidden">
-                            <div className="absolute -top-6 -right-6 w-24 h-24 bg-amber-200/20 rounded-full" />
-                            <div className="flex items-start gap-4">
-                                <div className="bg-amber-100 p-2 rounded-xl">
-                                    <AlertCircle className="text-amber-600" size={20} />
+                        <div className="bg-amber-500/5 p-8 rounded-[2.5rem] border border-amber-500/20 shadow-xl shadow-amber-500/5 relative overflow-hidden group">
+                            <div className="absolute -top-10 -right-10 w-40 h-40 bg-amber-500/10 rounded-full blur-3xl pointer-events-none group-hover:scale-150 transition-transform duration-1000" />
+                            <div className="flex items-start gap-6 relative z-10">
+                                <div className="bg-amber-500/20 p-4 rounded-2xl shadow-inner border border-amber-500/20">
+                                    <AlertCircle className="text-amber-500" size={28} />
                                 </div>
-                                <div>
-                                    <h3 className="text-sm font-black text-amber-900">AI Improvement Tip</h3>
-                                    <p className="text-xs font-medium text-amber-800 mt-1">{aiTip.suggestion}</p>
+                                <div className="space-y-3">
+                                    <div className="space-y-1">
+                                      <h3 className="text-[9px] font-black text-amber-500 uppercase tracking-[0.3em]">AI Protocol Suggestion</h3>
+                                      <p className="text-base font-bold text-foreground leading-tight italic opacity-90">"{aiTip.suggestion}"</p>
+                                    </div>
                                     <button 
                                         onClick={() => navigate(`/sell?edit=${listings.find(l => l.title === aiTip.listing_title)?.id}`)}
-                                        className="mt-3 text-[11px] font-black text-amber-900 flex items-center gap-1 group"
+                                        className="inline-flex items-center gap-3 text-[10px] font-black text-amber-500 uppercase tracking-widest group/btn active:scale-95 transition-all"
                                     >
-                                        Edit {aiTip.listing_title}
-                                        <ChevronRight size={14} className="transition-transform group-hover:translate-x-1" />
+                                        Execute Refinement
+                                        <div className="h-8 w-8 bg-amber-500/20 rounded-full flex items-center justify-center group-hover/btn:translate-x-2 transition-transform">
+                                          <ChevronRight size={16} />
+                                        </div>
                                     </button>
                                 </div>
                             </div>
@@ -398,9 +448,9 @@ export function MyListings() {
 // Sub-components
 function StatItem({ label, value, variant }: { label: string, value: string | number, variant?: 'accent' }) {
   return (
-    <div className="bg-white/5 p-3 rounded-2xl flex flex-col items-center">
-      <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider">{label}</span>
-      <span className={cn("text-lg font-black mt-0.5", variant === 'accent' ? "text-amber-400" : "text-white")}>
+    <div className="bg-white/10 backdrop-blur-md p-5 rounded-[1.5rem] flex flex-col items-center border border-white/5 shadow-inner group/stat hover:bg-white/15 transition-all">
+      <span className="text-[9px] font-black text-white/40 uppercase tracking-[0.2em]">{label}</span>
+      <span className={cn("text-2xl font-black mt-1 tracking-tighter tabular-nums", variant === 'accent' ? "text-amber-400 drop-shadow-[0_0_15px_rgba(251,191,36,0.5)]" : "text-white")}>
         {value}
       </span>
     </div>
@@ -412,33 +462,38 @@ function TabButton({ label, count, active, onClick }: { label: string, count: nu
     <button 
       onClick={onClick}
       className={cn(
-        "px-5 py-2 rounded-2xl whitespace-nowrap transition-all flex items-center gap-2",
+        "px-6 py-3 rounded-2xl whitespace-nowrap transition-all duration-500 flex items-center gap-3 group relative overflow-hidden",
         active 
-          ? "bg-[#1a2744] text-white shadow-md shadow-blue-100" 
-          : "bg-white text-gray-400 border border-gray-100"
+          ? "bg-primary text-white shadow-2xl shadow-primary/20 scale-105 z-10" 
+          : "bg-card text-muted-foreground border border-border/50 hover:border-primary/50"
       )}
     >
-      <span className="text-xs font-bold">{label}</span>
+      <span className="text-[10px] font-black uppercase tracking-widest relative z-10">{label}</span>
       {count !== undefined && (
-        <span className={cn("text-[10px] font-black px-1.5 py-0.5 rounded-md", active ? "bg-white/20" : "bg-gray-100")}>
+        <span className={cn(
+          "text-[9px] font-black px-2 py-0.5 rounded-lg tabular-nums relative z-10", 
+          active ? "bg-white/20" : "bg-muted text-muted-foreground group-hover:bg-primary/5 group-hover:text-primary transition-colors"
+        )}>
           {count}
         </span>
       )}
+      <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
     </button>
   );
 }
 
 function MetricBox({ label, value, change }: { label: string, value: number, change: number }) {
+  const isUp = change >= 0;
   return (
-    <div>
-      <p className="text-[10px] font-bold text-gray-400 uppercase">{label}</p>
-      <div className="flex items-center gap-2 mt-1">
-        <span className="text-xl font-black text-[#1a2744]">{value}</span>
+    <div className="space-y-2">
+      <p className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em] opacity-40">{label}</p>
+      <div className="flex items-center gap-3">
+        <span className="text-2xl font-black text-foreground tracking-tighter tabular-nums">{value}</span>
         <div className={cn(
-          "flex items-center text-[10px] font-bold px-1.5 py-0.5 rounded-lg",
-          change >= 0 ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"
+          "flex items-center text-[9px] font-black px-2 py-1 rounded-xl shadow-lg leading-none",
+          isUp ? "bg-emerald-500/10 text-emerald-500 shadow-emerald-500/5" : "bg-danger/10 text-danger shadow-danger/5"
         )}>
-           {change >= 0 ? <TrendingUp size={10} className="mr-0.5" /> : <TrendingDown size={10} className="mr-0.5" />}
+           {isUp ? <TrendingUp size={12} className="mr-1" /> : <TrendingDown size={12} className="mr-1" />}
            {Math.abs(change).toFixed(0)}%
         </div>
       </div>
@@ -446,51 +501,59 @@ function MetricBox({ label, value, change }: { label: string, value: number, cha
   );
 }
 
-function EmptyState({ tab, hasListings, onAction }: { tab: TabType, hasListings: boolean, onAction: () => void }) {
-  let icon = <FileText className="w-12 h-12 text-gray-200" />;
-  let title = "No listings yet";
-  let subtitle = "Start selling your notes and earn money on campus";
-  let btnText = "Sell your first notes";
+const EmptyState = forwardRef<HTMLDivElement, { tab: TabType, hasListings: boolean, onAction: () => void }>(({ tab, hasListings, onAction }, ref) => {
+  let icon = <FileText className="w-10 h-10 text-muted-foreground/20" />;
+  let title = "Arsenal Depleted";
+  let subtitle = "Start digitizing your knowledge and build your campus revenue stream.";
+  let btnText = "Publish First Insight";
 
   if (tab === 'active' && hasListings) {
-    title = "No active listings";
-    subtitle = "All your listings are paused or in draft — resume or publish one to appear in search.";
+    title = "Market Stagnant";
+    subtitle = "All your knowledge assets are currently encrypted or in archive. Enable them to go live.";
     btnText = "";
   } else if (tab === 'sold') {
-    title = "No sales yet";
-    subtitle = "Keep your listings active and price them fairly to attract buyers.";
+    title = "No Acquisitions";
+    subtitle = "Enhance your listing description or use the AI protocol to improve market fit.";
     btnText = "";
   } else if (tab === 'drafts') {
-    title = "No drafts";
-    subtitle = "Your unfinished listings will appear here.";
+    title = "Backlog Clear";
+    subtitle = "Your secure staging area is empty. Start a new build anytime.";
     btnText = "";
   }
 
   return (
-    <div className="bg-white p-12 rounded-[2.5rem] text-center shadow-sm border border-gray-100 flex flex-col items-center">
-      <div className="bg-gray-50 p-6 rounded-full mb-6">
+    <div ref={ref} className="bg-card p-12 rounded-[3rem] text-center shadow-2xl shadow-black/5 border border-border/50 flex flex-col items-center gap-6 animate-in fade-in zoom-in duration-500">
+      <div className="bg-muted p-8 rounded-full shadow-inner border border-border/50">
         {icon}
       </div>
-      <h3 className="text-lg font-black text-[#1a2744]">{title}</h3>
-      <p className="text-sm font-medium text-gray-500 mt-2 max-w-[200px]">{subtitle}</p>
+      <div>
+        <h3 className="text-xl font-black text-foreground uppercase tracking-tight">{title}</h3>
+        <p className="text-xs font-medium text-muted-foreground mt-2 max-w-[220px] mx-auto opacity-60 leading-relaxed">{subtitle}</p>
+      </div>
       {btnText && (
-        <Button onClick={onAction} className="mt-8 bg-[#1a2744] hover:bg-[#1f2d4d] text-white px-8 rounded-2xl h-12 font-bold shadow-lg shadow-blue-100">
+        <button 
+          onClick={onAction} 
+          className="h-14 bg-primary hover:bg-primary/90 text-white px-10 rounded-[1.5rem] font-black uppercase tracking-widest text-[10px] shadow-2xl shadow-primary/20 transition-all active:scale-95"
+        >
           {btnText}
-        </Button>
+        </button>
       )}
     </div>
   );
-}
+});
 
 function TopperNudge({ stats, isTopper }: { stats: any, isTopper: boolean }) {
+  const navigate = useNavigate();
   if (isTopper) {
     return (
-        <div className="bg-emerald-500 p-6 rounded-3xl mt-6 text-white shadow-lg overflow-hidden relative">
-            <div className="absolute top-0 right-0 p-4 opacity-20">
-                <Trophy size={80} />
+        <div className="bg-emerald-500 p-8 rounded-[2.5rem] mt-10 text-white shadow-2xl shadow-emerald-500/20 overflow-hidden relative group">
+            <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:rotate-12 transition-transform duration-700">
+                <Trophy size={120} />
             </div>
-            <h3 className="text-lg font-black">You are a Verified Topper!</h3>
-            <p className="text-sm font-medium opacity-90 mt-1">Your listings are highlighted as expert material.</p>
+            <div className="relative z-10 space-y-2">
+              <h3 className="text-2xl font-black tracking-tighter uppercase leading-none">Apex Mindset Verified</h3>
+              <p className="text-sm font-medium opacity-80 max-w-[220px]">Your insights are now flagged as high-fidelity knowledge assets.</p>
+            </div>
         </div>
     );
   }
@@ -500,50 +563,62 @@ function TopperNudge({ stats, isTopper }: { stats: any, isTopper: boolean }) {
   const remaining = 10 - (stats?.sold_count || 0);
 
   return (
-    <div className="bg-white p-6 rounded-3xl mt-6 shadow-sm border border-gray-100 overflow-hidden relative group">
-      <div className="flex items-center gap-4 mb-4">
-        <div className="bg-amber-100 p-3 rounded-2xl text-amber-600">
-          <Trophy size={24} />
+    <div className="bg-card p-8 rounded-[2.5rem] mt-10 shadow-2xl shadow-black/5 border border-border/50 overflow-hidden relative group">
+      <div className="flex items-center gap-6 mb-8 relative z-10">
+        <div className="bg-amber-500/10 p-4 rounded-2xl text-amber-500 shadow-inner border border-amber-500/10">
+          <Trophy size={32} />
         </div>
         <div>
-          <h3 className="font-black text-[#1a2744]">Verified Topper Progress</h3>
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Unlock special badges & trust</p>
+          <h3 className="text-xl font-black text-foreground tracking-tight uppercase leading-none">Verified Topper Status</h3>
+          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mt-2 opacity-40">Next Level Trust Injection</p>
         </div>
       </div>
 
-      <div className="space-y-4">
-        <div>
-          <div className="flex justify-between text-[11px] font-bold mb-1.5">
-            <span className="text-[#132b4b]">Sales: {stats?.sold_count || 0} of 10</span>
-            <span className="text-gray-400">{Math.round(salesProgress)}%</span>
+      <div className="space-y-8 relative z-10">
+        <div className="space-y-3">
+          <div className="flex justify-between items-end">
+            <span className="text-[10px] font-black text-foreground uppercase tracking-widest">Market Volume: {stats?.sold_count || 0} / 10</span>
+            <span className="text-[10px] font-black text-amber-500 tabular-nums">{Math.round(salesProgress)}%</span>
           </div>
-          <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-            <div className="h-full bg-amber-400 transition-all duration-1000" style={{ width: `${salesProgress}%` }} />
+          <div className="h-3 bg-muted rounded-full overflow-hidden border border-border/50">
+            <motion.div 
+              initial={{ width: 0 }}
+              animate={{ width: `${salesProgress}%` }}
+              transition={{ duration: 1.5, ease: "easeOut" }}
+              className="h-full bg-gradient-to-r from-amber-400 to-amber-600 shadow-[0_0_15px_rgba(251,191,36,0.5)]" 
+            />
           </div>
         </div>
 
-        <div>
-          <div className="flex justify-between text-[11px] font-bold mb-1.5">
-            <span className="text-[#132b4b]">Rating: {stats?.avg_rating || 0} of 4.5</span>
-            <span className="text-gray-400">{Math.round(ratingProgress)}%</span>
+        <div className="space-y-3">
+          <div className="flex justify-between items-end">
+            <span className="text-[10px] font-black text-foreground uppercase tracking-widest">Quality Rating: {stats?.avg_rating || 0} / 4.5</span>
+            <span className="text-[10px] font-black text-primary tabular-nums">{Math.round(ratingProgress)}%</span>
           </div>
-          <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-            <div className="h-full bg-blue-500 transition-all duration-1000" style={{ width: `${ratingProgress}%` }} />
+          <div className="h-3 bg-muted rounded-full overflow-hidden border border-border/50">
+            <motion.div 
+              initial={{ width: 0 }}
+              animate={{ width: `${ratingProgress}%` }}
+              transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
+              className="h-full bg-gradient-to-r from-primary to-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.5)]" 
+            />
           </div>
         </div>
       </div>
 
-      <div className="mt-6 flex flex-col items-center">
-        <p className="text-xs font-bold text-gray-500 mb-4">
-          {remaining > 0 ? `${remaining} more sales to go — keep listing!` : "Maintain 4.5+ rating to unlock!"}
+      <div className="mt-10 flex flex-col items-center relative z-10">
+        <p className="text-xs font-bold text-muted-foreground mb-6 opacity-60 text-center italic">
+          {remaining > 0 ? `Target acquired: ${remaining} more acquisitions required.` : "Quality metrics met. Maintain rating to unlock."}
         </p>
         <button 
-          onClick={() => window.location.href = '/sell'}
-          className="w-full bg-[#1a2744] text-white py-3 rounded-2xl font-bold text-sm shadow-md transition-transform group-hover:scale-[1.02]"
+          onClick={() => navigate('/create')}
+          className="w-full bg-primary text-white py-5 rounded-[1.5rem] font-black uppercase tracking-widest text-[10px] shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
         >
-          Sell more notes
+          Scale Your Influence
         </button>
       </div>
+
+      <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
     </div>
   );
 }

@@ -4,7 +4,6 @@ import { useParams, Link } from 'react-router-dom';
 import { BookOpen, ArrowLeft, Search, GraduationCap } from 'lucide-react';
 import { ListingCard } from '@/components/domain/ListingCard';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Button } from '@/components/ui/button';
 
 interface Subject {
   subject_code: string;
@@ -70,92 +69,101 @@ export function SubjectPage() {
     <div className="w-full max-w-screen-sm mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-24">
       
       {/* Back Button */}
-      <Link to="/" className="inline-flex items-center gap-2 text-sm font-medium text-[hsl(var(--text-muted))] hover:text-[hsl(var(--primary))] transition-colors pt-2">
-        <ArrowLeft className="w-4 h-4" />
-        Back to Home
+      <Link to="/" className="inline-flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50 hover:text-primary transition-all group/back pt-4">
+        <ArrowLeft className="w-4 h-4 transition-transform group-hover/back:-translate-x-1" />
+        Return to Nexus
       </Link>
 
       {/* Subject Header */}
-      <div className="space-y-3">
-        <div className="flex items-start gap-3">
-          <div className="flex-shrink-0 w-12 h-12 bg-[hsl(var(--primary))/10] rounded-2xl flex items-center justify-center">
-            <GraduationCap className="w-6 h-6 text-[hsl(var(--primary))]" />
+      <div className="space-y-6">
+        <div className="flex items-start gap-4">
+          <div className="flex-shrink-0 w-16 h-16 bg-primary/10 rounded-[1.5rem] flex items-center justify-center border border-primary/20 shadow-xl shadow-primary/5">
+            <GraduationCap className="w-8 h-8 text-primary" />
           </div>
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 pt-1">
             {loading ? (
-              <>
-                <Skeleton className="h-6 w-32 mb-2" />
-                <Skeleton className="h-4 w-48" />
-              </>
+              <div className="space-y-3">
+                <Skeleton className="h-6 w-32 bg-muted/50 rounded-lg" />
+                <Skeleton className="h-8 w-64 bg-muted/50 rounded-lg" />
+              </div>
             ) : (
-              <>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-[hsl(var(--primary))/10] text-[hsl(var(--primary))] text-xs font-bold tracking-wide">
+              <div className="space-y-2">
+                <div className="flex items-center gap-3 flex-wrap">
+                  <span className="inline-flex items-center px-3 py-1.5 rounded-xl bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest border border-primary/20">
                     {subject_code}
                   </span>
                   {subject?.programme && (
-                    <span className="text-xs text-gray-400 font-medium">{subject.programme}</span>
+                    <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-40">{subject.programme}</span>
                   )}
                 </div>
-                <h1 className="text-xl font-bold text-[hsl(var(--text))] mt-1 leading-tight">
+                <h1 className="text-3xl font-black text-foreground tracking-tighter uppercase leading-[0.9]">
                   {subject?.subject_name || subject_code}
                 </h1>
                 {subject?.branch && (
-                  <p className="text-sm text-[hsl(var(--text-muted))] font-medium mt-0.5">{subject.branch}</p>
+                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.15em] opacity-40 mt-1">{subject.branch}</p>
                 )}
-              </>
+              </div>
             )}
           </div>
         </div>
 
         {/* Stats bar */}
         {!loading && (
-          <div className="flex items-center gap-4 px-4 py-3 bg-gray-50 rounded-2xl">
-            <div className="flex items-center gap-2">
-              <BookOpen className="w-4 h-4 text-[hsl(var(--primary))]" />
-              <span className="text-sm font-bold text-[hsl(var(--text))]">{listings.length}</span>
-              <span className="text-sm text-gray-400">listing{listings.length !== 1 ? 's' : ''}</span>
+          <div className="flex items-center gap-6 px-6 py-4 bg-muted/30 rounded-[2rem] border border-border/50">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                <BookOpen className="w-4 h-4 text-primary" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-sm font-black text-foreground tabular-nums leading-none">{listings.length}</span>
+                <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest opacity-40">Assets Available</span>
+              </div>
             </div>
           </div>
         )}
       </div>
 
       {/* Listings */}
-      <div>
-        <h2 className="text-lg font-bold tracking-tight border-l-4 border-[hsl(var(--primary))] pl-3 mb-4">
-          Notes & Materials
-        </h2>
+      <div className="pt-4">
+        <div className="flex items-center justify-between mb-8 px-2">
+          <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/30">
+            Intelligence Repository
+          </h2>
+          <div className="h-[1px] flex-1 bg-border/50 ml-4" />
+        </div>
 
         {loading ? (
-          <div className="grid grid-cols-2 gap-4">
-            {[1, 2, 3, 4].map(n => (
-              <div key={n} className="space-y-2">
-                <Skeleton className="aspect-[4/3] w-full rounded-xl" />
-                <Skeleton className="h-4 w-3/4" />
-                <Skeleton className="h-3 w-1/2" />
+          <div className="grid grid-cols-1 gap-6">
+            {[1, 2, 3].map(n => (
+              <div key={n} className="space-y-4">
+                <Skeleton className="aspect-video w-full rounded-[2.5rem] bg-muted/30" />
+                <div className="space-y-3 px-4">
+                  <Skeleton className="h-6 w-3/4 bg-muted/30" />
+                  <Skeleton className="h-4 w-1/2 bg-muted/20" />
+                </div>
               </div>
             ))}
           </div>
         ) : listings.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-[hsl(var(--muted))] p-10 text-center space-y-4">
-            <div className="mx-auto bg-[hsl(var(--muted))] w-14 h-14 rounded-full flex items-center justify-center">
-              <Search className="h-7 w-7 text-[hsl(var(--text-muted))]" />
+          <div className="rounded-[3rem] border border-dashed border-border/50 bg-muted/10 p-16 text-center space-y-8 animate-in zoom-in-95 duration-700">
+            <div className="mx-auto bg-muted w-20 h-20 rounded-[2rem] flex items-center justify-center shadow-inner">
+              <Search className="h-8 w-8 text-muted-foreground/20" />
             </div>
-            <div className="space-y-1">
-              <p className="font-semibold text-[hsl(var(--text))]">No listings yet</p>
-              <p className="text-sm text-[hsl(var(--text-muted))]">Be the first to share notes for this subject!</p>
+            <div className="space-y-2">
+              <p className="text-xl font-black text-foreground uppercase tracking-tight">Void Detected</p>
+              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-40">Be the first to seed intelligence for this subject</p>
             </div>
-            <Link to="/create">
-              <Button className="mt-2 bg-[hsl(var(--primary))] text-white rounded-xl px-6">
-                Sell Notes
-              </Button>
+            <Link to="/create" className="inline-block">
+              <button className="h-14 px-10 bg-primary text-white rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-2xl shadow-primary/20 hover:scale-110 active:scale-95 transition-all">
+                Publish Assets
+              </button>
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-4">
-            {listings.map((listing: any) => (
+          <div className="grid grid-cols-1 gap-4">
+            {listings.map((listing, idx) => (
               <Link key={listing.id} to={`/listing/${listing.id}`}>
-                <ListingCard listing={listing} />
+                <ListingCard listing={listing} index={idx} />
               </Link>
             ))}
           </div>
