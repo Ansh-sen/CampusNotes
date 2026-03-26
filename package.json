@@ -1,45 +1,17 @@
 {
-  "name": "campus-notes",
-  "private": true,
+  "name": "campus-notes-root",
   "version": "1.0.0",
-  "type": "module",
+  "private": true,
   "scripts": {
-    "dev": "vite --host",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "@hookform/resolvers": "^3.9.0",
-    "@supabase/supabase-js": "^2.45.4",
-    "clsx": "^2.1.1",
-    "framer-motion": "^12.38.0",
-    "lucide-react": "^0.446.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-helmet-async": "^3.0.0",
-    "react-hook-form": "^7.53.0",
-    "react-router-dom": "^6.26.2",
-    "sharp": "^0.34.5",
-    "socket.io-client": "^4.8.3",
-    "tailwind-merge": "^2.5.2",
-    "vite-plugin-pwa": "^1.2.0",
-    "zod": "^3.23.8"
+    "client": "npm run dev --prefix client",
+    "server": "npm run start --prefix server",
+    "admin": "npm run dev --prefix admin",
+    "dev": "concurrently \"npm run client\" \"npm run server\"",
+    "dev:all": "concurrently \"npm run client\" \"npm run server\" \"npm run admin\"",
+    "build": "npm run build --prefix client",
+    "lint": "npm run lint --prefix client"
   },
   "devDependencies": {
-    "@eslint/js": "^9.11.1",
-    "@types/react": "^18.3.11",
-    "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react": "^4.3.2",
-    "autoprefixer": "^10.4.20",
-    "eslint": "^9.11.1",
-    "eslint-plugin-react-hooks": "^5.1.0-rc.0",
-    "eslint-plugin-react-refresh": "^0.4.12",
-    "globals": "^15.9.0",
-    "postcss": "^8.4.47",
-    "tailwindcss": "^3.4.13",
-    "typescript": "^5.5.3",
-    "typescript-eslint": "^8.7.0",
-    "vite": "^5.4.8"
+    "concurrently": "^8.2.2"
   }
 }
