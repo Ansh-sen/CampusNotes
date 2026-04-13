@@ -384,7 +384,7 @@ export function Home() {
       )}
 
       {/* Hero Header Section */}
-      <div className="px-4 pt-0 pb-14 premium-gradient text-white rounded-b-[3.5rem] shadow-2xl shadow-primary/20 relative overflow-hidden animate-in fade-in slide-in-from-top-4 duration-700">
+      <div className="px-4 pt-10 pb-14 premium-gradient text-white rounded-[3.5rem] shadow-2xl shadow-primary/20 relative overflow-hidden animate-in fade-in slide-in-from-top-4 duration-700 mx-1 mt-2">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-20 -mt-20 blur-3xl animate-pulse" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-primary/20 rounded-full -ml-10 -mb-10 blur-2xl" />
         
@@ -446,7 +446,7 @@ export function Home() {
         </div>
       )}
 
-      <div className={cn("px-4 space-y-8", !Object.entries(filters).some(([key, val]) => (key !== 'sort' || val !== 'latest') && val !== '') && "mt-10")}>
+      <div className={cn("px-4 space-y-8", !Object.entries(filters).some(([key, val]) => (key !== 'sort' || val !== 'latest') && val !== '') && "mt-12")}>
         
         {/* Exam Countdown Banner */}
         {showExamBanner && (
@@ -491,12 +491,13 @@ export function Home() {
 
         <div className="space-y-3">
           <div className="flex items-center justify-between gap-4 px-2">
-            <div className="flex flex-col min-w-0">
-              <h2 className="text-xl font-black text-foreground tracking-tight truncate uppercase">For you <span className="text-primary/50 text-sm ml-1">· Sem {profile?.semester || 4} {profile?.branch || 'CSE'}</span></h2>
+            <div className="flex items-center gap-3 min-w-0">
+              <h2 className="text-xl font-black text-foreground tracking-tight truncate uppercase">For you</h2>
+              <span className="text-primary/60 text-[10px] font-black uppercase tracking-widest mt-1 shrink-0 animate-pulse">· Sem {profile?.semester || 6} {profile?.branch || 'AIML'}</span>
             </div>
             <Link 
               to={`/browse?programme=${encodeURIComponent(profile?.programme || '')}&branch=${encodeURIComponent(profile?.branch || '')}&semester=${profile?.semester || ''}&category=${activeCategory.id !== 'all' ? activeCategory.id : ''}`} 
-              className="text-primary text-[10px] font-black uppercase tracking-widest hover:underline whitespace-nowrap shrink-0 bg-primary/5 px-3 py-1.5 rounded-lg"
+              className="text-blue-500 hover:text-blue-600 text-[10px] font-black uppercase tracking-widest hover:underline whitespace-nowrap shrink-0 bg-blue-500/5 px-3 py-1.5 rounded-lg border border-blue-500/10 transition-colors"
             >
               See all
             </Link>
@@ -528,9 +529,11 @@ export function Home() {
               ))}
             </div>
           ) : forYouListings.length === 0 ? (
-            <div className="rounded-[2.5rem] border-2 border-dashed border-border p-12 text-center space-y-4 bg-muted/10">
-              <Search className="mx-auto h-12 w-12 text-muted-foreground/20" />
-              <p className="text-muted-foreground text-[10px] font-black uppercase tracking-widest">No listings found for this selection.</p>
+            <div className="rounded-[3rem] border-2 border-dashed border-border p-14 text-center space-y-5 bg-muted/5 group hover:bg-muted/10 transition-all duration-500">
+              <div className="h-16 w-16 bg-muted/20 rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform shadow-inner">
+                <Search className="h-8 w-8 text-muted-foreground/30" />
+              </div>
+              <p className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.2em] opacity-80 max-w-[200px] mx-auto leading-relaxed">No notes available right now!</p>
               <Button variant="outline" size="sm" className="rounded-xl font-black uppercase tracking-widest text-[10px]" onClick={() => {
                 setActiveCategory({ id: 'all', label: 'All' });
                 setFilters({ sort: 'latest', programme: '', branch: '', semester: '', subject_code: '', materialType: '', minPrice: '', maxPrice: '' });

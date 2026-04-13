@@ -151,7 +151,7 @@ export const messageService = {
   },
   
   async heartbeat(jwt: string) {
-    await fetch(`${API_URL}/messages/heartbeat`, {
+    return await fetch(`${API_URL}/messages/heartbeat`, {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${jwt}` }
     });

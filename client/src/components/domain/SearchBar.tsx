@@ -10,7 +10,7 @@ interface SearchBarProps {
 export function SearchBar({ value, onChange, onFilterClick }: SearchBarProps) {
   return (
     <div className="flex items-center gap-2 w-full bg-white h-12 p-1 rounded-2xl shadow-sm border border-gray-100/50">
-      <div className="relative flex-1">
+      <div className="relative flex-1 pr-2">
         <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center justify-center h-5 w-5 text-gray-400">
           <Search className="h-full w-full stroke-[2.5px]" />
         </div>

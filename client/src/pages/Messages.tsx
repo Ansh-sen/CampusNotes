@@ -111,6 +111,10 @@ export function Messages() {
   }, []);
 
   useEffect(() => {
+    document.title = "Messages | CampusNotes";
+  }, []);
+
+  useEffect(() => {
     if (user && jwt) {
       socketRef.current = initSocket(jwt, convId);
 
@@ -190,8 +194,17 @@ export function Messages() {
       }
 
       // Heartbeat every 60s
-      const hb = setInterval(() => {
-        messageService.heartbeat(jwt);
+      const hb = setInterval(async () => {
+        try {
+          const res = await messageService.heartbeat(jwt);
+          if (res.status === 401 || res.status === 403) {
+            console.warn('Session expired, stopping heartbeat.');
+            clearInterval(hb);
+          }
+        } catch (e) {
+          console.error('Heartbeat error:', e);
+          clearInterval(hb);
+        }
       }, 60000);
 
       return () => {
@@ -745,40 +758,42 @@ export function Messages() {
   });
 
   return (
-    <div className="w-full space-y-6 animate-in fade-in duration-300 px-4 pb-20">
-      <div className="flex items-center justify-between py-6">
-        <h1 className="text-3xl font-black text-foreground tracking-tight">Messages</h1>
+    <div className="w-full space-y-6 animate-in fade-in duration-300 pb-20">
+      <div className="flex items-center justify-between pt-6 px-1">
+        <h1 className="text-3xl font-black text-foreground tracking-tight ml-4">Messages</h1>
         {conversations.length > 0 && (
-          <div className="bg-primary/5 px-4 py-2 rounded-2xl text-primary text-[10px] font-black uppercase tracking-widest border border-primary/10 backdrop-blur-sm">
+          <div className="bg-primary/5 px-4 py-2 rounded-2xl text-primary text-[10px] font-black uppercase tracking-widest border border-primary/10 backdrop-blur-sm mr-4">
             {conversations.length} Threads
           </div>
         )}
       </div>
 
       {/* Search Input */}
-      <div className="relative group">
-        <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
-          <Search className="h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+      <div className="px-4">
+        <div className="relative group">
+          <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
+            <Search className="h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+          </div>
+          <input 
+            type="text" 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search name, listing, or message..."
+            className="w-full h-16 bg-card border border-border rounded-[2rem] pl-12 pr-12 text-sm font-black shadow-sm focus:ring-4 focus:ring-primary/10 focus:border-primary/20 transition-all outline-none placeholder:text-muted-foreground/30"
+          />
+          {searchQuery && (
+            <button 
+              onClick={() => setSearchQuery('')}
+              className="absolute inset-y-0 right-5 flex items-center"
+            >
+              <X className="h-4 w-4 text-muted-foreground hover:text-danger transition-colors" />
+            </button>
+          )}
         </div>
-        <input 
-          type="text" 
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search name, listing, or message..."
-          className="w-full h-16 bg-card border border-border rounded-[2rem] pl-12 pr-12 text-sm font-black shadow-sm focus:ring-4 focus:ring-primary/10 focus:border-primary/20 transition-all outline-none placeholder:text-muted-foreground/30"
-        />
-        {searchQuery && (
-          <button 
-            onClick={() => setSearchQuery('')}
-            className="absolute inset-y-0 right-5 flex items-center"
-          >
-            <X className="h-4 w-4 text-muted-foreground hover:text-danger transition-colors" />
-          </button>
-        )}
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide py-1 -mx-4 px-4">
+      <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide py-1 px-4">
         {(['All', 'Buying', 'Selling', 'Unread', 'Archived'] as const).map(tab => {
           const isActive = activeTab === tab;
           return (
@@ -799,16 +814,18 @@ export function Messages() {
       
       {loading ? (
         <div className="space-y-4">
+        <div className="space-y-4 px-4">
           {[1,2,3,4].map(n => (
-            <div key={n} className="h-28 bg-card border border-border/50 rounded-[2.5rem] p-6 flex gap-6">
-              <Skeleton className="h-14 w-14 rounded-2xl shrink-0" />
-              <div className="flex-1 space-y-3">
-                <Skeleton className="h-5 w-1/3 rounded-lg" />
-                <Skeleton className="h-4 w-1/2 rounded-lg" />
-                <Skeleton className="h-4 w-full rounded-lg" />
+            <div key={n} className="h-28 bg-card border border-border/10 rounded-[2.5rem] p-6 flex gap-6 animate-pulse">
+              <div className="h-14 w-14 rounded-2xl shrink-0 bg-muted/40" />
+              <div className="flex-1 space-y-3 pt-1">
+                <div className="h-3 w-1/3 rounded-full bg-muted/40" />
+                <div className="h-2 w-1/2 rounded-full bg-muted/20" />
+                <div className="h-2 w-full rounded-full bg-muted/10" />
               </div>
             </div>
           ))}
+        </div>
         </div>
       ) : conversations.length === 0 ? (
         <div className="text-center py-24 bg-card rounded-[3.5rem] border border-border px-8 space-y-8 shadow-xl shadow-black/5">
