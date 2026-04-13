@@ -128,7 +128,7 @@ export function Browse() {
   };
 
   return (
-    <div className="w-full max-w-screen-sm mx-auto min-h-screen bg-background pb-24">
+    <div className="w-full min-h-screen bg-background pb-24">
       {/* Header */}
       <div className="bg-card/80 backdrop-blur-xl border-b border-border/50 sticky top-0 z-40 px-4 pt-10 pb-6 space-y-6 shadow-2xl shadow-black/5">
         <div className="flex items-center gap-4">
@@ -179,7 +179,7 @@ export function Browse() {
         </div>
       </div>
 
-      <div className="p-6">
+      <div className="p-4">
         {loading ? (
           <div className="grid grid-cols-1 gap-6">
             {[1, 2, 3, 4, 5, 6].map(n => (

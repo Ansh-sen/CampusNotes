@@ -225,7 +225,7 @@ export function Profile() {
     <div className="bg-background min-h-screen">
       
       {/* 1. Dark Navy Header (Matches Image) */}
-      <div className="bg-primary premium-gradient text-white pt-10 pb-16 px-6 rounded-b-[3.5rem] relative shadow-2xl shadow-primary/20 overflow-hidden">
+      <div className="bg-primary premium-gradient text-white pt-0 pb-16 px-4 rounded-b-[2.5rem] relative shadow-2xl shadow-primary/20 overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-[80px] -mr-24 -mt-24 pointer-events-none animate-pulse" />
         <div className="absolute bottom-0 left-0 w-32 h-32 bg-black/10 rounded-full blur-3xl -ml-12 -mb-12 pointer-events-none" />
         
@@ -293,8 +293,8 @@ export function Profile() {
       </div>
 
       {/* 3. Tab Navigation (Pill Style) */}
-      <div className="px-6 -mt-8 relative z-20">
-        <div className="flex bg-card/80 backdrop-blur-xl p-1.5 rounded-[2rem] shadow-2xl border border-border/50 overflow-x-auto scrollbar-hide no-scrollbar max-w-sm mx-auto">
+      <div className="px-4 -mt-8 relative z-20">
+        <div className="flex bg-card/80 backdrop-blur-xl p-1.5 rounded-[2rem] shadow-2xl border border-border/50 overflow-x-auto scrollbar-hide no-scrollbar w-full">
           <TabButton label="Overview" active={activeTab === 'overview'} onClick={() => setActiveTab('overview')} />
           <TabButton label="Listings" active={activeTab === 'listings'} onClick={() => setActiveTab('listings')} />
           <TabButton label="Reviews" active={activeTab === 'reviews'} onClick={() => setActiveTab('reviews')} />
@@ -303,7 +303,7 @@ export function Profile() {
       </div>
 
       {/* 4. Tab Content */}
-      <div className="p-5 pt-8 pb-32 max-w-md mx-auto overflow-x-hidden">
+      <div className="p-4 pt-8 pb-32 w-full overflow-x-hidden">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}

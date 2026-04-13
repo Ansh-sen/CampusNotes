@@ -27,14 +27,20 @@ const storage = multer.diskStorage({
 const upload = multer({ 
     storage: storage,
     limits: {
-        fileSize: 5 * 1024 * 1024 // 5MB limit
+        fileSize: 10 * 1024 * 1024 // Increased to 10MB to accommodate larger PDFs
     },
     fileFilter: function (req, file, cb) {
-        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-        if (allowedTypes.includes(file.mimetype)) {
+        const allowedMimeTypes = [
+            'image/jpeg', 'image/png', 'image/webp', 
+            'application/pdf', 
+            'application/msword', 
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        ];
+        
+        if (allowedMimeTypes.includes(file.mimetype)) {
             cb(null, true);
         } else {
-            cb(new Error('Unsupported file type. Allowed: Images, PDF, DOCX.'));
+            cb(new Error('Unsupported file type. Please upload an image (JPG, PNG, WEBP) or a document (PDF, DOCX).'));
         }
     }
 });
@@ -216,33 +222,7 @@ router.get('/conversations/:id', authenticateToken, async (req, res) => {
     }
 });
 
-// PATCH /api/messages/mark-read - Bulk mark messages as read
-router.patch('/mark-read', authenticateToken, async (req, res) => {
-    try {
-        const { conversation_id, sender_id } = req.body;
-        const userId = req.user.id;
-        
-        await db.execute(`
-            UPDATE messages 
-            SET read_at = NOW(), is_read = TRUE 
-            WHERE conversation_id = ? AND recipient_id = ? AND read_at IS NULL
-        `, [conversation_id, userId]);
-        
-        // Emit socket event to the sender so their ticks turn blue
-        const io = req.app.get('io');
-        if (io && sender_id) {
-            io.to(`user_${sender_id}`).emit('messages_read', { 
-                conversation_id, 
-                reader_id: userId 
-            });
-        }
-        
-        res.json({ success: true });
-    } catch (error) {
-        console.error('Error marking messages as read:', error);
-        res.status(500).json({ error: 'Failed' });
-    }
-});
+// Redundant endpoint removed. Replaced by /read/:conversationId
 
 // PATCH /api/messages/:id/meetup - Accept or Decline a meetup proposal
 router.patch('/:id/meetup', authenticateToken, async (req, res) => {
@@ -459,18 +439,40 @@ router.put('/:id', authenticateToken, async (req, res) => {
     }
 });
 
-// PATCH /api/messages/read - Mark messages as read
+// PATCH /api/messages/read/:conversationId - Mark messages as read and sync everywhere
 router.patch('/read/:conversationId', authenticateToken, async (req, res) => {
     try {
         const { conversationId } = req.params;
         const userId = req.user.id;
 
+        // 1. Update messages in DB
         await db.execute(
-            'UPDATE messages SET is_read = TRUE WHERE conversation_id = ? AND sender_id != ?',
+            'UPDATE messages SET is_read = TRUE, read_at = NOW() WHERE conversation_id = ? AND recipient_id = ? AND is_read = FALSE',
             [conversationId, userId]
         );
 
-        res.json({ message: 'Messages marked as read.' });
+        // 2. Sync with Socket.io
+        const io = req.app.get('io');
+        if (io) {
+            // Get other participant to notify their blue ticks
+            const [convs] = await db.execute('SELECT buyer_id, seller_id FROM conversations WHERE id = ?', [conversationId]);
+            if (convs.length > 0) {
+                const otherId = convs[0].buyer_id === userId ? convs[0].seller_id : convs[0].buyer_id;
+                
+                // Notify sender that messages were read (for blue ticks)
+                io.to(`user_${otherId}`).emit('messages_read', {
+                    conversation_id: conversationId,
+                    reader_id: userId
+                });
+
+                // Notify reader's other sessions to refresh unread count
+                io.to(`user_${userId}`).emit('unread_sync', {
+                    conversation_id: conversationId
+                });
+            }
+        }
+
+        res.json({ message: 'Messages marked as read and synchronized.' });
     } catch (error) {
         console.error('Error marking messages as read:', error);
         res.status(500).json({ error: 'Failed to update status.' });

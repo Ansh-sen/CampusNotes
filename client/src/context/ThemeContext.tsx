@@ -5,6 +5,7 @@ type Theme = 'light' | 'dark' | 'system';
 interface ThemeContextType {
   theme: Theme;
   setTheme: (theme: Theme) => void;
+  toggleTheme: () => void;
   resolvedTheme: 'light' | 'dark';
 }
 
@@ -18,6 +19,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   });
 
   const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light');
+
+  const toggleTheme = () => {
+    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
+  };
 
   useEffect(() => {
     const updateTheme = () => {
@@ -50,10 +55,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
-  }, [theme]);
+  }, [theme, resolvedTheme]);
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, resolvedTheme }}>
+    <ThemeContext.Provider value={{ theme, setTheme, toggleTheme, resolvedTheme }}>
       {children}
     </ThemeContext.Provider>
   );

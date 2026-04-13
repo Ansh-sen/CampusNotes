@@ -119,7 +119,7 @@ export function MessageInput({ onSend, conversationId, initialValue = '', onInpu
   };
 
   return (
-    <div className="p-4 bg-transparent pb-[var(--chat-pb,calc(env(safe-area-inset-bottom)+16px))]">
+    <div className="p-4 bg-background/80 backdrop-blur-xl border-t border-border/30 pb-[var(--chat-pb,calc(env(safe-area-inset-bottom)+12px))]">
       {/* File Preview */}
       {file && (
         <div className="mb-4 animate-in slide-in-from-bottom-2 duration-300">

@@ -91,7 +91,7 @@ export function Messages() {
             container.style.setProperty('--chat-height', '100dvh');
             container.style.setProperty('--chat-top', '0px');
             container.style.setProperty('--chat-z-index', '50');
-            container.style.setProperty('--chat-pb', 'calc(env(safe-area-inset-bottom) + 16px)');
+            container.style.setProperty('--chat-pb', 'calc(env(safe-area-inset-bottom) + 12px)');
             document.body.style.overflow = '';
           }
         }
@@ -126,6 +126,8 @@ export function Messages() {
           });
           if (convId && socketRef.current) {
             messageService.markAsRead(convId, jwt);
+            refreshUnreadCount();
+            setConversations(prev => prev.map(c => c.id === convId ? { ...c, unread_count: 0, is_unread: false } : c));
             const otherId = currentConv?.other_participant?.id;
             socketRef.current.emit('mark_read', { conversation_id: convId, reader_id: user?.id, other_id: otherId });
           }
@@ -136,6 +138,10 @@ export function Messages() {
       });
 
       socketRef.current.on('unread_update', () => {
+        loadInbox();
+      });
+
+      socketRef.current.on('unread_sync', () => {
         loadInbox();
       });
 
@@ -192,6 +198,7 @@ export function Messages() {
         clearInterval(hb);
         socketRef.current?.off('receive_message');
         socketRef.current?.off('unread_update');
+        socketRef.current?.off('unread_sync');
         socketRef.current?.off('messages_read');
         socketRef.current?.off('user_online');
         socketRef.current?.off('user_offline');
@@ -222,7 +229,7 @@ export function Messages() {
     loadMessages();
     markAsRead();
     fetchSafetyCheckin();
-  }, [user, jwt, convId]);
+  }, [user, jwt, convId, currentConv?.id]);
 
   const fetchSafetyCheckin = async () => {
     if (!convId || !jwt) return;
@@ -282,6 +289,8 @@ export function Messages() {
       
       if (id && user) {
         messageService.markAsRead(id, jwt!);
+        refreshUnreadCount();
+        setConversations(prev => prev.map(c => c.id === id ? { ...c, unread_count: 0, is_unread: false } : c));
         const otherId = convRes.data.buyer_id === user.id ? convRes.data.seller_id : convRes.data.buyer_id;
         socketRef.current?.emit('mark_read', { conversation_id: id, reader_id: user.id, other_id: otherId });
       }
@@ -520,12 +529,14 @@ export function Messages() {
       <div 
         ref={containerRef}
         style={{ 
-          height: 'var(--chat-height, calc(100dvh - 80px))',
+          height: 'var(--chat-height, 100dvh)',
           top: 'var(--chat-top, 0px)',
           position: 'var(--chat-position, fixed)' as any,
           width: '100%',
+          maxWidth: 'var(--layout-max-width, 42rem)', // Matches max-w-2xl
           zIndex: 'var(--chat-z-index, 50)' as any,
-          left: 0
+          left: '50%',
+          transform: 'translateX(-50%)'
         }}
         className="flex flex-col bg-background animate-in fade-in duration-300 overflow-hidden"
       >
@@ -734,7 +745,7 @@ export function Messages() {
   });
 
   return (
-    <div className="w-full max-w-screen-sm mx-auto space-y-6 animate-in fade-in duration-300 px-6 pb-20">
+    <div className="w-full space-y-6 animate-in fade-in duration-300 px-4 pb-20">
       <div className="flex items-center justify-between py-6">
         <h1 className="text-3xl font-black text-foreground tracking-tight">Messages</h1>
         {conversations.length > 0 && (

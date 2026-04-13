@@ -45,7 +45,7 @@ export function MyListingCard({ listing, onAction }: MyListingCardProps) {
     if (isDraft) {
       badges.push(<Badge key="draft" variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-500/20 text-[9px] font-black uppercase tracking-widest">Draft</Badge>);
     } else if (listing.approval_status === 'pending_approval') {
-      badges.push(<Badge key="pending" variant="outline" className="bg-primary/10 text-primary border-primary/20 text-[9px] font-black uppercase tracking-widest">Pending Audit</Badge>);
+      badges.push(<Badge key="pending" variant="outline" className="bg-primary/10 text-primary border-primary/20 text-[9px] font-black uppercase tracking-widest">Checking...</Badge>);
     } else if (listing.approval_status === 'rejected') {
       badges.push(<Badge key="rejected" variant="outline" className="bg-danger/10 text-danger border-danger/20 text-[9px] font-black uppercase tracking-widest">Rejected</Badge>);
     } else if (status === 'available') {
@@ -69,9 +69,9 @@ export function MyListingCard({ listing, onAction }: MyListingCardProps) {
     if (isDraft) {
       return (
         <>
-          <button onClick={() => onAction('continue_draft', listing.id)} className={cn(btnClass, "text-primary")}>Resume Build</button>
+          <button onClick={() => onAction('continue_draft', listing.id)} className={cn(btnClass, "text-primary")}>Continue Editing</button>
           <div className="w-[1px] h-6 bg-border/50 self-center" />
-          <button onClick={() => onAction('discard_draft', listing.id)} className={cn(btnClass, "text-danger")}>Flush Draft</button>
+          <button onClick={() => onAction('discard_draft', listing.id)} className={cn(btnClass, "text-danger")}>Delete Draft</button>
         </>
       );
     }
@@ -81,28 +81,28 @@ export function MyListingCard({ listing, onAction }: MyListingCardProps) {
     if (status === 'sold') {
       return (
         <>
-          <button onClick={() => onAction('relist', listing.id)} className={secondaryBtnClass}>Relist Asset</button>
+          <button onClick={() => onAction('relist', listing.id)} className={secondaryBtnClass}>Put back on sale</button>
           <div className="w-[1px] h-6 bg-border/50 self-center" />
-          <button onClick={() => onAction('view_review', listing.id)} className={secondaryBtnClass}>Audits</button>
+          <button onClick={() => onAction('view_review', listing.id)} className={secondaryBtnClass}>Reviews</button>
           <div className="w-[1px] h-6 bg-border/50 self-center" />
-          <button onClick={() => onAction('delete', listing.id)} className={cn(btnClass, "text-danger")}>Terminate</button>
+          <button onClick={() => onAction('delete', listing.id)} className={cn(btnClass, "text-danger")}>Delete</button>
         </>
       );
     }
 
     return (
       <>
-        <button onClick={() => onAction('edit', listing.id)} className={secondaryBtnClass}>Refine</button>
+        <button onClick={() => onAction('edit', listing.id)} className={secondaryBtnClass}>Edit</button>
         <div className="w-[1px] h-6 bg-border/50 self-center" />
         {status === 'paused' ? (
-          <button onClick={() => onAction('resume', listing.id)} className={cn(btnClass, "text-emerald-500")}>Unarchive</button>
+          <button onClick={() => onAction('resume', listing.id)} className={cn(btnClass, "text-emerald-500")}>Show again</button>
         ) : (
-          <button onClick={() => onAction('pause', listing.id)} className={secondaryBtnClass}>Archive</button>
+          <button onClick={() => onAction('pause', listing.id)} className={secondaryBtnClass}>Hide</button>
         )}
         <div className="w-[1px] h-6 bg-border/50 self-center" />
-        <button onClick={() => onAction('mark_sold', listing.id)} className={cn(btnClass, "text-primary")}>Liquidate</button>
+        <button onClick={() => onAction('mark_sold', listing.id)} className={cn(btnClass, "text-primary")}>Mark as Sold</button>
         <div className="w-[1px] h-6 bg-border/50 self-center" />
-        <button onClick={() => onAction('delete', listing.id)} className={cn(btnClass, "text-danger")}>Terminate</button>
+        <button onClick={() => onAction('delete', listing.id)} className={cn(btnClass, "text-danger")}>Delete</button>
       </>
     );
   };
@@ -114,7 +114,7 @@ export function MyListingCard({ listing, onAction }: MyListingCardProps) {
     )}>
       {isDraft && (
         <div className="bg-amber-500/10 px-6 py-3 flex justify-between items-center border-b border-amber-500/10">
-          <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest leading-none">Intelligence Staging — {listing.title || 'Incomplete'}</span>
+          <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest leading-none">Creating Draft — {listing.title || 'Incomplete'}</span>
           <span className="text-[9px] font-black text-amber-500 opacity-60 uppercase tracking-widest">Phase {listing.last_step || 1} / 3</span>
         </div>
       )}
@@ -148,9 +148,9 @@ export function MyListingCard({ listing, onAction }: MyListingCardProps) {
           </div>
 
           <div className="flex-1 min-w-0 space-y-2">
-            <h3 className="text-base font-black text-foreground truncate uppercase tracking-tight leading-none">{listing.title || 'Asset Untitled'}</h3>
+            <h3 className="text-base font-black text-foreground truncate uppercase tracking-tight leading-none">{listing.title || 'Untitled Note'}</h3>
             <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-40">
-              {listing.subject_code || 'GEN'} • Sem {listing.semester || 'N/A'} • {listing.material_type || 'Archive'}
+              {listing.subject_code || 'GEN'} • Sem {listing.semester || 'N/A'} • {listing.material_type || 'Note'}
             </p>
             <div className="flex flex-wrap gap-2 pt-1">
               {renderStatusBadges()}
@@ -160,35 +160,39 @@ export function MyListingCard({ listing, onAction }: MyListingCardProps) {
 
         {/* Stats Row */}
         <div className={cn(
-          "px-8 py-4 border-y border-border/30 flex items-center justify-between bg-muted/20",
+          "px-8 py-5 border-y border-border/30 flex items-center justify-between bg-muted/20",
           isDraft && "opacity-30 pointer-events-none"
         )}>
-          <div className="flex gap-8">
-            <div className="flex items-center gap-2 group/metric">
-              <Eye className="h-4 w-4 text-primary opacity-40 group-hover/metric:opacity-100 transition-opacity" />
+          <div className="flex gap-10">
+            <div className="flex items-center gap-3 group/metric">
+              <div className="bg-primary/10 p-2 rounded-xl">
+                 <Eye size={18} className="text-primary opacity-60 group-hover/metric:opacity-100 transition-opacity" />
+              </div>
               <div className="flex flex-col">
-                <span className="text-xs font-black text-foreground tabular-nums leading-none">{viewCount}</span>
-                <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest opacity-30">Reach</span>
+                <span className="text-sm font-black text-foreground tabular-nums leading-none mb-0.5">{viewCount}</span>
+                <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest opacity-40 leading-none">Views</span>
               </div>
             </div>
-            <div className="flex items-center gap-2 group/metric">
-              <MessageCircle className="h-4 w-4 text-emerald-500 opacity-40 group-hover/metric:opacity-100 transition-opacity" />
+            <div className="flex items-center gap-3 group/metric">
+              <div className="bg-emerald-500/10 p-2 rounded-xl">
+                <MessageCircle size={18} className="text-emerald-500 opacity-60 group-hover/metric:opacity-100 transition-opacity" />
+              </div>
               <div className="flex flex-col">
-                <span className="text-xs font-black text-foreground tabular-nums leading-none">{inquiryCount}</span>
-                <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest opacity-30">Inquiry</span>
+                <span className="text-sm font-black text-foreground tabular-nums leading-none mb-0.5">{inquiryCount}</span>
+                <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest opacity-40 leading-none">Inquiries</span>
               </div>
             </div>
           </div>
-          <div className="text-right">
+          <div className="text-right flex flex-col justify-center min-h-[40px]">
             {status === 'sold' && listing.buyer_name ? (
-                <div className="flex flex-col items-end">
-                  <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest opacity-30">Acquired by</span>
-                  <span className="text-[10px] font-black text-primary uppercase tracking-tight">{listing.buyer_name}</span>
+                <div className="flex flex-col items-end gap-1">
+                  <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest opacity-30 leading-none">Bought by</span>
+                  <span className="text-xs font-black text-primary uppercase tracking-tight leading-none">{listing.buyer_name}</span>
                 </div>
             ) : (
-                <div className="flex flex-col items-end">
-                  <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest opacity-30">Market Value</span>
-                  <span className="text-sm font-black text-foreground tracking-tighter tabular-nums leading-none">₹{listing.price}</span>
+                <div className="flex flex-col items-end gap-1">
+                  <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest opacity-30 leading-none">Market Price</span>
+                  <span className="text-base font-black text-foreground tracking-tighter tabular-nums leading-none">₹{listing.price}</span>
                 </div>
             )}
           </div>

@@ -8,6 +8,8 @@ const { checkDuplicate } = require('../services/duplicateDetector');
 const path = require('path');
 const fs = require('fs');
 
+const { validateListing } = require('../middleware/validation');
+
 // GET /api/listings - Fetch listings with dynamic filtering and sorting
 router.get('/', async (req, res) => {
     try {
@@ -314,7 +316,7 @@ router.get('/my-draft', authenticateToken, async (req, res) => {
 });
 
 // POST /api/listings/draft - Save or update a draft
-router.post('/draft', authenticateToken, async (req, res) => {
+router.post('/draft', authenticateToken, validateListing, async (req, res) => {
     try {
         const userId = req.user.id;
         const { id, title, description, subject_code, semester, branch, programme, material_type, price, images, tags } = req.body;
@@ -501,7 +503,7 @@ router.get('/:id', async (req, res) => {
 const crypto = require('crypto');
 
 // POST /api/listings - Create a new listing (Protected Route)
-router.post('/', authenticateToken, async (req, res) => {
+router.post('/', authenticateToken, validateListing, async (req, res) => {
     const { 
         id, title, description, price, material_type,
         images, tags, is_draft, file_url,

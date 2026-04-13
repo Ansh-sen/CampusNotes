@@ -28,7 +28,7 @@ export function BottomNav() {
   }
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-100 pb-[env(safe-area-inset-bottom)] px-2">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/80 dark:bg-card/60 backdrop-blur-xl border-t border-border/50 pb-[env(safe-area-inset-bottom)] px-2 shadow-[0_-8px_30px_rgb(0,0,0,0.04)]">
       <div className="flex justify-around items-center h-20">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path || (item.path !== '/' && location.pathname.startsWith(item.path));
@@ -40,24 +40,24 @@ export function BottomNav() {
               to={item.path}
               className={cn(
                 "flex flex-col items-center justify-center w-full h-full pt-2 transition-all relative",
-                isActive ? "text-[#1a2744]" : "text-gray-400 hover:text-gray-600"
+                isActive ? "text-primary dark:text-primary" : "text-muted-foreground hover:text-foreground"
               )}
             >
               <div className="relative mb-1">
-                <Icon className={cn("w-6 h-6 stroke-[1.5px]", isActive && "text-[#1a2744]")} />
+                <Icon className={cn("w-6 h-6 stroke-[1.5px]", isActive && "text-primary dark:text-primary animate-pulse-subtle")} />
                 {item.badge !== undefined && item.badge > 0 && (
                   <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[8px] font-bold text-white ring-2 ring-white">
                     {item.badge > 9 ? '9+' : item.badge}
                   </span>
                 )}
               </div>
-              <span className={cn("text-[9px] font-bold tracking-tight px-0.5 text-center", isActive ? "text-[#1a2744]" : "text-gray-400")}>
+              <span className={cn("text-[9px] font-bold tracking-tight px-0.5 text-center transition-colors", isActive ? "text-primary dark:text-primary" : "text-muted-foreground")}>
                 {item.label}
               </span>
               
               {/* Active Indicator Dot */}
               {isActive && (
-                <div className="absolute bottom-1 h-1 w-1 bg-[#1a2744] rounded-full" />
+                <div className="absolute bottom-1 h-1 w-1 bg-primary rounded-full shadow-[0_0_8px_rgba(var(--primary),0.5)]" />
               )}
             </Link>
           );

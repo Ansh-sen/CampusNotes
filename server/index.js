@@ -15,11 +15,20 @@ app.get("/", (req, res) => {
 
 // General API Rate Limiter
 const apiLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    limit: 1000, // Limit each IP to 1000 requests per `window` (here, per 15 minutes).
-    standardHeaders: 'draft-7', // set `RateLimit` and `RateLimit-Policy` headers
-    legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
+    windowMs: 15 * 60 * 1000, 
+    limit: 1000, 
+    standardHeaders: 'draft-7', 
+    legacyHeaders: false, 
     message: { error: 'Too many requests, please try again later.' }
+});
+
+// Stricter Auth Rate Limiter (Login/Register)
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    limit: 10, // Limit each IP to 10 attempts
+    standardHeaders: 'draft-7',
+    legacyHeaders: false,
+    message: { error: 'Too many auth attempts, please try again after 15 minutes.' }
 });
 
 // Define HTTP Server for Socket.io
@@ -27,29 +36,33 @@ const server = http.createServer(app);
 
 const { router: authRouter, authenticateToken } = require('./routes/auth');
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = process.env.JWT_SECRET || 'your_secret_key_here_change_in_production';
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+    console.error('CRITICAL ERROR: JWT_SECRET missing in environment.');
+}
 
 // Common CORS Configuration
 const allowedOrigins = [
     'http://localhost:5173',
     'http://127.0.0.1:5173',
-    // We add a dynamic check in the cors middleware below
-];
+    process.env.CLIENT_URL
+].filter(Boolean); // Filter out undefined/null if CLIENT_URL is not set yet
 
 const corsOptions = {
     origin: (origin, callback) => {
         // Allow requests with no origin (like mobile apps or curl)
         if (!origin) return callback(null, true);
         
-        // Check if origin is localhost or a local network IP
+        // Check if origin is localhost, local network IP, or the configured CLIENT_URL
         const localRegex = /^http:\/\/(localhost|127\.0\.0\.1|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+|172\.(1[6-9]|2[0-9]|3[0-1])\.\d+\.\d+)(:\d+)?$/;
-        const isLocal = allowedOrigins.includes(origin) || localRegex.test(origin);
+        const isAllowed = allowedOrigins.includes(origin) || localRegex.test(origin);
         
-        if (isLocal) {
+        if (isAllowed) {
             callback(null, true);
         } else {
             console.warn(`[CORS BLOCKED] ${origin}`);
-            callback(null, false); // Return false instead of error to avoid 500
+            callback(null, false);
         }
     },
     credentials: true,
@@ -59,7 +72,10 @@ const corsOptions = {
 
 // Initialize Socket.io
 const io = new Server(server, {
-    cors: corsOptions
+    cors: corsOptions,
+    transports: ['websocket', 'polling'], // Allow polling fallback for stable mobile sync
+    pingTimeout: 60000, // 60s timeout for mobile sleep/resume cycles
+    pingInterval: 25000
 });
 
 // Socket.io Authentication Middleware
@@ -85,14 +101,24 @@ app.use(helmet({
 
 
 app.use(cors(corsOptions));
-app.use(express.json());
-app.use('/api/', apiLimiter);
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
+// app.use('/api/', apiLimiter);
 
 // Request Logging Middleware
 app.use((req, res, next) => {
     const origin = req.headers.origin || 'No Origin';
     console.log(`[${new Date().toLocaleTimeString()}] ${req.method} ${req.url} - From: ${origin} - IP: ${req.ip}`);
     next();
+});
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+    res.json({ 
+        status: 'ok', 
+        timestamp: new Date().toISOString(),
+        service: 'CampusNotes API'
+    });
 });
 
 // Routes
@@ -208,15 +234,21 @@ io.on('connection', (socket) => {
 // Serve uploaded files statically
 app.use('/uploads', express.static('uploads'));
 
-// Health check endpoint
-app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok', message: 'CampusNotes Express API + WebSockets running!' });
-});
-
 // Global Error Handler
 app.use((err, req, res, next) => {
-    console.error(`[FATAL ERROR] ${req.method} ${req.url}:`, err);
-    res.status(500).json({ error: 'Internal server error' });
+    const statusCode = err.statusCode || 500;
+    const isProduction = process.env.NODE_ENV === 'production';
+    
+    console.error(`[FATAL ERROR] ${req.method} ${req.url}:`, {
+        message: err.message,
+        stack: isProduction ? '🥞' : err.stack,
+        timestamp: new Date().toISOString()
+    });
+
+    res.status(statusCode).json({ 
+        error: isProduction ? 'Internal server error' : err.message,
+        ...(isProduction ? {} : { stack: err.stack })
+    });
 });
 
 // Start Server on the combined HTTP + Socket Server

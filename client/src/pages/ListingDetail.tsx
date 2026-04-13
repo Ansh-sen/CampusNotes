@@ -234,7 +234,7 @@ export function ListingDetail() {
 
   if (!listing) {
     return (
-      <div className="max-w-screen-sm mx-auto p-12 text-center space-y-6">
+      <div className="max-w-md mx-auto p-12 text-center space-y-6">
         <div className="h-20 w-20 bg-red-50 rounded-full flex items-center justify-center mx-auto">
           <ShieldAlert className="h-10 w-10 text-red-500" />
         </div>
@@ -284,7 +284,7 @@ export function ListingDetail() {
   const isOwner = user?.id === listing.seller_id;
 
   return (
-    <div className="space-y-8 pb-32 animate-in fade-in duration-500 max-w-screen-sm mx-auto px-4">
+    <div className="space-y-8 pb-32 animate-in fade-in duration-500 w-full px-4">
       <Helmet>
         <title>{listing.title} | CampusNotes</title>
         <meta name="description" content={`${listing.subject_code} · ₹${listing.price || 'Free'}`} />
@@ -644,7 +644,7 @@ export function ListingDetail() {
       </div>
 
       {/* Fixed Sticky Footer */}
-      <div className="fixed bottom-20 sm:bottom-0 left-0 right-0 p-6 bg-card/8 backdrop-blur-2xl border-t border-border/50 z-[60] max-w-screen-sm mx-auto flex gap-4 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.2)] rounded-t-[3rem]">
+      <div className="fixed bottom-20 sm:bottom-0 left-1/2 -translate-x-1/2 right-0 p-6 bg-card/8 backdrop-blur-2xl border-t border-border/50 z-[60] w-full max-w-2xl flex gap-4 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.2)] rounded-t-[3rem] items-center justify-center">
         {isOwner ? (
           <>
             <button 

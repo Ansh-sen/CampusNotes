@@ -7,6 +7,7 @@ import Listings from './pages/Listings';
 import Academic from './pages/Academic';
 import Reports from './pages/Reports';
 import AdminLayout from './components/AdminLayout';
+import { ThemeProvider } from './context/ThemeContext';
 
 const AdminAuthGuard = ({ children }: { children: React.ReactNode }) => {
   const token = localStorage.getItem('admin_token');
@@ -16,27 +17,29 @@ const AdminAuthGuard = ({ children }: { children: React.ReactNode }) => {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route
-          path="/*"
-          element={
-            <AdminAuthGuard>
-              <AdminLayout />
-            </AdminAuthGuard>
-          }
-        >
-          <Route index element={<Dashboard />} />
-          <Route path="users" element={<Users />} />
-          <Route path="users/:id" element={<Users />} />
-          <Route path="verifications" element={<Verifications />} />
-          <Route path="listings" element={<Listings />} />
-          <Route path="academic" element={<Academic />} />
-          <Route path="reports" element={<Reports />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <ThemeProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route
+            path="/*"
+            element={
+              <AdminAuthGuard>
+                <AdminLayout />
+              </AdminAuthGuard>
+            }
+          >
+            <Route index element={<Dashboard />} />
+            <Route path="users" element={<Users />} />
+            <Route path="users/:id" element={<Users />} />
+            <Route path="verifications" element={<Verifications />} />
+            <Route path="listings" element={<Listings />} />
+            <Route path="academic" element={<Academic />} />
+            <Route path="reports" element={<Reports />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }

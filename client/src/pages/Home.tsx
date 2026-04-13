@@ -374,7 +374,7 @@ export function Home() {
   const isProfileComplete = !!(profile?.branch && profile?.semester);
 
   return (
-    <div className="w-full max-w-screen-sm mx-auto pb-24 animate-in fade-in slide-in-from-bottom-4 duration-500 bg-background min-h-screen">
+    <div className="w-full pb-24 animate-in fade-in slide-in-from-bottom-4 duration-500 bg-background min-h-screen">
       
       {/* Offline Banner */}
       {isOffline && (
@@ -384,7 +384,7 @@ export function Home() {
       )}
 
       {/* Hero Header Section */}
-      <div className="px-6 pt-12 pb-14 premium-gradient text-white rounded-b-[3.5rem] shadow-2xl shadow-primary/20 relative overflow-hidden animate-in fade-in slide-in-from-top-4 duration-700">
+      <div className="px-4 pt-0 pb-14 premium-gradient text-white rounded-b-[3.5rem] shadow-2xl shadow-primary/20 relative overflow-hidden animate-in fade-in slide-in-from-top-4 duration-700">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-20 -mt-20 blur-3xl animate-pulse" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-primary/20 rounded-full -ml-10 -mb-10 blur-2xl" />
         
@@ -409,7 +409,7 @@ export function Home() {
 
       {/* Filter Pills */}
       {Object.entries(filters).some(([key, val]) => (key !== 'sort' || val !== 'latest') && val !== '') && (
-        <div className="flex items-center gap-2 overflow-x-auto px-6 py-4 scrollbar-hide animate-in fade-in slide-in-from-left-4 duration-300">
+        <div className="flex items-center gap-2 overflow-x-auto px-4 py-4 scrollbar-hide animate-in fade-in slide-in-from-left-4 duration-300">
           <div className="flex items-center gap-2 shrink-0">
             {Object.entries(filters).map(([key, value]) => {
               if ((key === 'sort' && value === 'latest') || value === '') return null;
@@ -446,7 +446,7 @@ export function Home() {
         </div>
       )}
 
-      <div className={cn("px-6 space-y-8", !Object.entries(filters).some(([key, val]) => (key !== 'sort' || val !== 'latest') && val !== '') && "mt-10")}>
+      <div className={cn("px-4 space-y-8", !Object.entries(filters).some(([key, val]) => (key !== 'sort' || val !== 'latest') && val !== '') && "mt-10")}>
         
         {/* Exam Countdown Banner */}
         {showExamBanner && (
@@ -473,7 +473,7 @@ export function Home() {
         )}
 
         {/* Category Chips */}
-        <div className="flex overflow-x-auto gap-3 py-2 -mx-6 px-6 scrollbar-hide snap-x no-scrollbar">
+        <div className="flex overflow-x-auto gap-3 py-2 -mx-4 px-4 scrollbar-hide snap-x no-scrollbar">
           {categories.map(category => (
             <button
               key={category.id}
@@ -555,7 +555,7 @@ export function Home() {
             <Link to="/browse?sort=latest" className="text-primary text-[10px] font-black uppercase tracking-widest hover:underline whitespace-nowrap shrink-0 bg-primary/5 px-3 py-1.5 rounded-lg">See all</Link>
           </div>
           
-          <div className="flex gap-4 overflow-x-auto pb-6 scrollbar-hide -mx-6 px-6 snap-x no-scrollbar">
+          <div className="flex gap-4 overflow-x-auto pb-6 scrollbar-hide -mx-4 px-4 snap-x no-scrollbar">
             {newOnCampusListings.map((item, idx) => (
               <Link 
                 to={`/listing/${item.id}`} 
@@ -604,7 +604,7 @@ export function Home() {
               <Link to="/browse?sort=trending" className="text-primary text-[10px] font-black uppercase tracking-widest hover:underline whitespace-nowrap shrink-0 bg-primary/5 px-3 py-1.5 rounded-lg">See all</Link>
             </div>
             
-            <div className="flex gap-4 overflow-x-auto pb-6 scrollbar-hide -mx-6 px-6 snap-x no-scrollbar">
+            <div className="flex gap-4 overflow-x-auto pb-6 scrollbar-hide -mx-4 px-4 snap-x no-scrollbar">
               {trendingLoading ? (
                 <>
                   <Skeleton className="snap-start min-w-[180px] h-[140px] rounded-[2rem]" />

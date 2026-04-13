@@ -44,8 +44,13 @@ export function UnreadCountProvider({ children }: { children: React.ReactNode })
         setUnreadCount(prev => data.increment ? prev + 1 : Math.max(0, prev - 1));
       });
 
+      socketRef.current?.on('unread_sync', () => {
+        fetchUnreadCount();
+      });
+
       return () => {
         socketRef.current?.off('unread_update');
+        socketRef.current?.off('unread_sync');
       };
     } else {
       setUnreadCount(0);

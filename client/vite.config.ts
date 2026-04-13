@@ -10,6 +10,9 @@ export default defineConfig(({ mode }) => {
   const apiPattern = new RegExp(`^${apiUrl.replace(/\//g, '\\/')}\\/api\\/.*$`);
 
   return {
+    build: {
+      outDir: 'dist',
+    },
     plugins: [
       react(),
       VitePWA({

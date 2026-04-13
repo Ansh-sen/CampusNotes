@@ -14,7 +14,7 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-[60] glass border-b border-border/50 pt-[env(safe-area-inset-top)]">
-      <div className="flex h-16 items-center justify-between px-6 max-w-md mx-auto w-full">
+      <div className="flex h-16 items-center justify-between px-4 w-full">
         <Link to="/" className="flex items-center space-x-2.5">
           <div className="bg-primary p-2 rounded-xl shadow-lg shadow-primary/20 animate-float">
             <GraduationCap className="h-5 w-5 text-white" />

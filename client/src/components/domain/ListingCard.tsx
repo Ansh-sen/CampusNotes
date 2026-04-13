@@ -73,6 +73,7 @@ export function ListingCard({ listing, index = 0, viewMode = 'list' }: { listing
           <img 
             src={coverImage} 
             alt={listing.title} 
+            loading="lazy"
             className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
           />
         ) : (
@@ -103,16 +104,16 @@ export function ListingCard({ listing, index = 0, viewMode = 'list' }: { listing
       <CardContent className={cn("p-6 flex-1 flex flex-col", isGrid ? "gap-4 p-4" : "gap-5")}>
         <div className="space-y-2">
           <h3 className={cn(
-            "line-clamp-2 font-black text-foreground tracking-tight group-hover:text-primary transition-colors uppercase leading-[1.1]",
-            isGrid ? "text-sm" : "text-lg"
+            "line-clamp-2 font-black text-foreground tracking-tight group-hover:text-primary transition-colors uppercase leading-tight",
+            isGrid ? "text-[13px]" : "text-lg"
           )}>
             {listing.title}
           </h3>
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-[9px] font-black text-primary/60 uppercase tracking-widest bg-primary/5 px-2 py-1 rounded-lg border border-primary/10">
+          <div className="flex items-center gap-2 flex-wrap min-h-[22px]">
+            <span className="text-[9px] font-black text-primary/60 uppercase tracking-widest bg-primary/5 px-2 py-1 rounded-lg border border-primary/10 flex items-center h-full">
               {listing.subject_code || 'General Notes'}
             </span>
-            <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest opacity-40">
+            <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest opacity-40 flex items-center h-full">
               SEM {listing.semester || 'N/A'}
             </span>
           </div>
@@ -135,14 +136,14 @@ export function ListingCard({ listing, index = 0, viewMode = 'list' }: { listing
         )}
 
         <div className={cn("flex items-center justify-between mt-auto border-t border-border/50", isGrid ? "pt-4" : "pt-6")}>
-          <div className="flex flex-col">
-            <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest opacity-40 mb-1">Price</span>
+          <div className="flex flex-col gap-0.5">
+            <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest opacity-40 leading-none">Price</span>
             <span className={cn("text-foreground font-black leading-none tracking-tighter tabular-nums", isGrid ? "text-lg" : "text-2xl")}>
               ₹{listing.price > 0 ? listing.price : 'FREE'}
             </span>
           </div>
           
-          <div className={cn("px-3 py-1.5 rounded-xl text-[8px] font-black uppercase tracking-widest leading-none shadow-inner border", 
+          <div className={cn("px-3 py-1.5 rounded-xl text-[8px] font-black uppercase tracking-widest flex items-center justify-center shadow-inner border h-7", 
             listing.status === 'available' 
               ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" 
               : "bg-danger/10 text-danger border-danger/20"

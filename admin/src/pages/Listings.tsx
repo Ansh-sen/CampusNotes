@@ -5,7 +5,12 @@ import {
   ExternalLink,
   Clock,
   BookOpen,
-  FileText
+  FileText,
+  CheckCircle,
+  TrendingUp,
+  Tag,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { API_URL, STUDENT_APP_URL } from '../config';
 import { cn } from '../lib/utils';
@@ -97,98 +102,100 @@ export default function Listings() {
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
-      <div className="flex items-center justify-between">
+    <div className="space-y-10 animate-fade-in">
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">Listing Moderation</h1>
-          <p className="text-slate-500 font-medium">Review and manage marketplace content</p>
+          <h1 className="text-4xl font-black text-foreground tracking-tight">Marketplace Moderation</h1>
+          <p className="text-muted-foreground font-bold text-sm mt-1 uppercase tracking-widest opacity-60 italic">Quality assurance for campus notes and materials</p>
         </div>
-        <div className="flex bg-white rounded-2xl border border-slate-200 p-1 shadow-sm">
-           {[
-             { id: 'pending_approval', label: 'Pending' },
-             { id: 'approved', label: 'Approved' },
-             { id: 'rejected', label: 'Rejected' },
-             { id: 'all', label: 'All' }
-           ].map((s) => (
-             <button 
-              key={s.id}
-              onClick={() => { setStatus(s.id); setPage(1); }}
-              className={cn(
-                "px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
-                status === s.id ? "bg-slate-900 text-white shadow-lg" : "text-slate-500 hover:text-slate-900"
-              )}
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex bg-secondary/50 rounded-2xl border border-border/50 p-1.5 shadow-inner">
+             {[
+               { id: 'pending_approval', label: 'Pending' },
+               { id: 'approved', label: 'Approved' },
+               { id: 'rejected', label: 'Rejected' },
+               { id: 'all', label: 'Registry' }
+             ].map((s) => (
+               <button 
+                key={s.id}
+                onClick={() => { setStatus(s.id); setPage(1); }}
+                className={cn(
+                  "px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+                  status === s.id ? "bg-primary text-white shadow-xl" : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                 )}
+              >
+                {s.label}
+              </button>
+             ))}
+          </div>
+          {status === 'pending_approval' && listings.length > 0 && (
+            <button 
+              disabled={loading}
+              onClick={handleApproveAll}
+              className="flex items-center gap-3 px-6 py-3 bg-emerald-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-all active:scale-95 shadow-xl shadow-emerald-500/20 disabled:opacity-50"
             >
-              {s.label}
+              <CheckCircle size={18} />
+              Bulk Approve All
             </button>
-           ))}
+          )}
         </div>
-        {status === 'pending_approval' && listings.length > 0 && (
-          <button 
-            disabled={loading}
-            onClick={handleApproveAll}
-            className="flex items-center gap-2 px-6 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-emerald-700 transition-all active:scale-95 shadow-lg shadow-emerald-100 disabled:opacity-50"
-          >
-            <BookOpen size={16} />
-            Approve All ({listings.length})
-          </button>
-        )}
       </div>
 
-      <div className="bg-white border border-slate-100 rounded-[2rem] shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-slate-50 flex items-center justify-between bg-white sticky top-0 z-10">
-          <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+      <div className="admin-card">
+        <div className="p-8 border-b border-border/50 flex flex-col md:flex-row md:items-center justify-between gap-6 bg-muted/5 sticky top-0 z-10">
+          <div className="relative flex-1 max-w-xl">
+            <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground transition-colors" />
             <input 
               type="text" 
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && fetchListings()}
-              placeholder="Search by title, subject..." 
-              className="w-full h-11 bg-slate-50 border border-slate-100 rounded-xl pl-11 pr-4 text-sm font-medium focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all"
+              placeholder="Filter by title, subject or author..." 
+              className="w-full h-14 bg-card border border-border rounded-[1.5rem] pl-14 pr-6 text-sm font-bold text-foreground focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all placeholder:text-muted-foreground/50"
             />
           </div>
-          <div className="flex items-center gap-2 ml-4">
+          <div className="flex items-center gap-3">
              <button 
               onClick={() => setIsFilterOpen(!isFilterOpen)}
               className={cn(
-                "h-11 px-4 border rounded-xl transition-all flex items-center gap-2 text-xs font-black uppercase tracking-widest",
-                isFilterOpen ? "bg-slate-900 text-white border-slate-900" : "bg-slate-50 border-slate-100 text-slate-500 hover:text-slate-900"
+                "h-14 px-6 border rounded-2xl transition-all flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em]",
+                isFilterOpen ? "bg-foreground text-background border-foreground shadow-xl" : "bg-card border-border text-muted-foreground hover:border-primary/50"
               )}
             >
                 <Filter size={18} />
-                Filter
+                Categories
              </button>
              <button 
               onClick={fetchListings}
-              className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-blue-700 transition-all active:scale-95"
+              className="btn-primary h-14 flex items-center gap-2"
             >
-                Search
+                <Search size={18} /> Apply Filter
              </button>
           </div>
         </div>
 
         {isFilterOpen && (
-          <div className="p-6 bg-slate-50 border-b border-slate-100 grid grid-cols-3 gap-4 animate-in slide-in-from-top-4 duration-300">
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 pl-1">Material Type</label>
+          <div className="p-10 bg-secondary/20 border-b border-border/50 grid grid-cols-1 md:grid-cols-3 gap-8 animate-fade-in">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1 ml-2 block">Format Type</label>
               <select 
                 value={materialType}
                 onChange={(e) => setMaterialType(e.target.value)}
-                className="w-full h-10 bg-white border border-slate-200 rounded-xl px-4 text-xs font-bold focus:ring-2 focus:ring-blue-100 outline-none transition-all"
+                className="w-full h-12 bg-card border border-border rounded-xl px-5 text-xs font-black uppercase tracking-tight focus:ring-4 focus:ring-primary/10 outline-none transition-all"
               >
-                <option value="">All Types</option>
-                <option value="Notes">Notes</option>
-                <option value="Previous Year">Previous Year</option>
-                <option value="Assignment">Assignment</option>
-                <option value="Book">Book</option>
+                <option value="">All Formats</option>
+                <option value="Notes">Typed Notes</option>
+                <option value="Previous Year">PYQs / Papers</option>
+                <option value="Assignment">Solutions / Assignments</option>
+                <option value="Book">E-Books</option>
               </select>
             </div>
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 pl-1">Programme</label>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1 ml-2 block">Programme</label>
               <select 
                 value={programme}
                 onChange={(e) => setProgramme(e.target.value)}
-                className="w-full h-10 bg-white border border-slate-200 rounded-xl px-4 text-xs font-bold focus:ring-2 focus:ring-blue-100 outline-none transition-all"
+                className="w-full h-12 bg-card border border-border rounded-xl px-5 text-xs font-black uppercase tracking-tight focus:ring-4 focus:ring-primary/10 outline-none transition-all"
               >
                 <option value="">All Programmes</option>
                 <option value="B.Tech">B.Tech</option>
@@ -197,103 +204,127 @@ export default function Listings() {
                 <option value="MBA">MBA</option>
               </select>
             </div>
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 pl-1">Branch</label>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1 ml-2 block">Branch Filter</label>
               <input 
                 type="text"
                 value={branch}
                 onChange={(e) => setBranch(e.target.value)}
-                placeholder="e.g. CSE, ECE..."
-                className="w-full h-10 bg-white border border-slate-200 rounded-xl px-4 text-xs font-bold focus:ring-2 focus:ring-blue-100 outline-none transition-all"
+                placeholder="e.g. CSE, Mechanical..."
+                className="w-full h-12 bg-card border border-border rounded-xl px-5 text-xs font-black uppercase tracking-tight focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder:text-muted-foreground/30"
               />
             </div>
           </div>
         )}
 
         <div className="overflow-x-auto no-scrollbar">
-          <table className="w-full text-left">
+          <table className="w-full text-left border-collapse">
              <thead>
-                <tr className="bg-slate-50/50 border-b border-slate-100">
-                   <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Content / Material</th>
-                   <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Seller / Identity</th>
-                   <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Category</th>
-                   <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Created</th>
-                   <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400 text-right">Moderation</th>
+                <tr className="bg-secondary/20">
+                   <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-50">Note Material / Asset</th>
+                   <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-50">Publisher</th>
+                   <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-50">Taxonomy</th>
+                   <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-50">Ingestion Date</th>
+                   <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-50 text-right">Moderation</th>
                 </tr>
              </thead>
-             <tbody className="divide-y divide-slate-50">
+             <tbody className="divide-y divide-border/30">
                 {loading ? (
                    <tr>
-                      <td colSpan={5} className="py-20 text-center">
-                         <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Scanning Marketplace...</p>
+                      <td colSpan={5} className="py-32 text-center">
+                         <div className="w-14 h-14 border-[6px] border-primary border-t-transparent rounded-full animate-spin mx-auto mb-6 shadow-xl shadow-primary/20" />
+                         <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] opacity-40">Scanning marketplace assets...</p>
                       </td>
                    </tr>
                 ) : listings.length === 0 ? (
                    <tr>
-                      <td colSpan={5} className="py-20 text-center text-slate-400 font-bold uppercase tracking-widest text-xs">No listings found in this queue</td>
+                      <td colSpan={5} className="py-32 text-center space-y-4">
+                         <div className="h-20 w-20 bg-secondary rounded-full flex items-center justify-center mx-auto mb-6 opacity-20">
+                           <BookOpen size={40} />
+                         </div>
+                         <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] opacity-40 italic">System clear: no assets in this segment</p>
+                      </td>
                    </tr>
                 ) : (
-                   listings.map((item) => (
-                     <tr key={item.id} className="hover:bg-slate-50/50 transition-colors group">
-                        <td className="px-6 py-5">
-                           <div className="flex items-start gap-3">
-                              <div className="h-12 w-12 bg-slate-100 rounded-xl flex items-center justify-center shrink-0 border border-slate-200 overflow-hidden relative">
+                   listings.map((item, idx) => (
+                     <tr 
+                      key={item.id} 
+                      className="hover:bg-secondary/20 transition-all group animate-fade-in"
+                      style={{ animationDelay: `${idx * 20}ms` }}
+                     >
+                        <td className="px-8 py-6">
+                           <div className="flex items-start gap-4">
+                              <div className="h-16 w-16 bg-secondary rounded-2xl flex items-center justify-center shrink-0 border border-border/50 overflow-hidden relative group-hover:bg-primary/10 transition-colors">
                                  {item.images ? (
-                                   <div className="w-full h-full bg-slate-300 animate-pulse" />
+                                   <div className="w-full h-full bg-primary/5 absolute inset-0 flex items-center justify-center">
+                                      <FileText className="text-primary/40" size={24} />
+                                   </div>
                                  ) : (
-                                   <FileText className="text-slate-400" size={20} />
+                                   <FileText className="text-muted-foreground/30" size={24} />
                                  )}
                               </div>
-                              <div className="max-w-[240px]">
-                                 <h4 className="text-sm font-black text-slate-900 truncate leading-tight group-hover:text-blue-600 transition-colors">{item.title}</h4>
-                                 <p className="text-[10px] font-bold text-slate-400 mt-0.5 truncate uppercase tracking-tighter">
-                                    {item.subject_code} · {item.material_type}
-                                 </p>
-                                 <div className="flex items-center gap-2 mt-1.5">
-                                    <span className="text-[9px] font-black text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100">₹{item.price}</span>
+                              <div className="max-w-[320px] min-w-0">
+                                 <h4 className="text-base font-black text-foreground truncate leading-tight group-hover:text-primary transition-colors tracking-tight">{item.title}</h4>
+                                 <div className="flex items-center gap-3 mt-1.5 overflow-hidden">
+                                    <span className="text-[9px] font-black text-primary uppercase tracking-widest whitespace-nowrap bg-primary/5 px-2 py-0.5 rounded-lg border border-primary/10">
+                                       {item.subject_code}
+                                    </span>
+                                    <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest whitespace-nowrap opacity-40">
+                                       {item.material_type}
+                                    </span>
+                                 </div>
+                                 <div className="flex items-center gap-3 mt-2">
+                                    <div className="flex items-center gap-1.5 group/price px-2.5 py-1 bg-emerald-500/10 rounded-xl border border-emerald-500/10">
+                                       <Tag size={10} className="text-emerald-500" />
+                                       <span className="text-[11px] font-black text-emerald-500 tabular-nums">₹{item.price}</span>
+                                    </div>
                                     {item.ai_score && (
-                                      <span className="text-[9px] font-black text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-100">AI {item.ai_score}/10</span>
+                                      <div className="flex items-center gap-1.5 px-2.5 py-1 bg-indigo-500/10 rounded-xl border border-indigo-500/10">
+                                        <TrendingUp size={10} className="text-indigo-400" />
+                                        <span className="text-[11px] font-black text-indigo-400 tabular-nums">AI {item.ai_score}</span>
+                                      </div>
                                     )}
                                  </div>
                               </div>
                            </div>
                         </td>
-                        <td className="px-6 py-5">
+                        <td className="px-8 py-6">
                            <div className="space-y-1">
-                               <p className="text-xs font-black text-slate-800">{item.seller_name || 'Unknown Seller'}</p>
-                              <p className="text-[10px] font-medium text-slate-400 italic">{item.seller_email || 'No email'}</p>
+                               <p className="text-sm font-black text-foreground group-hover:text-primary transition-colors">{item.seller_name || 'Anonymous'}</p>
+                              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-40">{item.seller_email?.split('@')[0] || 'Unlinked'}</p>
                            </div>
                         </td>
-                        <td className="px-6 py-5">
-                           <div className="flex flex-col gap-1">
-                              <span className="inline-flex items-center gap-1 text-[9px] font-black uppercase text-slate-500 tracking-tighter">
-                                 <BookOpen size={10} className="text-slate-300" />
+                        <td className="px-8 py-6">
+                           <div className="flex flex-col gap-1.5">
+                              <span className="inline-flex items-center gap-2 text-[10px] font-black uppercase text-foreground tracking-tight">
+                                 <BookOpen size={12} className="text-primary" />
                                  {item.programme || 'N/A'}
                               </span>
-                              <span className="text-[9px] font-bold text-slate-400">{item.branch || 'N/A'} · Sem {item.semester || 0}</span>
+                              <div className="h-0.5 w-6 bg-border/50 rounded-full" />
+                              <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest opacity-40">{item.branch || 'General'} · Sem {item.semester || 'X'}</span>
                            </div>
                         </td>
-                        <td className="px-6 py-5">
-                            <p className="text-[10px] font-bold text-slate-400 flex items-center gap-1">
-                               <Clock size={10} /> {new Date(item.created_at).toLocaleDateString()}
-                            </p>
+                        <td className="px-8 py-6">
+                            <div className="flex items-center gap-2 text-muted-foreground opacity-60">
+                               <Clock size={12} className="text-primary" />
+                               <span className="text-[11px] font-black tabular-nums">{new Date(item.created_at).toLocaleDateString()}</span>
+                            </div>
                         </td>
-                        <td className="px-6 py-5 text-right">
-                           <div className="flex items-center justify-end gap-2 opacity-40 group-hover:opacity-100 transition-opacity">
+                        <td className="px-8 py-6 text-right">
+                           <div className="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-x-3 group-hover:translate-x-0">
                               {item.approval_status === 'pending_approval' && (
                                 <>
                                   <button 
                                     onClick={() => handleApprove(item.id)}
-                                    className="h-9 px-3 bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white rounded-lg text-[9px] font-black uppercase tracking-widest border border-emerald-100 transition-all active:scale-95"
+                                    className="h-11 px-5 bg-emerald-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-emerald-500/20 hover:bg-emerald-600 transition-all active:scale-95"
                                   >
-                                      Approve
+                                      Authorize
                                   </button>
                                   <button 
                                     onClick={() => handleReject(item.id)}
-                                    className="h-9 px-3 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white rounded-lg text-[9px] font-black uppercase tracking-widest border border-red-100 transition-all active:scale-95"
+                                    className="h-11 px-5 bg-destructive text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-destructive/20 hover:bg-destructive transition-all active:scale-95"
                                   >
-                                      Reject
+                                      Deny
                                   </button>
                                 </>
                               )}
@@ -301,9 +332,10 @@ export default function Listings() {
                                 href={`${STUDENT_APP_URL}/listings/${item.id}`} 
                                 target="_blank"
                                 rel="noreferrer"
-                                className="h-9 w-9 bg-slate-100 text-slate-400 hover:bg-slate-900 hover:text-white rounded-lg transition-all flex items-center justify-center border border-slate-200"
+                                className="h-11 w-11 bg-secondary text-primary hover:bg-primary hover:text-white rounded-xl transition-all flex items-center justify-center shadow-sm active:scale-95"
+                                title="Visual Inspection"
                               >
-                                 <ExternalLink size={14} />
+                                 <ExternalLink size={18} />
                               </a>
                            </div>
                         </td>
@@ -314,22 +346,24 @@ export default function Listings() {
           </table>
         </div>
 
-        <div className="p-6 border-t border-slate-50 flex items-center justify-between">
-           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Showing {listings.length} items</p>
-           <div className="flex gap-2">
+        <div className="p-10 border-t border-border/50 flex flex-col sm:flex-row items-center justify-between gap-6 bg-secondary/10">
+           <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest italic opacity-40">
+              Registry segment <b className="text-foreground">{(page-1)*20+1}-{Math.min(page*20, total)}</b> of <b className="text-foreground">{total}</b> digital assets
+           </p>
+           <div className="flex gap-4">
               <button 
                 disabled={page === 1}
                 onClick={() => setPage(p => p - 1)}
-                className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-slate-50 disabled:opacity-50"
+                className="inline-flex items-center gap-3 h-12 px-8 bg-card border border-border rounded-2xl text-[10px] font-black uppercase tracking-widest text-foreground hover:border-primary hover:bg-primary/5 disabled:opacity-30 transition-all active:scale-95 shadow-xl shadow-black/5"
               >
-                Prev
+                <ChevronLeft size={18} /> Prev
               </button>
               <button 
                 disabled={page * 20 >= total}
                 onClick={() => setPage(p => p + 1)}
-                className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-slate-50 disabled:opacity-50"
+                className="inline-flex items-center gap-3 h-12 px-8 bg-card border border-border rounded-2xl text-[10px] font-black uppercase tracking-widest text-foreground hover:border-primary hover:bg-primary/5 disabled:opacity-30 transition-all active:scale-95 shadow-xl shadow-black/5"
               >
-                Next
+                Next <ChevronRight size={18} />
               </button>
            </div>
         </div>

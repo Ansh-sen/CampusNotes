@@ -549,8 +549,8 @@ export function CreateListing() {
         )}
       </AnimatePresence>
 
-      <div className="fixed bottom-0 left-0 right-0 p-6 glass border-t border-border/50 z-[60] pb-[calc(1.5rem+env(safe-area-inset-bottom))]">
-        <div className="max-w-xl mx-auto flex gap-4">
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 right-0 p-6 glass border-t border-border/50 z-[60] pb-[calc(1.5rem+env(safe-area-inset-bottom))] w-full max-w-2xl flex items-center justify-center">
+        <div className="w-full flex gap-4">
           {step > 1 ? (
             <button onClick={handleBack} className="flex-1 h-16 rounded-2xl bg-card border border-border/50 flex items-center justify-center font-black text-muted-foreground uppercase tracking-widest text-[10px] hover:bg-muted transition-all active:scale-95 shadow-xl shadow-black/5">
               <ArrowLeft className="w-5 h-5 mr-3" /> Back
