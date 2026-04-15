@@ -46,7 +46,7 @@ export function Layout() {
   const isChatThread = pathname === '/messages' && new URLSearchParams(location.search).get('conv');
   
   return (
-    <div className="flex flex-col min-h-[100dvh] w-full max-w-lg mx-auto bg-background border-x border-border shadow-[0_0_50px_rgba(0,0,0,0.1)] relative">
+    <div className="flex flex-col min-h-[100dvh] w-full max-w-screen-xl mx-auto bg-background border-x border-border/50 shadow-2xl relative">
       <Header />
       <main 
         ref={mainRef} 

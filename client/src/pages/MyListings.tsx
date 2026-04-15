@@ -186,41 +186,41 @@ export function MyListings() {
   return (
     <div className="min-h-screen bg-background pb-32">
       {/* Header */}
-      <div className="bg-primary text-primary-foreground pt-0 pb-10 px-4 rounded-b-[3rem] shadow-2xl relative overflow-hidden group">
+      <div className="bg-primary text-primary-foreground pt-14 pb-12 px-5 rounded-b-[3.5rem] shadow-2xl relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -mr-20 -mt-20 group-hover:bg-white/10 transition-colors duration-1000" />
         
-        <div className="flex justify-between items-center mb-8 relative z-10">
-          <div className="space-y-1">
-            <h1 className="text-3xl font-black tracking-tighter uppercase leading-none">Dashboard</h1>
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Manage Your Notes</p>
+        <div className="flex justify-between items-end mb-10 relative z-10 px-1">
+          <div className="space-y-1.5">
+            <h1 className="text-[clamp(1.75rem,6vw,2.5rem)] font-black tracking-tighter uppercase leading-[0.9] drop-shadow-sm">Dashboard</h1>
+            <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-50 px-0.5">Manage Your Notes</p>
           </div>
           
-          <div className="flex items-center gap-4">
-            <div className="bg-black/20 backdrop-blur-md rounded-2xl p-1.5 flex border border-white/10 shadow-inner">
+          <div className="flex items-center gap-4 mb-1">
+            <div className="bg-black/20 backdrop-blur-xl rounded-2xl p-1.5 flex border border-white/10 shadow-2xl">
               <button 
                 onClick={() => setActiveView('listings')}
                 className={cn(
-                  "h-10 w-10 flex items-center justify-center rounded-xl transition-all duration-500", 
-                  activeView === 'listings' ? "bg-white text-primary shadow-xl scale-105" : "text-white/40 hover:text-white"
+                  "h-11 w-11 flex items-center justify-center rounded-xl transition-all duration-500", 
+                  activeView === 'listings' ? "bg-white text-primary shadow-2xl scale-105" : "text-white/40 hover:text-white"
                 )}
               >
-                <List size={20} />
+                <List size={22} />
               </button>
               <button 
                 onClick={() => setActiveView('analytics')}
                 className={cn(
-                  "h-10 w-10 flex items-center justify-center rounded-xl transition-all duration-500", 
-                  activeView === 'analytics' ? "bg-white text-primary shadow-xl scale-105" : "text-white/40 hover:text-white"
+                  "h-11 w-11 flex items-center justify-center rounded-xl transition-all duration-500", 
+                  activeView === 'analytics' ? "bg-white text-primary shadow-2xl scale-105" : "text-white/40 hover:text-white"
                 )}
               >
-                <BarChart2 size={20} />
+                <BarChart2 size={22} />
               </button>
             </div>
 
             {activeTab === 'drafts' && (stats?.draft_count || 0) > 0 && (
               <button 
                 onClick={handleClearDrafts}
-                className="px-5 h-10 bg-danger/20 hover:bg-danger text-white border border-danger/30 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg"
+                className="px-5 h-11 bg-danger/20 hover:bg-danger text-white border border-danger/30 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-2xl"
               >
                 Flush System
               </button>
@@ -228,15 +228,15 @@ export function MyListings() {
 
             <button 
               onClick={() => navigate('/create')}
-              className="h-12 w-12 flex items-center justify-center bg-white text-primary rounded-2xl hover:scale-110 transition-all active:scale-95 shadow-2xl shadow-black/20 group/btn"
+              className="h-14 w-14 flex items-center justify-center bg-white text-primary rounded-2xl hover:scale-110 active:scale-95 shadow-2xl shadow-primary/40 group/btn transition-all duration-500"
             >
-              <Plus size={24} className="group-hover:rotate-90 transition-transform duration-500" />
+              <Plus size={28} className="group-hover:rotate-90 transition-transform duration-700 ease-in-out" />
             </button>
           </div>
         </div>
 
         {/* Stats Row */}
-        <div className="grid grid-cols-3 gap-4 relative z-10">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 relative z-10">
           {loading ? (
              <>
                <div className="h-20 bg-white/5 animate-pulse rounded-[1.5rem]" />
@@ -259,7 +259,7 @@ export function MyListings() {
         </div>
       </div>
 
-      <div className="w-full px-4 mt-8 space-y-8">
+      <div className="w-full px-5 mt-10 space-y-10 max-w-screen-xl mx-auto">
         {activeView === 'listings' ? (
           <>
             {/* Tabs - Evenly Distributed Grid */}
@@ -448,9 +448,12 @@ export function MyListings() {
 // Sub-components
 function StatItem({ label, value, variant }: { label: string, value: string | number, variant?: 'accent' }) {
   return (
-    <div className="bg-white/10 backdrop-blur-md p-5 rounded-[1.5rem] flex flex-col items-center border border-white/5 shadow-inner group/stat hover:bg-white/15 transition-all">
-      <span className="text-[9px] font-black text-white/40 uppercase tracking-[0.2em]">{label}</span>
-      <span className={cn("text-2xl font-black mt-1 tracking-tighter tabular-nums", variant === 'accent' ? "text-amber-400 drop-shadow-[0_0_15px_rgba(251,191,36,0.5)]" : "text-white")}>
+    <div className="bg-white/10 backdrop-blur-xl p-6 rounded-[2rem] flex flex-col items-center border border-white/5 shadow-2xl group/stat hover:bg-white/20 transition-all duration-500">
+      <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.25em]">{label}</span>
+      <span className={cn(
+        "text-3xl font-black mt-2 tracking-tighter tabular-nums drop-shadow-lg", 
+        variant === 'accent' ? "text-amber-300 drop-shadow-[0_0_20px_rgba(251,191,36,0.6)]" : "text-white"
+      )}>
         {value}
       </span>
     </div>
@@ -462,22 +465,27 @@ function TabButton({ label, count, active, onClick }: { label: string, count: nu
     <button 
       onClick={onClick}
       className={cn(
-        "px-2 py-4 rounded-2xl transition-all duration-500 flex flex-col items-center justify-center gap-2 group relative overflow-hidden h-full",
+        "px-2 py-5 rounded-[2rem] transition-all duration-700 flex flex-col items-center justify-center gap-3 group relative h-full border",
         active 
-          ? "bg-primary text-white shadow-xl shadow-primary/20 scale-[1.02] z-10" 
-          : "bg-card text-muted-foreground border border-border/50 hover:border-primary/50"
+          ? "bg-primary text-white shadow-2xl shadow-primary/30 border-primary scale-[1.05] z-10" 
+          : "bg-card text-muted-foreground border-border/50 hover:border-primary/40 hover:bg-secondary/30"
       )}
     >
-      <span className="text-[8px] font-black uppercase tracking-tight relative z-10 leading-none">{label}</span>
+      <span className="text-[9px] font-black uppercase tracking-widest relative z-10 leading-none">{label}</span>
       {count !== undefined && (
         <span className={cn(
-          "text-[10px] font-black px-2 py-0.5 rounded-lg tabular-nums relative z-10", 
-          active ? "bg-white/20" : "bg-muted text-muted-foreground group-hover:bg-primary/5 group-hover:text-primary transition-colors"
+          "text-[10px] font-black px-3 py-1 rounded-xl tabular-nums relative z-10 shadow-sm", 
+          active ? "bg-white/20 text-white" : "bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-all duration-500"
         )}>
           {count}
         </span>
       )}
-      <div className="absolute inset-x-0 bottom-0 h-1 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+      {active && (
+        <motion.div 
+          layoutId="activeTabGlow"
+          className="absolute inset-0 bg-gradient-to-t from-white/10 to-transparent pointer-events-none rounded-[2rem]"
+        />
+      )}
     </button>
   );
 }

@@ -101,6 +101,11 @@ export default function Users() {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (!res.ok) throw new Error('Delete failed');
+      
+      // Optimistic UI update: Remove deleted user from local state immediately
+      setUsers(prev => prev.filter(u => u.id !== userId));
+      
+      // Refresh full list from server
       fetchUsers();
       if (selectedUser?.id === userId) setSelectedUser(null);
     } catch (e) {
@@ -326,7 +331,7 @@ export default function Users() {
                 <tr>
                   <td colSpan={5} className="py-32 text-center">
                     <div className="h-20 w-20 bg-secondary rounded-full flex items-center justify-center mx-auto mb-6 opacity-20">
-                      <Users size={40} />
+                      <Users />
                     </div>
                     <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] opacity-40 italic">System clear: no matching profiles found</p>
                   </td>

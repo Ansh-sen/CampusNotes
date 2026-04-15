@@ -15,11 +15,11 @@ export function Header() {
   return (
     <header className="sticky top-0 z-[60] bg-background/80 backdrop-blur-xl border-b border-border/40 shadow-[0_1px_10px_rgba(0,0,0,0.02)] pt-[env(safe-area-inset-top)]">
       <div className="flex h-16 items-center justify-between px-4 w-full">
-        <Link to="/" className="flex items-center space-x-2.5">
-          <div className="bg-primary p-2 rounded-xl shadow-lg shadow-primary/20 animate-float">
-            <GraduationCap className="h-5 w-5 text-white" />
+        <Link to="/" className="flex items-center space-x-3">
+          <div className="bg-primary p-2.5 rounded-2xl shadow-xl shadow-primary/20 animate-float">
+            <GraduationCap className="h-6 w-6 text-white" />
           </div>
-          <span className="text-xl font-black tracking-tighter text-foreground drop-shadow-sm">
+          <span className="text-[clamp(1.25rem,4vw,1.75rem)] font-black tracking-tighter text-foreground drop-shadow-sm leading-none">
             Campus<span className="text-primary">Notes</span>
           </span>
         </Link>

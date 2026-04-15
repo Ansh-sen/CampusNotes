@@ -75,10 +75,13 @@
   }
 
   body {
-    @apply bg-background text-foreground antialiased transition-colors duration-300;
+    @apply bg-background text-foreground antialiased transition-colors duration-300 overflow-x-hidden;
     font-family: 'Outfit', sans-serif;
-    padding-bottom: env(safe-area-inset-bottom);
-    padding-top: env(safe-area-inset-top);
+    /* Safe Area Baseline */
+    --sat: env(safe-area-inset-top);
+    --sab: env(safe-area-inset-bottom);
+    --sar: env(safe-area-inset-right);
+    --sal: env(safe-area-inset-left);
   }
 
   h1, h2, h3, h4, h5, h6 {

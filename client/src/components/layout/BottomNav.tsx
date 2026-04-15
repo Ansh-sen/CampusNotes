@@ -28,8 +28,8 @@ export function BottomNav() {
   }
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/90 dark:bg-card/80 backdrop-blur-2xl border-t border-border/50 pb-[env(safe-area-inset-bottom)] px-4 shadow-[0_-8px_30px_rgb(0,0,0,0.1)]">
-      <div className="flex justify-between items-center h-20 max-w-lg mx-auto">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/90 dark:bg-card/80 backdrop-blur-2xl border-t border-border/50 pb-[env(safe-area-inset-bottom)] px-6 shadow-[0_-10px_40px_rgba(0,0,0,0.12)]">
+      <div className="flex justify-around items-center h-20 max-w-screen-xl mx-auto">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path || (item.path !== '/' && location.pathname.startsWith(item.path));
           const Icon = item.icon;

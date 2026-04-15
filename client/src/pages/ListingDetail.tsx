@@ -3,7 +3,7 @@ import { API_URL, API_BASE_URL } from '@/config';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { MessageSquare, ShieldAlert, ArrowLeft, Trash2, FileText, Sparkles, Share2, Copy, MessageCircle, ChevronRight, MessageCircleCode } from 'lucide-react';
+import { MessageSquare, ShieldAlert, ArrowLeft, Trash2, FileText, Sparkles, Share2, Copy, MessageCircle, ChevronRight } from 'lucide-react';
 import { useToast } from '@/components/ui/toast-provider';
 import { Skeleton } from '@/components/ui/skeleton';
 import { listingService } from '@/services/listingService';
@@ -26,7 +26,6 @@ export function ListingDetail() {
   const [reviews, setReviews] = useState<any[]>([]);
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
-  const [isCopied, setIsCopied] = useState(false);
 
   useEffect(() => {
     const handleOnline = () => setIsOffline(false);
@@ -156,8 +155,6 @@ export function ListingDetail() {
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(window.location.href);
-    setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 2000);
     toast({ title: 'Link copied!', description: 'Listing URL copied to clipboard.', type: 'success' });
   };
 
@@ -482,7 +479,7 @@ export function ListingDetail() {
                {isOwner ? (
                  <div className="flex flex-col gap-3">
                    <Button onClick={() => navigate(`/sell?edit=${listing.id}`)} className="h-16 rounded-2xl bg-primary text-white font-black uppercase tracking-widest text-[10px] shadow-xl">Modify Listing</Button>
-                   <Button onClick={handleDelete} variant="destructive" className="h-16 rounded-2xl font-black uppercase tracking-widest text-[10px]">Delete Asset</Button>
+                   <Button onClick={handleDelete} variant="danger" className="h-16 rounded-2xl font-black uppercase tracking-widest text-[10px]">Delete Asset</Button>
                  </div>
                ) : (
                  <div className="flex flex-col gap-3">
