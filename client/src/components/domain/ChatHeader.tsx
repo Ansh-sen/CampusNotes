@@ -34,7 +34,7 @@ export function ChatHeader({ conversation, onBack, onAction }: ChatHeaderProps) 
   };
 
   return (
-    <div className="w-full bg-card/80 backdrop-blur-xl border-b border-border/50 px-6 py-4 flex items-center justify-between shadow-lg shadow-black/5">
+    <div className="w-full bg-card/80 backdrop-blur-xl border-b border-border/50 px-4 py-4 flex items-center justify-between shadow-lg shadow-black/5">
       <div className="flex items-center gap-4">
         <button onClick={onBack} className="p-2.5 -ml-2 hover:bg-muted rounded-full transition-colors active:scale-90">
           <ArrowLeft className="h-5 w-5 text-foreground" />

@@ -34,7 +34,7 @@ export function Login() {
       }
 
       // Update auth context
-      login(data.token, data.user);
+      login(data.accessToken, data.refreshToken, data.user);
 
       toast({ title: 'Welcome back!', type: 'success' });
       navigate('/');

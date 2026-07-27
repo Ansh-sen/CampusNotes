@@ -24,7 +24,7 @@ export function ListingContextBar({ listing, isSeller, onScheduleMeet, onAction 
   const isSold = listing.status === 'sold';
 
   return (
-    <div className="w-full bg-card/80 backdrop-blur-md border-b border-border/50 px-6 py-4 flex items-center justify-between shadow-xl shadow-black/5 animate-in slide-in-from-top duration-300">
+    <div className="w-full bg-card/80 backdrop-blur-md border-b border-border/50 px-4 py-4 flex items-center justify-between shadow-xl shadow-black/5 animate-in slide-in-from-top duration-300">
       <div 
         onClick={() => !isSold && navigate(`/listing/${listing.id}`)}
         className={`flex items-center gap-4 flex-1 min-w-0 ${!isSold ? 'cursor-pointer hover:opacity-80 transition-all active:scale-[0.98]' : ''}`}

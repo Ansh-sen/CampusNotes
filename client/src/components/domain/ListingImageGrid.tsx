@@ -192,9 +192,10 @@ export function ListingImageGrid({
                 <div className="w-14 h-14 rounded-2xl bg-muted flex items-center justify-center group-hover:scale-110 group-hover:bg-primary/10 transition-all shadow-inner group-hover:shadow-xl">
                   <UploadCloud className="w-7 h-7 text-muted-foreground group-hover:text-primary transition-colors" />
                 </div>
-                <div className="text-center relative z-10">
-                  <p className="text-[10px] font-black text-foreground uppercase tracking-widest">Add Photo</p>
-                  <p className="text-[9px] text-muted-foreground font-black uppercase tracking-widest opacity-40 mt-1">{images.length}/6</p>
+                <div className="text-center relative z-10 px-2">
+                  <p className="text-[10px] font-black text-foreground uppercase tracking-widest">Upload Photo</p>
+                  <p className="text-[9px] text-muted-foreground font-black uppercase tracking-widest opacity-40 mt-1">Drag and drop or click to upload</p>
+                  <p className="text-[9px] text-primary font-black uppercase tracking-widest mt-2">{images.length}/6</p>
                 </div>
               </>
             )}
@@ -267,8 +268,8 @@ export function ListingImageGrid({
         </div>
         <div className="space-y-1">
           <p className="text-[10px] font-black text-foreground uppercase tracking-widest leading-none">Pro Tip</p>
-          <p className="text-[10px] font-black text-muted-foreground/60 leading-relaxed uppercase tracking-widest opacity-60">
-            Wait for AI feedback! High-quality ratings (<span className="text-emerald-500">8/10+</span>) boost your visibility by <span className="text-primary opacity-100">40%</span>. 
+          <p className="text-[10px] font-medium text-muted-foreground/80 leading-relaxed tracking-tight">
+            Wait for AI feedback! High-quality ratings (<span className="text-emerald-500 font-bold">8/10+</span>) boost your visibility by <span className="text-primary font-bold">40%</span>. 
             Ensure your first capture is pristine.
           </p>
         </div>

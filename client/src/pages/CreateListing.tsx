@@ -244,7 +244,7 @@ export function CreateListing() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 pb-32 pt-6">
+    <div className="max-w-2xl mx-auto px-4 pb-16 pt-6">
       {/* Draft Modal */}
       <AnimatePresence>
         {showDraftModal && (
@@ -302,7 +302,7 @@ export function CreateListing() {
               </div>
               <span className={cn(
                 "text-[9px] font-black uppercase tracking-[0.2em] transition-all duration-700",
-                step >= s.num ? "text-primary" : "text-muted-foreground opacity-30"
+                step >= s.num ? "text-primary" : "text-muted-foreground opacity-60 font-bold"
               )}>{s.label}</span>
             </div>
           ))}
@@ -430,8 +430,8 @@ export function CreateListing() {
             className="space-y-6"
           >
             <div className="space-y-2">
-              <h2 className="text-2xl font-black text-foreground uppercase tracking-tight leading-none">Visual Protocol</h2>
-              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] opacity-40">Phase 2: High-Fidelity Capture & Audit</p>
+              <h2 className="text-2xl font-black text-foreground uppercase tracking-tight leading-none">Upload Photos</h2>
+              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] opacity-60">Step 2: Add clear pictures of your notes</p>
             </div>
             <ListingImageGrid 
               images={formData.images}
@@ -549,8 +549,8 @@ export function CreateListing() {
         )}
       </AnimatePresence>
 
-      <div className="fixed bottom-0 left-0 right-0 p-6 glass border-t border-border/50 z-[60] pb-[calc(1.5rem+env(safe-area-inset-bottom))]">
-        <div className="max-w-xl mx-auto flex gap-4">
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 right-0 p-6 glass border-t border-border/50 z-[60] pb-[calc(1.5rem+env(safe-area-inset-bottom))] w-full max-w-2xl flex flex-col items-center justify-center gap-4">
+        <div className="w-full flex gap-4">
           {step > 1 ? (
             <button onClick={handleBack} className="flex-1 h-16 rounded-2xl bg-card border border-border/50 flex items-center justify-center font-black text-muted-foreground uppercase tracking-widest text-[10px] hover:bg-muted transition-all active:scale-95 shadow-xl shadow-black/5">
               <ArrowLeft className="w-5 h-5 mr-3" /> Back
@@ -569,7 +569,7 @@ export function CreateListing() {
               (step === 3 && (formData.price < 10 || loading))
             }
             className={cn(
-              "flex-[2.5] h-16 rounded-2xl bg-primary text-white flex items-center justify-center font-black uppercase tracking-widest text-[11px] shadow-2xl shadow-primary/30 transition-all active:scale-95 hover:scale-[1.02] disabled:opacity-20 disabled:grayscale disabled:pointer-events-none disabled:shadow-none",
+              "flex-[2.5] h-16 rounded-2xl bg-primary text-white flex items-center justify-center font-black uppercase tracking-widest text-[11px] shadow-2xl shadow-primary/30 transition-all active:scale-95 hover:scale-[1.02] disabled:opacity-40 disabled:grayscale disabled:pointer-events-none disabled:shadow-none",
               step === 3 && "bg-foreground text-background"
             )}
           >
@@ -578,6 +578,12 @@ export function CreateListing() {
             )}
           </button>
         </div>
+        
+        {step === 2 && formData.images.length === 0 && (
+          <p className="text-[10px] font-black text-danger uppercase tracking-widest animate-in fade-in slide-in-from-bottom-2">
+            Upload at least one photo to proceed.
+          </p>
+        )}
       </div>
     </div>
   );

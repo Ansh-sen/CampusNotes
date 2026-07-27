@@ -9,7 +9,8 @@ import {
   ChevronLeft,
   ChevronRight,
   AlertCircle,
-  ShieldCheck
+  ShieldCheck,
+  Clock
 } from 'lucide-react';
 import { API_URL } from '../config';
 import { cn } from '../lib/utils';
@@ -88,7 +89,6 @@ export default function Verifications() {
     } catch (e) {
       alert('Approval failed');
     } finally {
-      setProcessing(true); // Should be false but we re-fetch anyway
       setProcessing(false);
     }
   };
@@ -139,90 +139,92 @@ export default function Verifications() {
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
-      <div className="flex items-center justify-between">
+    <div className="space-y-10 animate-fade-in">
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">Student Verifications</h1>
-          <p className="text-slate-500 font-medium">Review and validate student identity submissions</p>
+          <h1 className="text-4xl font-black text-foreground tracking-tight">Identity Verification</h1>
+          <p className="text-muted-foreground font-bold text-sm mt-1 uppercase tracking-widest opacity-60 italic">Reviewing pending enrollment credentials</p>
         </div>
-        <div className="flex bg-white rounded-2xl border border-slate-200 p-1 shadow-sm">
-           <button 
-            onClick={() => setActiveTab('pending')}
-            className={cn(
-              "px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
-              activeTab === 'pending' ? "bg-slate-900 text-white" : "text-slate-500 hover:text-slate-900"
-            )}
-           >
-            Pending ({pending.length})
-           </button>
-           <button 
-            onClick={() => setActiveTab('history')}
-            className={cn(
-              "px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
-              activeTab === 'history' ? "bg-slate-900 text-white" : "text-slate-500 hover:text-slate-900"
-            )}
-           >
-            History
-           </button>
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex bg-secondary/50 rounded-2xl border border-border/50 p-1.5 shadow-inner">
+             <button 
+              onClick={() => setActiveTab('pending')}
+              className={cn(
+                "px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+                activeTab === 'pending' ? "bg-primary text-white shadow-xl" : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+              )}
+             >
+              Pending ({pending.length})
+             </button>
+             <button 
+              onClick={() => setActiveTab('history')}
+              className={cn(
+                "px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+                activeTab === 'history' ? "bg-primary text-white shadow-xl" : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+              )}
+             >
+              History
+             </button>
+          </div>
+          {activeTab === 'pending' && pending.length > 0 && (
+            <button 
+              disabled={processing}
+              onClick={handleApproveAll}
+              className="flex items-center gap-3 px-6 py-3 bg-emerald-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-all active:scale-95 shadow-xl shadow-emerald-500/20 disabled:opacity-50"
+            >
+              <ShieldCheck size={18} />
+              Bulk Approve All
+            </button>
+          )}
         </div>
-        {activeTab === 'pending' && pending.length > 0 && (
-          <button 
-            disabled={processing}
-            onClick={handleApproveAll}
-            className="flex items-center gap-2 px-6 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-emerald-700 transition-all active:scale-95 shadow-lg shadow-emerald-100 disabled:opacity-50"
-          >
-            <ShieldCheck size={16} />
-            Approve All ({pending.length})
-          </button>
-        )}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
         {/* Table/List View */}
-        <div className="lg:col-span-2 space-y-4">
-          <div className="bg-white border border-slate-100 rounded-[2rem] shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-slate-50 flex items-center justify-between bg-white sticky top-0 z-10">
+        <div className="lg:col-span-2 space-y-6">
+          <div className="admin-card">
+            <div className="p-8 border-b border-border/50 flex items-center justify-between bg-muted/5 sticky top-0 z-10">
               <div className="relative flex-1 max-w-sm">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground transition-colors" />
                 <input 
                   type="text" 
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && fetchPending()}
-                  placeholder="Search by name, email, or enrollment..." 
-                  className="w-full h-11 bg-slate-50 border border-slate-100 rounded-xl pl-11 pr-4 text-sm font-medium focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all"
+                  placeholder="Filter name, email, credentials..." 
+                  className="w-full h-12 bg-card border border-border rounded-xl pl-12 pr-4 text-sm font-bold text-foreground focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder:text-muted-foreground/50"
                 />
               </div>
-              <div className="flex items-center gap-2 ml-4">
+              <div className="flex items-center gap-3 ml-4">
                 <button 
                   onClick={() => setIsFilterOpen(!isFilterOpen)}
                   className={cn(
-                    "h-11 px-4 border rounded-xl transition-all flex items-center gap-2 text-xs font-black uppercase tracking-widest",
-                    isFilterOpen ? "bg-slate-900 text-white border-slate-900" : "bg-slate-50 border-slate-100 text-slate-500 hover:text-slate-900"
+                    "h-12 px-5 border rounded-xl transition-all flex items-center gap-2 text-[10px] font-black uppercase tracking-widest",
+                    isFilterOpen ? "bg-foreground text-background border-foreground shadow-xl" : "bg-card border-border text-muted-foreground hover:border-primary/50"
                   )}
                 >
-                  <Filter size={18} />
-                  Filter
+                  <Filter size={16} />
+                  Programmes
                 </button>
                 <button 
                   onClick={fetchPending}
-                  className="h-11 px-6 bg-blue-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-100"
+                  className="btn-primary h-12 flex items-center gap-2"
                 >
-                  Apply
+                  <Search size={16} /> Search
                 </button>
               </div>
             </div>
 
             {isFilterOpen && (
-              <div className="p-6 bg-slate-50 border-b border-slate-100 grid grid-cols-2 gap-4 animate-in slide-in-from-top-4 duration-300">
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 pl-1">Programme</label>
+              <div className="p-8 bg-secondary/20 border-b border-border/50 grid grid-cols-2 gap-6 animate-fade-in">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1 ml-1 block">Degree Course</label>
                   <select 
                     value={programme}
                     onChange={(e) => setProgramme(e.target.value)}
-                    className="w-full h-10 bg-white border border-slate-200 rounded-xl px-4 text-xs font-bold focus:ring-2 focus:ring-blue-100 outline-none transition-all"
+                    className="w-full h-11 bg-card border border-border rounded-xl px-4 text-xs font-black uppercase tracking-tight focus:ring-4 focus:ring-primary/10 outline-none transition-all"
                   >
-                    <option value="">All Programmes</option>
+                    <option value="">All Streams</option>
                     <option value="B.Tech">B.Tech</option>
                     <option value="M.Tech">M.Tech</option>
                     <option value="BCA">BCA</option>
@@ -230,59 +232,62 @@ export default function Verifications() {
                     <option value="MBA">MBA</option>
                   </select>
                 </div>
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 pl-1">Branch</label>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1 ml-1 block">Specialization / Branch</label>
                   <input 
                     type="text"
                     value={branch}
                     onChange={(e) => setBranch(e.target.value)}
                     placeholder="e.g. CSE, ECE..."
-                    className="w-full h-10 bg-white border border-slate-200 rounded-xl px-4 text-xs font-bold focus:ring-2 focus:ring-blue-100 outline-none transition-all"
+                    className="w-full h-11 bg-card border border-border rounded-xl px-4 text-xs font-black uppercase tracking-tight focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder:text-muted-foreground/30"
                   />
                 </div>
               </div>
             )}
 
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto no-scrollbar">
               {loading ? (
-                <div className="p-12 text-center space-y-4">
-                   <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" />
-                   <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Loading applications...</p>
+                <div className="p-32 text-center space-y-6">
+                   <div className="w-14 h-14 border-[6px] border-primary border-t-transparent rounded-full animate-spin mx-auto shadow-xl shadow-primary/20" />
+                   <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] opacity-40">Polling verification queue...</p>
                 </div>
               ) : (activeTab === 'pending' ? pending : history).length === 0 ? (
-                <div className="p-20 text-center space-y-4">
-                   <div className="w-20 h-20 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mx-auto">
-                      <CheckCircle2 size={40} />
+                <div className="p-32 text-center space-y-8">
+                   <div className="h-24 w-24 bg-emerald-500/10 text-emerald-500 rounded-full flex items-center justify-center mx-auto shadow-inner">
+                      <CheckCircle2 size={48} />
                    </div>
-                   <h3 className="text-xl font-black text-slate-900">
-                     {activeTab === 'pending' ? "All caught up!" : "No history found"}
-                   </h3>
-                   <p className="text-sm text-slate-500 font-medium">
-                     {activeTab === 'pending' 
-                        ? "There are no pending student verifications at the moment."
-                        : "Verification activity logs will appear here."}
-                   </p>
+                   <div className="space-y-2">
+                     <h3 className="text-2xl font-black text-foreground tracking-tight">
+                       {activeTab === 'pending' ? "Queue Restored" : "History Purged"}
+                     </h3>
+                     <p className="text-sm text-muted-foreground font-bold uppercase tracking-widest opacity-40 italic">
+                       {activeTab === 'pending' 
+                          ? "No new applications requiring validation"
+                          : "Verification log records are currently empty"}
+                     </p>
+                   </div>
                 </div>
               ) : (
                 <table className="w-full text-left">
                   <thead>
-                    <tr className="bg-slate-50/50">
-                      <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Student</th>
-                      <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Enrollment</th>
-                      <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">
-                        {activeTab === 'pending' ? 'Submitted' : 'Status / Date'}
+                    <tr className="bg-secondary/20">
+                      <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-50">Student Profile</th>
+                      <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-50">Enrollment</th>
+                      <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-50">
+                        {activeTab === 'pending' ? 'Timestamp' : 'Resolution'}
                       </th>
-                      <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400 text-right">Actions</th>
+                      <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-50 text-right">Action</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-50">
-                    {(activeTab === 'pending' ? pending : history).map((item) => (
+                  <tbody className="divide-y divide-border/30">
+                    {(activeTab === 'pending' ? pending : history).map((item, idx) => (
                       <tr 
                         key={item.id} 
                         className={cn(
-                          "hover:bg-blue-50/30 transition-colors cursor-pointer group",
-                          selectedUser?.id === (activeTab === 'pending' ? item.id : item.user_id) && "bg-blue-50/50"
+                          "hover:bg-secondary/30 transition-all cursor-pointer group animate-fade-in",
+                          selectedUser?.id === (activeTab === 'pending' ? item.id : item.user_id) && "bg-primary/5"
                         )}
+                        style={{ animationDelay: `${idx * 30}ms` }}
                         onClick={() => setSelectedUser(activeTab === 'pending' ? item : { 
                           ...item, 
                           id: item.user_id, 
@@ -290,47 +295,50 @@ export default function Verifications() {
                           email: item.user_email 
                         })}
                       >
-                        <td className="px-6 py-5">
-                          <div className="flex items-center gap-3">
-                            <div className="h-10 w-10 bg-slate-100 rounded-xl flex items-center justify-center font-black text-slate-400 uppercase">
+                        <td className="px-8 py-6">
+                          <div className="flex items-center gap-4">
+                            <div className="h-12 w-12 bg-secondary rounded-2xl flex items-center justify-center font-black text-primary uppercase shadow-inner group-hover:bg-primary group-hover:text-white transition-all duration-300">
                               {(activeTab === 'pending' ? item.name : item.user_name).charAt(0)}
                             </div>
                             <div>
-                              <h4 className="text-sm font-bold text-slate-900 truncate max-w-[150px]">
+                              <h4 className="text-base font-black text-foreground truncate max-w-[180px] tracking-tight group-hover:text-primary transition-colors">
                                 {activeTab === 'pending' ? item.name : item.user_name}
                               </h4>
-                              <p className="text-[10px] font-medium text-slate-500">
+                              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-50">
                                 {activeTab === 'pending' ? item.email : item.user_email}
                               </p>
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-5">
-                          <span className="text-xs font-black text-slate-700 font-mono tracking-tighter bg-slate-100 px-2 py-1 rounded-lg border border-slate-200">
+                        <td className="px-8 py-6">
+                          <span className="text-xs font-black text-foreground font-mono tracking-tight bg-secondary/50 px-3 py-1.5 rounded-xl border border-border/50 shadow-inner">
                              {item.enrollment_number}
                           </span>
                         </td>
-                        <td className="px-6 py-5">
+                        <td className="px-8 py-6">
                            {activeTab === 'pending' ? (
-                             <span className="text-xs font-bold text-slate-500">
-                                {new Date(item.created_at).toLocaleDateString()}
-                             </span>
+                             <div className="flex items-center gap-2">
+                               <Clock size={12} className="text-primary" />
+                               <span className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+                                  {new Date(item.created_at).toLocaleDateString()}
+                               </span>
+                             </div>
                            ) : (
                              <div className="flex flex-col">
                                <span className={cn(
-                                 "text-[10px] font-black uppercase tracking-widest mb-0.5",
-                                 item.action === 'approved' ? "text-emerald-500" : "text-red-500"
+                                 "text-[10px] font-black uppercase tracking-[0.2em] mb-1",
+                                 item.action === 'approved' ? "text-emerald-500" : "text-destructive"
                                )}>
                                   {item.action}
                                </span>
-                               <span className="text-[10px] font-bold text-slate-400">
+                               <span className="text-[9px] font-bold text-muted-foreground uppercase opacity-40">
                                   {new Date(item.created_at).toLocaleDateString()}
                                </span>
                              </div>
                            )}
                         </td>
-                        <td className="px-6 py-5 text-right">
-                           <button className="p-2 hover:bg-white rounded-lg transition-all text-slate-400 hover:text-blue-600">
+                        <td className="px-8 py-6 text-right">
+                           <button className="h-10 w-10 flex items-center justify-center bg-secondary text-primary rounded-xl hover:bg-primary hover:text-white transition-all active:scale-95 shadow-sm">
                               <Eye size={18} />
                            </button>
                         </td>
@@ -341,11 +349,11 @@ export default function Verifications() {
               )}
             </div>
             
-            <div className="p-6 border-t border-slate-50 flex items-center justify-between text-xs font-bold text-slate-500">
-                <span>Showing {pending.length} results</span>
-                <div className="flex gap-2">
-                   <button className="p-2 border border-slate-100 rounded-lg hover:bg-slate-50 transition-all"><ChevronLeft size={16} /></button>
-                   <button className="p-2 border border-slate-100 rounded-lg hover:bg-slate-50 transition-all"><ChevronRight size={16} /></button>
+            <div className="p-10 border-t border-border/50 flex items-center justify-between text-[11px] font-black text-muted-foreground uppercase tracking-widest bg-secondary/10">
+                <span className="opacity-40 italic">Queue intensity: <b className="text-foreground not-italic">{(activeTab === 'pending' ? pending : history).length}</b> applications</span>
+                <div className="flex gap-4">
+                   <button className="h-11 w-11 flex items-center justify-center border border-border rounded-xl bg-card hover:border-primary hover:bg-primary/5 transition-all active:scale-95 shadow-xl shadow-black/5"><ChevronLeft size={20} /></button>
+                   <button className="h-11 w-11 flex items-center justify-center border border-border rounded-xl bg-card hover:border-primary hover:bg-primary/5 transition-all active:scale-95 shadow-xl shadow-black/5"><ChevronRight size={20} /></button>
                 </div>
             </div>
           </div>
@@ -353,108 +361,113 @@ export default function Verifications() {
 
         {/* Selected User Detail / Preview */}
         <div className="lg:col-span-1">
-          <div className="bg-slate-900 rounded-[2.5rem] p-8 text-white sticky top-8 shadow-2xl relative overflow-hidden h-[calc(100vh-160px)] flex flex-col">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none" />
+          <div className="admin-card bg-slate-900 border-none rounded-[3rem] p-10 text-white sticky top-28 shadow-3xl overflow-hidden h-[calc(100vh-160px)] flex flex-col group">
+            <div className="absolute top-0 right-0 w-80 h-80 bg-primary/10 rounded-full blur-[100px] -mr-40 -mt-40 pointer-events-none transition-transform duration-1000 group-hover:scale-125" />
             
             {!selectedUser ? (
-              <div className="flex-1 flex flex-col items-center justify-center text-center space-y-6">
-                <div className="w-20 h-20 bg-slate-800 rounded-3xl flex items-center justify-center text-slate-600 border border-slate-700">
-                  <ShieldCheck size={40} />
+              <div className="flex-1 flex flex-col items-center justify-center text-center space-y-8 animate-fade-in">
+                <div className="w-24 h-24 bg-white/5 rounded-[2.5rem] flex items-center justify-center text-slate-700 border border-white/5 shadow-inner">
+                  <ShieldCheck size={48} />
                 </div>
-                <div className="space-y-1">
-                  <h3 className="text-lg font-black tracking-tight">Select Application</h3>
-                  <p className="text-xs text-slate-500 font-medium">Pick a student from the list to review their details and ID document.</p>
+                <div className="space-y-3">
+                  <h3 className="text-2xl font-black tracking-tight">Active Inspector</h3>
+                  <p className="text-xs text-slate-400 font-bold uppercase tracking-widest leading-loose px-6 opacity-60 italic">Select a record from the personnel queue to initiate credential validation.</p>
                 </div>
               </div>
             ) : (
-              <div className="flex-1 flex flex-col animate-in slide-in-from-right-4 duration-500 h-full overflow-y-auto pr-1 no-scrollbar">
-                <div className="flex items-center gap-4 mb-8">
-                   <div className="h-14 w-14 bg-blue-600 rounded-2xl flex items-center justify-center font-black text-2xl shadow-lg shadow-blue-600/20 uppercase">
+              <div className="flex-1 flex flex-col animate-fade-in h-full overflow-y-auto pr-1 no-scrollbar">
+                <div className="flex items-center gap-6 mb-10">
+                   <div className="h-16 w-16 bg-primary rounded-[1.5rem] flex items-center justify-center font-black text-3xl shadow-2xl shadow-primary/30 uppercase">
                       {selectedUser.name.charAt(0)}
                    </div>
-                   <div>
-                      <h3 className="text-xl font-black truncate max-w-[180px] tracking-tight leading-tight">{selectedUser.name}</h3>
-                      <p className="text-[10px] font-bold text-blue-400 uppercase tracking-widest">{selectedUser.programme} · {selectedUser.branch}</p>
+                   <div className="min-w-0">
+                      <h3 className="text-2xl font-black truncate tracking-tighter leading-tight drop-shadow-md">{selectedUser.name}</h3>
+                      <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mt-1">{selectedUser.programme} · {selectedUser.branch}</p>
                    </div>
                 </div>
 
-                <div className="space-y-6">
-                  <div className="bg-slate-800/50 rounded-2xl p-4 border border-slate-700/50 space-y-4">
-                     <div className="space-y-1">
-                        <label className="text-[9px] font-black uppercase text-slate-500 tracking-widest">Enrollment ID</label>
-                        <p className="text-sm font-black text-white font-mono tracking-tight">{selectedUser.enrollment_number}</p>
+                <div className="flex-1 space-y-10">
+                  <div className="bg-white/5 rounded-[2rem] p-8 border border-white/10 space-y-8 shadow-inner">
+                     <div className="space-y-2">
+                        <label className="text-[9px] font-black uppercase text-slate-500 tracking-[0.3em]">Institutional ID</label>
+                        <p className="text-lg font-black text-white font-mono tracking-tight tabular-nums">{selectedUser.enrollment_number}</p>
                      </div>
-                     <div className="h-[1px] bg-slate-700/50" />
-                     <div className="space-y-1">
-                        <label className="text-[9px] font-black uppercase text-slate-500 tracking-widest">Departmental Data</label>
-                        <p className="text-xs font-bold text-slate-300">Semester {selectedUser.semester} · {selectedUser.programme}</p>
+                     <div className="h-[1px] bg-white/5" />
+                     <div className="space-y-2">
+                        <label className="text-[9px] font-black uppercase text-slate-500 tracking-[0.3em]">Academic Context</label>
+                        <p className="text-[11px] font-black text-slate-300 uppercase tracking-widest">Semester {selectedUser.semester} • {selectedUser.programme}</p>
                      </div>
                   </div>
 
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between px-1">
-                      <label className="text-[9px] font-black uppercase text-slate-500 tracking-widest">Student ID Photo</label>
-                      <button className="text-[9px] font-black text-blue-400 uppercase tracking-widest hover:text-blue-300 flex items-center gap-1">
-                         <ExternalLink size={10} /> Full View
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between px-2">
+                      <label className="text-[9px] font-black uppercase text-slate-500 tracking-[0.3em]">Document Evidence</label>
+                      <button 
+                        onClick={() => window.open(selectedUser.id_image_url, '_blank')}
+                        className="text-[9px] font-black text-primary uppercase tracking-widest hover:text-primary/80 flex items-center gap-1 transition-colors"
+                      >
+                         <ExternalLink size={10} /> Full Resolution
                       </button>
                     </div>
-                    <div className="aspect-[4/3] bg-slate-800 rounded-3xl overflow-hidden border border-slate-700 group cursor-zoom-in relative">
+                    <div className="aspect-[4/3] bg-black rounded-[2rem] overflow-hidden border border-white/10 group cursor-zoom-in relative shadow-2xl">
                        {selectedUser.id_image_url ? (
                          <img 
                           src={selectedUser.id_image_url} 
                           alt="ID Preview" 
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                          className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-80 group-hover:opacity-100" 
                         />
                        ) : (
-                         <div className="w-full h-full flex items-center justify-center text-slate-700">No Image provided</div>
+                         <div className="w-full h-full flex items-center justify-center text-slate-800 font-black uppercase tracking-widest text-[10px]">No Evidence Provided</div>
                        )}
-                       <div className="absolute inset-0 bg-blue-600/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                          <Eye className="text-white w-8 h-8 drop-shadow-lg" />
+                       <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <Eye className="text-white w-10 h-10 drop-shadow-[0_0_20px_rgba(255,255,255,0.5)]" />
                        </div>
                     </div>
                   </div>
                 </div>
 
                 {activeTab === 'pending' ? (
-                  <div className="flex gap-3 mt-auto pt-10">
+                  <div className="flex gap-4 mt-12 pt-10 border-t border-white/5">
                     <button 
                       disabled={processing}
                       onClick={() => handleApprove(selectedUser.id)}
-                      className="flex-1 h-12 bg-blue-600 hover:bg-blue-500 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-50"
+                      className="flex-1 h-14 bg-primary hover:bg-primary/90 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-2xl shadow-primary/20 flex items-center justify-center gap-3 transition-all active:scale-95 disabled:opacity-50"
                     >
-                        <CheckCircle2 size={16} />
-                        Approve
+                        <CheckCircle2 size={18} />
+                        Validate
                     </button>
                     <button 
                       disabled={processing}
                       onClick={() => { setIsRejectModalOpen(true); }}
-                      className="flex-1 h-12 bg-slate-800 hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/30 border border-slate-700 rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-50"
+                      className="flex-1 h-14 bg-white/5 hover:bg-destructive/20 hover:text-destructive border border-white/10 rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 transition-all active:scale-95 disabled:opacity-50 group"
                     >
-                        <XCircle size={16} />
-                        Reject
+                        <XCircle size={18} className="group-hover:rotate-90 transition-transform" />
+                        Revoke
                     </button>
                   </div>
                 ) : (
-                  <div className="mt-8 space-y-4">
-                     <div className="p-4 bg-slate-800/50 rounded-2xl border border-slate-700/50">
-                        <p className="text-[9px] font-black uppercase text-slate-500 tracking-widest mb-2">History Info</p>
-                        <div className="flex items-center justify-between mb-2">
-                           <span className="text-xs font-bold text-slate-300">Action</span>
-                           <span className={cn(
-                             "text-xs font-black uppercase",
-                             selectedUser.action === 'approved' ? "text-emerald-500" : "text-red-500"
-                           )}>{selectedUser.action}</span>
-                        </div>
-                        <div className="flex items-center justify-between mb-2">
-                           <span className="text-xs font-bold text-slate-300">Admin</span>
-                           <span className="text-xs font-black text-white">{selectedUser.admin_name}</span>
-                        </div>
-                        {selectedUser.reason && (
-                          <div className="mt-4 pt-4 border-t border-slate-700/50">
-                             <p className="text-[9px] font-black uppercase text-slate-500 tracking-widest mb-1">Reason</p>
-                             <p className="text-xs text-slate-300 italic">"{selectedUser.reason}"</p>
+                  <div className="mt-12 space-y-6 pt-10 border-t border-white/5">
+                     <div className="p-8 bg-white/5 rounded-[2.5rem] border border-white/10 shadow-inner">
+                        <p className="text-[9px] font-black uppercase text-slate-500 tracking-[0.3em] mb-6">Decision Audit</p>
+                        <div className="space-y-4">
+                          <div className="flex items-center justify-between">
+                             <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Resolution</span>
+                             <span className={cn(
+                               "text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1 rounded-lg",
+                               selectedUser.action === 'approved' ? "bg-emerald-500/10 text-emerald-500" : "bg-destructive/10 text-destructive"
+                             )}>{selectedUser.action}</span>
                           </div>
-                        )}
+                          <div className="flex items-center justify-between">
+                             <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">By Moderator</span>
+                             <span className="text-xs font-black text-white">{selectedUser.admin_name}</span>
+                          </div>
+                          {selectedUser.reason && (
+                            <div className="mt-6 pt-6 border-t border-white/5">
+                               <p className="text-[9px] font-black uppercase text-slate-500 tracking-[0.3em] mb-3">Rejection Log</p>
+                               <p className="text-[11px] text-slate-300 font-bold italic leading-relaxed">"{selectedUser.reason}"</p>
+                            </div>
+                          )}
+                        </div>
                      </div>
                   </div>
                 )}
@@ -466,42 +479,42 @@ export default function Verifications() {
 
       {/* Reject Reason Modal */}
       {isRejectModalOpen && selectedUser && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="bg-white rounded-[2.5rem] w-full max-w-md p-10 shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300">
-             <div className="absolute top-0 right-0 w-32 h-32 bg-red-50 rounded-full blur-3xl -mr-16 -mt-16" />
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-xl animate-fade-in">
+          <div className="admin-card w-full max-w-lg p-12 shadow-3xl relative overflow-hidden scale-in-center">
+             <div className="absolute top-0 right-0 w-48 h-48 bg-destructive/5 rounded-full blur-[80px] -mr-24 -mt-24 pointer-events-none" />
              
-             <div className="flex flex-col items-center text-center space-y-6 relative z-10">
-                <div className="w-16 h-16 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center">
-                   <AlertCircle size={32} />
+             <div className="flex flex-col items-center text-center space-y-8 relative z-10">
+                <div className="w-20 h-20 bg-destructive/10 text-destructive rounded-3xl flex items-center justify-center shadow-inner">
+                   <AlertCircle size={40} />
                 </div>
-                <div className="space-y-1">
-                   <h3 className="text-2xl font-black text-slate-900 tracking-tight">Reject Application</h3>
-                   <p className="text-sm text-slate-500 font-medium px-4">Provide a reason for the student. This will be shown to them in their profile.</p>
+                <div className="space-y-3">
+                   <h3 className="text-3xl font-black text-foreground tracking-tight">Revoke Credential</h3>
+                   <p className="text-xs text-muted-foreground font-black uppercase tracking-widest opacity-60 leading-relaxed px-6 italic">Document the specific reason for denial. This notification will be synchronized to the student's profile.</p>
                 </div>
                 
-                <div className="w-full space-y-2">
-                   <label className="flex text-[10px] font-black uppercase tracking-widest text-slate-400 pl-2">Rejection Reason</label>
+                <div className="w-full space-y-4 text-left">
+                   <label className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-3 block">Rejection Intelligence</label>
                    <textarea 
                     value={rejectionReason}
                     onChange={(e) => setRejectionReason(e.target.value)}
-                    placeholder="e.g. ID image is blurred or invalid."
-                    className="w-full h-32 bg-slate-50 border border-slate-100 rounded-2xl p-4 text-sm font-bold placeholder:text-slate-300 focus:bg-white focus:border-red-500 outline-none transition-all resize-none shadow-inner"
+                    placeholder="Describe valid reasons: blurry image, incorrect enrollment ID, expired document..."
+                    className="w-full h-40 bg-secondary/30 border border-border rounded-[2rem] p-6 text-sm font-bold placeholder:text-muted-foreground/30 focus:bg-card focus:border-destructive focus:ring-4 focus:ring-destructive/10 outline-none transition-all shadow-inner resize-none"
                    />
                 </div>
 
-                <div className="flex w-full gap-3 pt-4">
+                <div className="flex w-full gap-4 pt-4">
                   <button 
                     onClick={() => setIsRejectModalOpen(false)}
-                    className="flex-1 h-14 bg-slate-50 text-slate-500 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-100 transition-all"
+                    className="flex-1 h-14 bg-secondary text-muted-foreground rounded-2xl font-black text-[10px] uppercase tracking-widest hover:text-foreground transition-all active:scale-95"
                   >
-                    Cancel
+                    Abort
                   </button>
                   <button 
                     onClick={handleReject}
                     disabled={processing || !rejectionReason}
-                    className="flex-1 h-14 bg-red-500 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-red-500/20 hover:bg-red-600 transition-all active:scale-95 disabled:opacity-50"
+                    className="flex-1 h-14 bg-destructive text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-2xl shadow-destructive/30 hover:bg-destructive transition-all active:scale-95 disabled:opacity-50"
                   >
-                    Confirm Rejection
+                    Confirm Revocation
                   </button>
                 </div>
              </div>

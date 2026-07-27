@@ -66,7 +66,7 @@ export function SubjectPage() {
   }, []);
 
   return (
-    <div className="w-full max-w-screen-sm mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-24">
+    <div className="w-full space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-24 px-4">
       
       {/* Back Button */}
       <Link to="/" className="inline-flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50 hover:text-primary transition-all group/back pt-4">
@@ -109,7 +109,7 @@ export function SubjectPage() {
 
         {/* Stats bar */}
         {!loading && (
-          <div className="flex items-center gap-6 px-6 py-4 bg-muted/30 rounded-[2rem] border border-border/50">
+          <div className="flex items-center gap-6 px-4 py-4 bg-muted/30 rounded-[2rem] border border-border/50">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
                 <BookOpen className="w-4 h-4 text-primary" />

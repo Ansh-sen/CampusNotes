@@ -35,7 +35,7 @@ export function Signup() {
       }
 
       // Automatically log the user in after successful registration
-      login(data.token, data.user);
+      login(data.accessToken, data.refreshToken, data.user);
 
       toast({ 
         title: 'Success!', 

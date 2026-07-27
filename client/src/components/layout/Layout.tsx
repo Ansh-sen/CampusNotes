@@ -46,13 +46,13 @@ export function Layout() {
   const isChatThread = pathname === '/messages' && new URLSearchParams(location.search).get('conv');
   
   return (
-    <div className="flex flex-col min-h-[100dvh] w-full max-w-screen-sm mx-auto bg-[hsl(var(--background))] border-x border-[hsl(var(--muted))]/50 relative shadow-sm">
+    <div className="flex flex-col min-h-[100dvh] w-full max-w-screen-xl mx-auto bg-background border-x border-border/50 shadow-2xl relative">
       <Header />
       <main 
         ref={mainRef} 
         className={cn(
           "flex-1 w-full overflow-x-hidden",
-          isChatThread ? "overflow-y-hidden pb-0" : "pt-4 px-4 pb-20 overflow-y-auto"
+          isChatThread ? "overflow-y-hidden pb-0" : "pb-20 overflow-y-auto"
         )}
       >
         <Outlet />

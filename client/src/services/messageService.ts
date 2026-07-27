@@ -151,7 +151,7 @@ export const messageService = {
   },
   
   async heartbeat(jwt: string) {
-    await fetch(`${API_URL}/messages/heartbeat`, {
+    return await fetch(`${API_URL}/messages/heartbeat`, {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${jwt}` }
     });
@@ -197,7 +197,11 @@ export const initSocket = (jwt: string, convId?: string | null) => {
     socket = io(API_BASE_URL, {
       auth: { token: jwt },
       withCredentials: true,
-      transports: ['websocket'], // Force websocket to avoid polling 400 errors
+      transports: ['websocket', 'polling'], // Allow polling as fallback for mobile networks
+      reconnection: true,
+      reconnectionAttempts: 10,
+      reconnectionDelay: 2000,
+      timeout: 20000,
     });
   } else if (socket.auth.token !== jwt) {
     socket.auth.token = jwt;

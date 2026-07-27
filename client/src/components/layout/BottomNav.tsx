@@ -28,8 +28,8 @@ export function BottomNav() {
   }
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-100 pb-[env(safe-area-inset-bottom)] px-2">
-      <div className="flex justify-around items-center h-20">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/90 dark:bg-card/80 backdrop-blur-2xl border-t border-border/50 pb-[env(safe-area-inset-bottom)] px-6 shadow-[0_-10px_40px_rgba(0,0,0,0.12)]">
+      <div className="flex justify-around items-center h-20 max-w-screen-xl mx-auto">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path || (item.path !== '/' && location.pathname.startsWith(item.path));
           const Icon = item.icon;
@@ -39,25 +39,31 @@ export function BottomNav() {
               key={item.path}
               to={item.path}
               className={cn(
-                "flex flex-col items-center justify-center w-full h-full pt-2 transition-all relative",
-                isActive ? "text-[#1a2744]" : "text-gray-400 hover:text-gray-600"
+                "flex flex-col items-center justify-center w-16 h-full transition-all relative group",
+                isActive ? "text-primary scale-110" : "text-muted-foreground hover:text-foreground/80 focus:text-foreground"
               )}
             >
-              <div className="relative mb-1">
-                <Icon className={cn("w-6 h-6 stroke-[1.5px]", isActive && "text-[#1a2744]")} />
+              <div className="relative mb-1 transition-transform group-active:scale-90">
+                <Icon className={cn(
+                  "w-6 h-6 stroke-[1.8px] transition-all", 
+                  isActive ? "text-primary drop-shadow-[0_0_10px_rgba(var(--primary),0.3)] opacity-100" : "text-muted-foreground/80"
+                )} />
                 {item.badge !== undefined && item.badge > 0 && (
-                  <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[8px] font-bold text-white ring-2 ring-white">
+                  <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[8px] font-black text-white ring-2 ring-card shadow-lg">
                     {item.badge > 9 ? '9+' : item.badge}
                   </span>
                 )}
               </div>
-              <span className={cn("text-[9px] font-bold tracking-tight px-0.5 text-center", isActive ? "text-[#1a2744]" : "text-gray-400")}>
+              <span className={cn(
+                "text-[8px] font-black uppercase tracking-widest transition-all", 
+                isActive ? "text-primary opacity-100" : "text-muted-foreground/60"
+              )}>
                 {item.label}
               </span>
               
               {/* Active Indicator Dot */}
               {isActive && (
-                <div className="absolute bottom-1 h-1 w-1 bg-[#1a2744] rounded-full" />
+                <div className="absolute -bottom-1 h-1.5 w-1.5 bg-primary rounded-full shadow-[0_0_10px_rgba(var(--primary),1)] animate-in zoom-in duration-300" />
               )}
             </Link>
           );

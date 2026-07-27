@@ -32,13 +32,12 @@ export function App() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
 
-            {/* Protected Routes */}
-            <Route element={<ProtectedRoute />}>
-              <Route element={<Layout />}>
+          <Route element={<ProtectedRoute />}>
+            <Route element={<Layout />}>
                 <Route path="/" element={<Home />} />
                 <Route path="/browse" element={<Browse />} />
-                <Route path="/messages" element={<Messages />} />
                 <Route path="/create" element={<CreateListing />} />
+                <Route path="/messages" element={<Messages />} />
                 <Route path="/my-listings" element={<MyListings />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/listing/:id" element={<ListingDetail />} />

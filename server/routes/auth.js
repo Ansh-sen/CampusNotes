@@ -5,9 +5,14 @@ const jwt = require('jsonwebtoken');
 const db = require('../db');
 const { v4: uuidv4 } = require('uuid');
 const crypto = require('crypto');
-const { sendEmail } = require('../utils/email');
+const { validateRegistration, validateLogin } = require('../middleware/validation');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your_secret_key_here_change_in_production';
+const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
+
+if (!JWT_SECRET || !JWT_REFRESH_SECRET) {
+    console.error('CRITICAL ERROR: JWT_SECRET or JWT_REFRESH_SECRET missing in environment.');
+}
 
 // Middleware to verify JWT token
 const authenticateToken = (req, res, next) => {
@@ -29,7 +34,7 @@ const authenticateToken = (req, res, next) => {
 };
 
 // POST: Register a new user
-router.post('/register', async (req, res) => {
+router.post('/register', validateRegistration, async (req, res) => {
     const { email, password, full_name } = req.body;
 
     if (!email || !password) {
@@ -54,23 +59,28 @@ router.post('/register', async (req, res) => {
             [userId, email, passwordHash, full_name || null]
         );
 
-        // Generate JWT
-        const token = jwt.sign({ id: userId, email: email }, JWT_SECRET, { expiresIn: '7d' });
+        // Generate JWTs
+        const accessToken = jwt.sign({ id: userId, email: email }, JWT_SECRET, { expiresIn: '15m' });
+        const refreshToken = jwt.sign({ id: userId, email: email }, JWT_REFRESH_SECRET, { expiresIn: '30d' });
 
         res.status(201).json({ 
             message: 'User registered successfully', 
-            token,
+            accessToken,
+            refreshToken,
             user: { id: userId, email, full_name }
         });
 
     } catch (error) {
         console.error('Registration Error:', error);
-        res.status(500).json({ error: 'Internal server error during registration.' });
+        res.status(500).json({ 
+            error: 'Internal server error during registration.',
+            details: error.message 
+        });
     }
 });
 
 // POST: Login
-router.post('/login', async (req, res) => {
+router.post('/login', validateLogin, async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -97,21 +107,26 @@ router.post('/login', async (req, res) => {
             return res.status(403).json({ error: 'Your account has been blocked. Contact support.' });
         }
 
-        // Generate JWT
-        const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
+        // Generate JWTs
+        const accessToken = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '15m' });
+        const refreshToken = jwt.sign({ id: user.id, email: user.email }, JWT_REFRESH_SECRET, { expiresIn: '30d' });
 
         // Don't send the password hash back
         delete user.password_hash;
 
         res.json({
             message: 'Logged in successfully',
-            token,
+            accessToken,
+            refreshToken,
             user
         });
 
     } catch (error) {
         console.error('Login Error:', error);
-        res.status(500).json({ error: 'Internal server error during login.' });
+        res.status(500).json({ 
+            error: 'Internal server error during login.',
+            details: error.message
+        });
     }
 });
 
@@ -249,6 +264,36 @@ router.post('/forgot-password', async (req, res) => {
 });
 
 // POST: Reset Password
+// POST: Refresh Token
+router.post('/refresh-token', async (req, res) => {
+    const { refreshToken } = req.body;
+
+    if (!refreshToken) {
+        return res.status(401).json({ error: 'Refresh token is required.' });
+    }
+
+    try {
+        jwt.verify(refreshToken, JWT_REFRESH_SECRET, (err, decoded) => {
+            if (err) {
+                return res.status(403).json({ error: 'Invalid or expired refresh token.' });
+            }
+
+            // Optional: Check if user still exists and is not blocked
+            // For now, generate new access token
+            const accessToken = jwt.sign(
+                { id: decoded.id, email: decoded.email }, 
+                JWT_SECRET, 
+                { expiresIn: '15m' }
+            );
+
+            res.json({ accessToken });
+        });
+    } catch (error) {
+        console.error('Refresh Token Error:', error);
+        res.status(500).json({ error: 'Internal server error during token refresh.' });
+    }
+});
+
 router.post('/reset-password', async (req, res) => {
     const { token, newPassword } = req.body;
 

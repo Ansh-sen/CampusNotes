@@ -186,41 +186,41 @@ export function MyListings() {
   return (
     <div className="min-h-screen bg-background pb-32">
       {/* Header */}
-      <div className="bg-primary text-primary-foreground pt-12 pb-10 px-6 rounded-b-[3rem] shadow-2xl relative overflow-hidden group">
+      <div className="bg-primary text-primary-foreground pt-14 pb-12 px-5 rounded-b-[3.5rem] shadow-2xl relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -mr-20 -mt-20 group-hover:bg-white/10 transition-colors duration-1000" />
         
-        <div className="flex justify-between items-center mb-8 relative z-10">
-          <div className="space-y-1">
-            <h1 className="text-3xl font-black tracking-tighter uppercase leading-none">Dashboard</h1>
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Portfolio Oversight</p>
+        <div className="flex justify-between items-end mb-10 relative z-10 px-1">
+          <div className="space-y-1.5">
+            <h1 className="text-[clamp(1.75rem,6vw,2.5rem)] font-black tracking-tighter uppercase leading-[0.9] drop-shadow-sm">Dashboard</h1>
+            <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-50 px-0.5">Manage Your Notes</p>
           </div>
           
-          <div className="flex items-center gap-4">
-            <div className="bg-black/20 backdrop-blur-md rounded-2xl p-1.5 flex border border-white/10 shadow-inner">
+          <div className="flex items-center gap-4 mb-1">
+            <div className="bg-black/20 backdrop-blur-xl rounded-2xl p-1.5 flex border border-white/10 shadow-2xl">
               <button 
                 onClick={() => setActiveView('listings')}
                 className={cn(
-                  "h-10 w-10 flex items-center justify-center rounded-xl transition-all duration-500", 
-                  activeView === 'listings' ? "bg-white text-primary shadow-xl scale-105" : "text-white/40 hover:text-white"
+                  "h-11 w-11 flex items-center justify-center rounded-xl transition-all duration-500", 
+                  activeView === 'listings' ? "bg-white text-primary shadow-2xl scale-105" : "text-white/40 hover:text-white"
                 )}
               >
-                <List size={20} />
+                <List size={22} />
               </button>
               <button 
                 onClick={() => setActiveView('analytics')}
                 className={cn(
-                  "h-10 w-10 flex items-center justify-center rounded-xl transition-all duration-500", 
-                  activeView === 'analytics' ? "bg-white text-primary shadow-xl scale-105" : "text-white/40 hover:text-white"
+                  "h-11 w-11 flex items-center justify-center rounded-xl transition-all duration-500", 
+                  activeView === 'analytics' ? "bg-white text-primary shadow-2xl scale-105" : "text-white/40 hover:text-white"
                 )}
               >
-                <BarChart2 size={20} />
+                <BarChart2 size={22} />
               </button>
             </div>
 
             {activeTab === 'drafts' && (stats?.draft_count || 0) > 0 && (
               <button 
                 onClick={handleClearDrafts}
-                className="px-5 h-10 bg-danger/20 hover:bg-danger text-white border border-danger/30 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg"
+                className="px-5 h-11 bg-danger/20 hover:bg-danger text-white border border-danger/30 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-2xl"
               >
                 Flush System
               </button>
@@ -228,15 +228,15 @@ export function MyListings() {
 
             <button 
               onClick={() => navigate('/create')}
-              className="h-12 w-12 flex items-center justify-center bg-white text-primary rounded-2xl hover:scale-110 transition-all active:scale-95 shadow-2xl shadow-black/20 group/btn"
+              className="h-14 w-14 flex items-center justify-center bg-white text-primary rounded-2xl hover:scale-110 active:scale-95 shadow-2xl shadow-primary/40 group/btn transition-all duration-500"
             >
-              <Plus size={24} className="group-hover:rotate-90 transition-transform duration-500" />
+              <Plus size={28} className="group-hover:rotate-90 transition-transform duration-700 ease-in-out" />
             </button>
           </div>
         </div>
 
         {/* Stats Row */}
-        <div className="grid grid-cols-3 gap-4 relative z-10">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 relative z-10">
           {loading ? (
              <>
                <div className="h-20 bg-white/5 animate-pulse rounded-[1.5rem]" />
@@ -246,28 +246,28 @@ export function MyListings() {
           ) : activeView === 'listings' ? (
             <>
               <StatItem label="Active" value={stats?.active_count || 0} />
-              <StatItem label="Fulfilled" value={stats?.sold_count || 0} variant="accent" />
-              <StatItem label="Total Hub" value={stats?.total_count || 0} />
+              <StatItem label="Items Sold" value={stats?.sold_count || 0} variant="accent" />
+              <StatItem label="Total Notes" value={stats?.total_count || 0} />
             </>
           ) : (
             <>
               <StatItem label="Revenue" value={`₹${stats?.total_earned || 0}`} variant="accent" />
-              <StatItem label="Volume" value={stats?.sold_count || 0} />
-              <StatItem label="Trust Index" value={stats?.avg_rating || 'N/A'} />
+              <StatItem label="Items Sold" value={stats?.sold_count || 0} />
+              <StatItem label="Your Rating" value={stats?.avg_rating || 'N/A'} />
             </>
           )}
         </div>
       </div>
 
-      <div className="max-w-md mx-auto px-6 mt-8 space-y-8">
+      <div className="w-full px-5 mt-10 space-y-10 max-w-screen-xl mx-auto">
         {activeView === 'listings' ? (
           <>
-            {/* Tabs */}
-            <div className="flex gap-4 overflow-x-auto pb-6 no-scrollbar">
+            {/* Tabs - Evenly Distributed Grid */}
+            <div className="grid grid-cols-4 gap-2 pb-6">
               <TabButton label="Overview" count={stats?.total_count} active={activeTab === 'all'} onClick={() => setActiveTab('all')} />
-              <TabButton label="Live" count={stats?.active_count} active={activeTab === 'active'} onClick={() => setActiveTab('active')} />
-              <TabButton label="Locked" count={stats?.sold_count} active={activeTab === 'sold'} onClick={() => setActiveTab('sold')} />
-              <TabButton label="Backlog" count={stats?.draft_count} active={activeTab === 'drafts'} onClick={() => setActiveTab('drafts')} />
+              <TabButton label="Active" count={stats?.active_count} active={activeTab === 'active'} onClick={() => setActiveTab('active')} />
+              <TabButton label="Sold" count={stats?.sold_count} active={activeTab === 'sold'} onClick={() => setActiveTab('sold')} />
+              <TabButton label="Drafts" count={stats?.draft_count} active={activeTab === 'drafts'} onClick={() => setActiveTab('drafts')} />
             </div>
 
             {/* List */}
@@ -297,14 +297,14 @@ export function MyListings() {
         ) : (
           /* Analytics View */
           <div className="space-y-8 pb-10">
-            {!analytics || listings.length < 3 ? (
+            {!analytics || listings.length < 1 ? (
                 <div className="bg-card p-12 rounded-[2.5rem] text-center shadow-xl shadow-black/5 border border-border/50 flex flex-col items-center gap-6">
                     <div className="h-20 w-20 bg-muted rounded-full flex items-center justify-center">
                       <BarChart2 className="w-10 h-10 text-muted-foreground/30" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-black text-foreground uppercase tracking-tight">Gathering Intelligence</h3>
-                      <p className="text-xs font-medium text-muted-foreground mt-2 max-w-[200px] mx-auto opacity-60 italic">Your reach data is still encrypting. Check back after more views.</p>
+                      <h3 className="text-lg font-black text-foreground uppercase tracking-tight">Your Progress</h3>
+                      <p className="text-xs font-medium text-muted-foreground mt-2 max-w-[200px] mx-auto opacity-60 italic">Publish your first notes to start seeing your views and progress here.</p>
                     </div>
                 </div>
             ) : (
@@ -312,8 +312,8 @@ export function MyListings() {
                     {/* Views Chart */}
                     <div className="bg-card p-8 rounded-[2.5rem] shadow-xl shadow-black/5 border border-border/50 space-y-8">
                         <div>
-                          <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] opacity-40">Intelligence Feed</h3>
-                          <h4 className="text-xl font-black text-foreground mt-1">Weekly Visibility Index</h4>
+                          <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] opacity-40">Your Progress</h3>
+                          <h4 className="text-xl font-black text-foreground mt-1">People who saw your notes</h4>
                         </div>
 
                         <div className="flex items-end justify-between h-40 gap-3">
@@ -339,12 +339,12 @@ export function MyListings() {
 
                         <div className="grid grid-cols-2 gap-6 pt-6 border-t border-border/50">
                             <MetricBox 
-                                label="Total Reach" 
+                                label="Total Views" 
                                 value={analytics.total_week} 
                                 change={((analytics.total_week - analytics.prev_week) / (analytics.prev_week || 1)) * 100}
                             />
                             <MetricBox 
-                                label="Conversion Lead" 
+                                label="Interested Buyers" 
                                 value={analytics.total_inquiries} 
                                 change={((analytics.total_inquiries - analytics.prev_inquiries) / (analytics.prev_inquiries || 1)) * 100}
                             />
@@ -372,8 +372,8 @@ export function MyListings() {
                     {listings.length > 0 && (
                         <div className="bg-card p-8 rounded-[2.5rem] shadow-xl shadow-black/5 border border-border/50 space-y-6 relative overflow-hidden group">
                             <div>
-                              <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] opacity-40">Apex Knowledge</h3>
-                              <h4 className="text-lg font-black text-foreground mt-1">Top Performing Listing</h4>
+                              <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] opacity-40">Your Best Seller</h3>
+                              <h4 className="text-lg font-black text-foreground mt-1">Most Popular Notes</h4>
                             </div>
 
                             <div className="flex gap-6 items-center p-4 bg-muted/30 rounded-3xl border border-border/10">
@@ -404,7 +404,7 @@ export function MyListings() {
                                 onClick={() => navigate(`/listing/${listings[0].id}`)}
                                 className="w-full flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-primary bg-primary/5 hover:bg-primary hover:text-white py-4 px-6 rounded-2xl transition-all shadow-xl shadow-primary/5 active:scale-95"
                             >
-                                <span>Deep Audit Stats</span>
+                                <span>See Details</span>
                                 <ChevronRight size={16} />
                             </button>
                         </div>
@@ -420,14 +420,14 @@ export function MyListings() {
                                 </div>
                                 <div className="space-y-3">
                                     <div className="space-y-1">
-                                      <h3 className="text-[9px] font-black text-amber-500 uppercase tracking-[0.3em]">AI Protocol Suggestion</h3>
+                                      <h3 className="text-[9px] font-black text-amber-500 uppercase tracking-[0.3em]">Tip to sell faster</h3>
                                       <p className="text-base font-bold text-foreground leading-tight italic opacity-90">"{aiTip.suggestion}"</p>
                                     </div>
                                     <button 
                                         onClick={() => navigate(`/sell?edit=${listings.find(l => l.title === aiTip.listing_title)?.id}`)}
                                         className="inline-flex items-center gap-3 text-[10px] font-black text-amber-500 uppercase tracking-widest group/btn active:scale-95 transition-all"
                                     >
-                                        Execute Refinement
+                                        Improve Now
                                         <div className="h-8 w-8 bg-amber-500/20 rounded-full flex items-center justify-center group-hover/btn:translate-x-2 transition-transform">
                                           <ChevronRight size={16} />
                                         </div>
@@ -448,9 +448,12 @@ export function MyListings() {
 // Sub-components
 function StatItem({ label, value, variant }: { label: string, value: string | number, variant?: 'accent' }) {
   return (
-    <div className="bg-white/10 backdrop-blur-md p-5 rounded-[1.5rem] flex flex-col items-center border border-white/5 shadow-inner group/stat hover:bg-white/15 transition-all">
-      <span className="text-[9px] font-black text-white/40 uppercase tracking-[0.2em]">{label}</span>
-      <span className={cn("text-2xl font-black mt-1 tracking-tighter tabular-nums", variant === 'accent' ? "text-amber-400 drop-shadow-[0_0_15px_rgba(251,191,36,0.5)]" : "text-white")}>
+    <div className="bg-white/10 backdrop-blur-xl p-6 rounded-[2rem] flex flex-col items-center border border-white/5 shadow-2xl group/stat hover:bg-white/20 transition-all duration-500">
+      <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.25em]">{label}</span>
+      <span className={cn(
+        "text-3xl font-black mt-2 tracking-tighter tabular-nums drop-shadow-lg", 
+        variant === 'accent' ? "text-amber-300 drop-shadow-[0_0_20px_rgba(251,191,36,0.6)]" : "text-white"
+      )}>
         {value}
       </span>
     </div>
@@ -462,22 +465,27 @@ function TabButton({ label, count, active, onClick }: { label: string, count: nu
     <button 
       onClick={onClick}
       className={cn(
-        "px-6 py-3 rounded-2xl whitespace-nowrap transition-all duration-500 flex items-center gap-3 group relative overflow-hidden",
+        "px-2 py-5 rounded-[2rem] transition-all duration-700 flex flex-col items-center justify-center gap-3 group relative h-full border",
         active 
-          ? "bg-primary text-white shadow-2xl shadow-primary/20 scale-105 z-10" 
-          : "bg-card text-muted-foreground border border-border/50 hover:border-primary/50"
+          ? "bg-primary text-white shadow-2xl shadow-primary/30 border-primary scale-[1.05] z-10" 
+          : "bg-card text-muted-foreground border-border/50 hover:border-primary/40 hover:bg-secondary/30"
       )}
     >
-      <span className="text-[10px] font-black uppercase tracking-widest relative z-10">{label}</span>
+      <span className="text-[9px] font-black uppercase tracking-widest relative z-10 leading-none">{label}</span>
       {count !== undefined && (
         <span className={cn(
-          "text-[9px] font-black px-2 py-0.5 rounded-lg tabular-nums relative z-10", 
-          active ? "bg-white/20" : "bg-muted text-muted-foreground group-hover:bg-primary/5 group-hover:text-primary transition-colors"
+          "text-[10px] font-black px-3 py-1 rounded-xl tabular-nums relative z-10 shadow-sm", 
+          active ? "bg-white/20 text-white" : "bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-all duration-500"
         )}>
           {count}
         </span>
       )}
-      <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+      {active && (
+        <motion.div 
+          layoutId="activeTabGlow"
+          className="absolute inset-0 bg-gradient-to-t from-white/10 to-transparent pointer-events-none rounded-[2rem]"
+        />
+      )}
     </button>
   );
 }
@@ -503,21 +511,21 @@ function MetricBox({ label, value, change }: { label: string, value: number, cha
 
 const EmptyState = forwardRef<HTMLDivElement, { tab: TabType, hasListings: boolean, onAction: () => void }>(({ tab, hasListings, onAction }, ref) => {
   let icon = <FileText className="w-10 h-10 text-muted-foreground/20" />;
-  let title = "Arsenal Depleted";
-  let subtitle = "Start digitizing your knowledge and build your campus revenue stream.";
-  let btnText = "Publish First Insight";
+  let title = "No Notes Found";
+  let subtitle = "Start selling your class notes and earn from your hard work.";
+  let btnText = "Put Up Your First Note";
 
   if (tab === 'active' && hasListings) {
-    title = "Market Stagnant";
-    subtitle = "All your knowledge assets are currently encrypted or in archive. Enable them to go live.";
+    title = "No Active Notes";
+    subtitle = "You don't have any notes for sale right now. Put them up and start earning.";
     btnText = "";
   } else if (tab === 'sold') {
-    title = "No Acquisitions";
-    subtitle = "Enhance your listing description or use the AI protocol to improve market fit.";
+    title = "Nothing Sold Yet";
+    subtitle = "Try adding better descriptions or more images to attract buyers.";
     btnText = "";
   } else if (tab === 'drafts') {
-    title = "Backlog Clear";
-    subtitle = "Your secure staging area is empty. Start a new build anytime.";
+    title = "No Drafts";
+    subtitle = "Your staging area is empty. Start a new listing anytime.";
     btnText = "";
   }
 
@@ -551,8 +559,8 @@ function TopperNudge({ stats, isTopper }: { stats: any, isTopper: boolean }) {
                 <Trophy size={120} />
             </div>
             <div className="relative z-10 space-y-2">
-              <h3 className="text-2xl font-black tracking-tighter uppercase leading-none">Apex Mindset Verified</h3>
-              <p className="text-sm font-medium opacity-80 max-w-[220px]">Your insights are now flagged as high-fidelity knowledge assets.</p>
+              <h3 className="text-2xl font-black tracking-tighter uppercase leading-none">Verified Seller Badge</h3>
+              <p className="text-sm font-medium opacity-80 max-w-[220px]">Your notes are now marked as top-quality study material.</p>
             </div>
         </div>
     );
@@ -569,8 +577,8 @@ function TopperNudge({ stats, isTopper }: { stats: any, isTopper: boolean }) {
           <Trophy size={32} />
         </div>
         <div>
-          <h3 className="text-xl font-black text-foreground tracking-tight uppercase leading-none">Verified Topper Status</h3>
-          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mt-2 opacity-40">Next Level Trust Injection</p>
+          <h3 className="text-xl font-black text-foreground tracking-tight uppercase leading-none">Top Seller Badge</h3>
+          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mt-2 opacity-40">Get more people to trust you</p>
         </div>
       </div>
 
@@ -614,7 +622,7 @@ function TopperNudge({ stats, isTopper }: { stats: any, isTopper: boolean }) {
           onClick={() => navigate('/create')}
           className="w-full bg-primary text-white py-5 rounded-[1.5rem] font-black uppercase tracking-widest text-[10px] shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
         >
-          Scale Your Influence
+          Put More Notes
         </button>
       </div>
 

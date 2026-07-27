@@ -101,7 +101,7 @@ export function FilterPanel({ isOpen, onClose, onApply, currentFilters }: Filter
       <div className="absolute inset-0 bg-[#001529]/40 backdrop-blur-sm animate-in fade-in duration-300" onClick={onClose} />
       
       {/* Panel */}
-      <div className="relative w-full max-w-screen-sm bg-white rounded-t-[2.5rem] shadow-2xl overflow-hidden animate-in slide-in-from-bottom-full duration-300 flex flex-col max-h-[92vh]">
+      <div className="relative w-full max-w-md bg-white rounded-t-[2.5rem] shadow-2xl overflow-hidden animate-in slide-in-from-bottom-full duration-300 flex flex-col max-h-[92vh]">
         {/* Drag handle decoration */}
         <div className="h-1.5 w-12 bg-gray-200 rounded-full mx-auto mt-4 mb-2 shrink-0" />
         
