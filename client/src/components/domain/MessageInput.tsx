@@ -18,7 +18,7 @@ export function MessageInput({ onSend, conversationId, initialValue = '', onInpu
   const [isSending, setIsSending] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const typingTimeoutRef = useRef<number | null>(null);
   const { user, profile } = useAuth();
 
   const isActuallyVerified = isVerified && profile?.verification_status === 'verified';
