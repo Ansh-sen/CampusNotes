@@ -19,7 +19,7 @@ jobs:
       - name: Install dependencies & Build Client
         run: |
           cd client
-          npm install
+          npm ci
           npm run build
 
       - name: Deploy to GitHub Pages
