@@ -10,6 +10,7 @@ export default defineConfig(({ mode }) => {
   const apiPattern = new RegExp(`^${apiUrl.replace(/\//g, '\\/')}\\/api\\/.*$`);
 
   return {
+    base: '/CampusNotes/', // Sets the correct subpath for GitHub Pages
     build: {
       outDir: 'dist',
     },
@@ -27,22 +28,9 @@ export default defineConfig(({ mode }) => {
           display: 'standalone',
           start_url: '/',
           icons: [
-            {
-              src: 'pwa-192x192.png',
-              sizes: '192x192',
-              type: 'image/png'
-            },
-            {
-              src: 'pwa-512x512.png',
-              sizes: '512x512',
-              type: 'image/png'
-            },
-            {
-              src: 'pwa-512x512.png',
-              sizes: '512x512',
-              type: 'image/png',
-              purpose: 'any maskable'
-            }
+            { src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' },
+            { src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png' },
+            { src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
           ]
         },
         workbox: {
@@ -52,18 +40,13 @@ export default defineConfig(({ mode }) => {
               handler: 'NetworkFirst',
               options: {
                 cacheName: 'campusnotes-api-cache',
-                expiration: {
-                  maxEntries: 50,
-                  maxAgeSeconds: 24 * 60 * 60 // 24 hours
-                }
+                expiration: { maxEntries: 50, maxAgeSeconds: 24 * 60 * 60 } // 24 hours
               }
             },
             {
               urlPattern: /\.(?:js|css|png|jpg|jpeg|svg|gif|woff2)$/,
               handler: 'CacheFirst',
-              options: {
-                cacheName: 'campusnotes-static-assets'
-              }
+              options: { cacheName: 'campusnotes-static-assets' }
             }
           ]
         }
