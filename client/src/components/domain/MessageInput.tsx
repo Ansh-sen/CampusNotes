@@ -18,9 +18,9 @@ export function MessageInput({ onSend, conversationId, initialValue = '', onInpu
   const [isSending, setIsSending] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const typingTimeoutRef = useRef<number | null>(null);
-  const { user, profile } = useAuth();
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null); // <--- FIXED TYPE HERE
 
+  const { user, profile } = useAuth();
   const isActuallyVerified = isVerified && profile?.verification_status === 'verified';
 
   if (!isActuallyVerified) {
@@ -30,7 +30,7 @@ export function MessageInput({ onSend, conversationId, initialValue = '', onInpu
           Verification Required to send messages & interact with campus notes
         </div>
         <button 
-          onClick={() => window.location.href = '/profile?action=verify'}
+          onClick={() => window.location.href = '/profile?action=verify'} 
           className="px-8 h-14 bg-primary text-white rounded-[2rem] font-black text-[10px] uppercase tracking-widest shadow-xl shadow-primary/20 active:scale-95 transition-all hover:bg-primary/90"
         >
           Verify My Student ID
@@ -61,24 +61,23 @@ export function MessageInput({ onSend, conversationId, initialValue = '', onInpu
   const handleTextChange = (newText: string) => {
     setText(newText);
     onInputValueChange?.(newText);
-    
+
     if (!conversationId || !user) return;
 
     const socket = getSocket();
     if (socket) {
-      socket.emit('typing_status', { 
-        conversation_id: conversationId, 
-        user_id: user.id, 
-        isTyping: true 
+      socket.emit('typing_status', {
+        conversation_id: conversationId,
+        user_id: user.id,
+        isTyping: true
       });
 
       if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
-      
       typingTimeoutRef.current = setTimeout(() => {
-        socket.emit('typing_status', { 
-          conversation_id: conversationId, 
-          user_id: user.id, 
-          isTyping: false 
+        socket.emit('typing_status', {
+          conversation_id: conversationId,
+          user_id: user.id,
+          isTyping: false
         });
       }, 2000);
     }
@@ -87,22 +86,22 @@ export function MessageInput({ onSend, conversationId, initialValue = '', onInpu
   const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault();
     if (isSending) return;
-    
+
     if (text.trim() || file) {
       setIsSending(true);
       try {
         await onSend(text, file || undefined);
         setText('');
         setFile(null);
-        
+
         // Stop typing immediately on send
         const socket = getSocket();
         if (socket && conversationId && user) {
           if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
-          socket.emit('typing_status', { 
-            conversation_id: conversationId, 
-            user_id: user.id, 
-            isTyping: false 
+          socket.emit('typing_status', {
+            conversation_id: conversationId,
+            user_id: user.id,
+            isTyping: false
           });
         }
       } finally {
@@ -137,10 +136,7 @@ export function MessageInput({ onSend, conversationId, initialValue = '', onInpu
               <span className="text-[10px] font-black truncate max-w-[150px] text-foreground tracking-tight">{file.name}</span>
               <span className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest">Ready to upload</span>
             </div>
-            <button 
-              onClick={() => setFile(null)}
-              className="p-2 hover:bg-muted rounded-full transition-all active:scale-90"
-            >
+            <button onClick={() => setFile(null)} className="p-2 hover:bg-muted rounded-full transition-all active:scale-90">
               <X className="h-4 w-4 text-muted-foreground" />
             </button>
           </div>
@@ -152,36 +148,37 @@ export function MessageInput({ onSend, conversationId, initialValue = '', onInpu
           type="file" 
           ref={fileInputRef} 
           className="hidden" 
-          onChange={(e) => e.target.files?.[0] && setFile(e.target.files[0])}
+          onChange={(e) => e.target.files?.[0] && setFile(e.target.files[0])} 
         />
+        
         <Button 
           variant="ghost" 
           size="icon" 
-          className="h-14 w-14 rounded-[1.5rem] bg-muted/50 text-muted-foreground hover:text-primary hover:bg-primary/10 shrink-0 transition-all active:scale-90 border border-border/50 shadow-inner"
+          className="h-14 w-14 rounded-[1.5rem] bg-muted/50 text-muted-foreground hover:text-primary hover:bg-primary/10 shrink-0 transition-all active:scale-90 border border-border/50 shadow-inner" 
           onClick={() => fileInputRef.current?.click()}
         >
           <Paperclip className="h-5 w-5" />
         </Button>
 
         <div className="flex-1 bg-muted/10 border border-muted-foreground/10 rounded-[2rem] focus-within:bg-muted/20 focus-within:ring-4 focus-within:ring-primary/5 transition-all overflow-hidden flex items-end px-5 py-1.5 shadow-sm backdrop-blur-sm">
-          <textarea
-            ref={textareaRef}
-            rows={1}
-            value={text}
+          <textarea 
+            ref={textareaRef} 
+            rows={1} 
+            value={text} 
             onFocus={() => {
               window.scrollTo(0, 0);
               document.body.scrollTo(0, 0);
-            }}
-            onChange={(e) => handleTextChange(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Type a message..."
-            className="w-full bg-transparent border-none focus:ring-0 py-3 text-sm font-medium text-foreground resize-none scrollbar-hide min-h-[48px] outline-none shadow-none placeholder:text-muted-foreground/30"
+            }} 
+            onChange={(e) => handleTextChange(e.target.value)} 
+            onKeyDown={handleKeyDown} 
+            placeholder="Type a message..." 
+            className="w-full bg-transparent border-none focus:ring-0 py-3 text-sm font-medium text-foreground resize-none scrollbar-hide min-h-[48px] outline-none shadow-none placeholder:text-muted-foreground/30" 
           />
         </div>
 
         <Button 
-          onClick={() => handleSubmit()}
-          disabled={( !text.trim() && !file) || isSending}
+          onClick={() => handleSubmit()} 
+          disabled={(!text.trim() && !file) || isSending} 
           className={`h-14 w-14 rounded-[1.5rem] shrink-0 transition-all active:scale-90 flex items-center justify-center border border-transparent ${
             (text.trim() || file) && !isSending 
               ? 'bg-primary text-white shadow-xl shadow-primary/20 hover:bg-primary/90' 
